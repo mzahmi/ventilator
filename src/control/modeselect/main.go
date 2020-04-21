@@ -1,5 +1,0 @@
-package modeselect
-
-func main() {
-
-}
