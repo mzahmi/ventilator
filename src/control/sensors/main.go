@@ -1,0 +1,4 @@
+package sensors
+
+func main() {
+}
