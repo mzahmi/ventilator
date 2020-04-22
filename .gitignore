@@ -1,0 +1,24 @@
+
+
+#src/gui/gui qt extras
+src/gui/rcc*
+src/gui/moc*
+src/gui/rcc*
+src/gui/*.
+src/gui/*.bckp
+src/gui/*.autosave
+src/gui/build-gui-Desktop*
+src/gui/rcc*
+src/gui/log.txt
+src/gui/*.jsc
+src/gui/*.log
+src/gui/*.pro.user
+src/gui/*.qmake.stash
+src/gui/*.qmlc
+src/gui/*.so
+src/gui/*.trace
+src/gui/*.vagrant
+src/gui/.DS_Store
+src/gui/Mfile*
+src/gui/deploy
+src/gui/windows
