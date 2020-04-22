@@ -1,5 +1,11 @@
 package controlsystem
 
-func main() {
+import "fmt"
 
+//func main() {
+
+//}
+
+func Control() {
+	fmt.Println("i'm from control system")
 }
