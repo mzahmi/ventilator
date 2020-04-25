@@ -6,9 +6,9 @@ type Pressure struct {
 	ID       int
 	Address  int
 	RawValue float64
-	Pascal   float64
-	Bar      float64
-	MMH2O    float64
+	//Pascal   float64
+	//Bar      float64
+	MMH2O float64
 }
 
 // ReadPressure ... reads raw data from attached sensors to
