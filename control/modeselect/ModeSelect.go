@@ -26,6 +26,7 @@ type UserInput struct {
 	PressureSupport     float32 // needs to be defined
 	InspiratoryPressure float32
 	PressureControl     float32
+	Exit                bool
 }
 
 // ModeSelection reads input from the GUI to select the
@@ -66,6 +67,7 @@ func VolumeControl(UI *UserInput) {
 	//calculate Te from UI.Ti and BCT
 	BCT := 60 / UI.Rate
 	Te := BCT - UI.Ti
+
 	//initiate a PID controller based on the PeakFlow
 	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 	FlowPID = FlowPID.Set(UI.PeakFlow)         // Sets the PID setpoint
@@ -79,7 +81,7 @@ func VolumeControl(UI *UserInput) {
 	FExp := sensors.Flow{ID: "SNS_F_EXP", Address: "GPIO04", RawValue: 0, Rate: 0}
 
 	//control loop
-	for {
+	for UI.Exit == false {
 		//Open main valve MIns controlled by flow sensor FIns
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti) * time.Second); {
 			MIns.IncrementValve(FlowPID.Update(FIns.ReadFlow()))
@@ -92,7 +94,6 @@ func VolumeControl(UI *UserInput) {
 		}
 		//Close main valve MExp
 		MExp.IncrementValve(0) // closes the valve
-
 	}
 
 }

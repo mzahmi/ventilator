@@ -22,7 +22,6 @@ type Flow struct {
 // Memberane based on its address
 func (PS *Pressure) ReadPressure() float64 {
 	//read raw data from source and convert to mmH2O pressure reading
-
 	return PS.MMH2O
 
 }
