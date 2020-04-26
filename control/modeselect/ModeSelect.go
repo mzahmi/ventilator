@@ -2,9 +2,10 @@ package modeselect
 
 import (
 	"fmt"
-	"github.com/mzahmi/ventilator/control/sensors"
-	"github.com/mzahmi/ventilator/control/valves"
 	"time"
+
+	"vent/control/sensors"
+	"vent/control/valves"
 )
 
 // UserInput is a custome type struct that contains the global
@@ -52,6 +53,7 @@ func ModeSelection(UI *UserInput) {
 
 // VolumeAC ...
 func VolumeAC(UI *UserInput) {
+	//Check breath type and run
 	switch UI.BreathType {
 	case "control":
 		VolumeControl(UI)
@@ -77,8 +79,8 @@ func VolumeControl(UI *UserInput) {
 	MExp := valves.PropValve{ID: "A_PSV_EXP", Address: "GPIO02", Percent: 100} //normally open
 
 	// Identify the flow sensors by FIns and FExp
-	FIns := sensors.Flow{ID: "SNS_F_INS", Address: "GPIO03", RawValue: 0, Rate: 0}
-	FExp := sensors.Flow{ID: "SNS_F_EXP", Address: "GPIO04", RawValue: 0, Rate: 0}
+	FIns := sensors.Flow{ID: "SNS_F_INS", Address: "GPIO03", Rate: 0}
+	FExp := sensors.Flow{ID: "SNS_F_EXP", Address: "GPIO04", Rate: 0}
 
 	//control loop
 	for UI.Exit == false {
@@ -100,5 +102,52 @@ func VolumeControl(UI *UserInput) {
 
 // VolumeAssist ...
 func VolumeAssist(UI *UserInput) {
+	//Initialize  Sensors
+	PIns := sensors.Pressure{ID: "Inhalation Pressure Sensor", Address: "GPIOX", MMH2O: 0}
+	FIns := sensors.Flow{ID: "SNS_F_INS", Address: "GPIO03", Rate: 0}
+	FExp := sensors.Flow{ID: "SNS_F_EXP", Address: "GPIO04", Rate: 0}
+	//Initialize valves
+	MIns := valves.PropValve{ID: "A_PSV_INS", Address: "GPIO01", Percent: 0}   //normally closed
+	MExp := valves.PropValve{ID: "A_PSV_EXP", Address: "GPIO02", Percent: 100} //normally open
+	//Initialize PID controller
+	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 
+	//Check trigger type
+	switch UI.PatientTriggerType {
+	case "pressure":
+		//Calculate trigger threshhold with PEEP and sensitivity
+		PTrigger := UI.PEEP + UI.PressureTrigSense
+		//Ti, IE, or Peak Flow Cycling
+		if UI.Ti != 0 {
+			//Calculate Te based on BCT and Ti
+			Te := 60/UI.Rate - UI.Ti
+			//Calulcate minimum flow rate(L/min) to deliver Tidal Volume(mL) given Ti(s)
+			FlowRate := UI.TidalVolume * 60 / (UI.Ti * 1000)
+			//Setpoint for PID
+			FlowPID.setpoint = float64(FlowRate)
+			//Begin loop
+			for !UI.Exit {
+				//check if trigger is true
+				if PIns.ReadPressure() <= PTrigger {
+					//Open main valve MIns controlled by flow sensor FIns
+					for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti) * time.Second); {
+						MIns.IncrementValve(FlowPID.Update(float64(FIns.ReadFlow())))
+					}
+					//Close main valve MIns
+					MIns.IncrementValve(0) // closes the valve
+					//Open main valve MExp controlled by flow sensor FExp
+					for start := time.Now(); time.Since(start) < (time.Duration(Te) * time.Second); {
+						MExp.IncrementValve(FlowPID.Update(float64(FExp.ReadFlow())))
+					}
+					//Close main valve MExp
+					MExp.IncrementValve(0) // closes the valve
+				}
+			}
+		} else if UI.PeakFlow != 0 {
+
+		} else if UI.IR != 0 {
+
+		}
+
+	}
 }
