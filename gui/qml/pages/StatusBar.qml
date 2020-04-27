@@ -1,5 +1,5 @@
 import QtQuick 2.4
-import QtQuick.Controls 2.13
+import QtQuick.Controls 2.0
 import "icons"
 import QtQuick.Layouts 1.0
 
@@ -40,7 +40,7 @@ StatusBarForm {
             width: 32
             height: 32
             iconSize: 24
-            iconStyle: "\uf083"
+            iconStyle: "\uf076"
 
         }
 
