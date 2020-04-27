@@ -5,17 +5,17 @@ import "fmt"
 //SolenValve is a custom type struct which contains
 //Solenoid ID, Address and State
 type SolenValve struct {
-	Address int
 	ID      string
+	Address string
 	state   bool
 }
 
 //PropValve is a custom type struct which contains
 //proportional valve ID, Address and Percentage
 type PropValve struct {
-	Address int
 	ID      string
-	Percent int
+	Address string
+	Percent float64
 }
 
 //SolenCmd switchs on and off the solenoids
@@ -34,9 +34,8 @@ func (valve *SolenValve) SolenCmd(cmd string) {
 }
 
 //IncrementValve adjusts the proportionality of the proportional valve
-func (valve *PropValve) IncrementValve(percent int) {
-
+func (valve *PropValve) IncrementValve(percent float64) {
 	valve.Percent = percent
-	fmt.Printf("Valve (%v) opening has been set to %v\n", valve.ID, valve.Percent)
+	fmt.Printf("Valve (%s) opening has been set to %v\n", valve.ID, valve.Percent)
 
 }
