@@ -22,3 +22,4 @@ src/gui/.DS_Store
 src/gui/Mfile*
 src/gui/deploy
 src/gui/windows
+src/gui/docs/_*
