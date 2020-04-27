@@ -8,7 +8,6 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"strconv"
 	"time"
@@ -16,41 +15,29 @@ import (
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/quick"
+	"periph.io/x/periph/conn/gpio"
 )
 
-// // QmlBridge ... test bridge
-// type QmlBridge struct {
-// 	core.QObject
-
-// 	// send to go
-// 	_ func(data string)        `signal:"sendToQml"`
-// 	_ func(data string) string `slot:"sendToGo"`
-// }
+var (
+	slider time.Duration = 0
+)
 
 // QmlBridge ... Custom bridge
 type QmlBridge struct {
 	core.QObject
 
-	_ func(data string)        `signal:"sendToQml"`
-	_ func(data string) string `slot:"sendToGo"`
+	_ func(data string) `slot:"sendStart"`
+	_ func(data string) `slot:"sendStop"`
+	_ func(value int)   `signal:"breathRate"`
 
 	// cretes onSendTime in qml
 	_ func(data string) `signal:"sendTime"`
 }
 
-// ButtonBridge ... Custom bridge
-type ButtonBridge struct {
-	core.QObject
-
-	_ func(data int)           `signal:"sendToQml"`
-	_ func(data string) string `slot:"sendToGo"`
-}
-
 // creates variables that will be linked the bridge struct
 var (
 	// qmlBridge    = NewQmlBridge(nil)
-	qmlBridge    = NewQmlBridge(nil)
-	buttonBridge = NewQmlBridge(nil)
+	qmlBridge = NewQmlBridge(nil)
 )
 
 func main() {
@@ -64,41 +51,72 @@ func main() {
 	view.SetResizeMode(quick.QQuickView__SizeRootObjectToView)
 	// view.RootContext().SetContextProperty("QmlBridge", qmlBridge)
 	view.RootContext().SetContextProperty("QmlBridge", qmlBridge)
-	view.RootContext().SetContextProperty("ButtonBridge", buttonBridge)
 	// location of qml file
-	view.SetSource(core.NewQUrl3("qrc:/qml/mainGo.qml", 0))
+	view.SetSource(core.NewQUrl3("qrc:/qml/MainGo.qml", 0))
 
 	// time counter
-	counter := 0
+	// counter := 0
 
-	// button function when clicked
-	buttonBridge.ConnectSendToGo(func(data string) string {
-		f, err := os.OpenFile("log.txt",
-			os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			log.Println(err)
-		}
-		defer f.Close()
-		if _, err := f.WriteString(strconv.Itoa(counter) + "\n"); err != nil {
-			log.Println(err)
-		}
-		return "hello from go"
+	// START BUTTON
+	qmlBridge.ConnectSendStart(func(data string) {
+		fmt.Println(fmt.Println("Start ", data))
+		StartClicked()
+		f, _ := strconv.ParseFloat(data, 8)
+		CalculateBCT(float32(f))
 	})
 
-	// show time
+	// STOP BUTTON
+	qmlBridge.ConnectSendStop(func(data string) {
+		fmt.Println(fmt.Println("Stop", data))
+		StopClicked()
+	})
+
+	// initiate host
+	InitiateHost()
+
 	go func() {
-		for t := range time.NewTicker(time.Second * 1).C {
-			qmlBridge.SendTime(t.Format(time.ANSIC))
+		for {
+			qmlBridge.BreathRate(int(slider))
+			//fmt.Println(readFromFile2())
+			//time.Sleep(time.Second)
+			//counter++
 		}
 	}()
 
-	// read from a file every second
+	// control loop
 	go func() {
-		i := 0
-		for i <= 100 {
-			qmlBridge.SendToQml(readFromFile())
-			time.Sleep(time.Second)
-			counter++
+		for {
+
+			time.Sleep(time.Millisecond * 200)
+			for !StartBool {
+				slider = 0
+				fmt.Println("Entered endless loop")
+				highBool := true
+
+				for start := time.Now(); time.Since(start) < (time.Millisecond * time.Duration(TI*1000)); {
+					time.Sleep(time.Millisecond * 50)
+					slider = 100 * time.Since(start) / (time.Millisecond * time.Duration(TI*1000))
+					fmt.Println(slider)
+					if highBool {
+						MIns.Out(gpio.High)
+						highBool = false
+					}
+				}
+
+				MIns.Out(gpio.Low)
+
+				for start := time.Now(); time.Since(start) < (time.Millisecond * time.Duration(TE*1000)); {
+					time.Sleep(time.Millisecond * 50)
+					slider = 100 - (100 * time.Since(start) / (time.Millisecond * time.Duration(TE*1000)))
+					fmt.Println(slider)
+					if !highBool {
+						MExp.Out(gpio.High)
+						highBool = true
+					}
+				}
+
+				MExp.Out(gpio.Low)
+			}
 		}
 	}()
 
@@ -109,15 +127,17 @@ func main() {
 	gui.QGuiApplication_Exec()
 }
 
-func readFromFile() string {
-	returnString := ""
+func readFromFile2() int {
+	returnString := "20"
 
-	data, err := ioutil.ReadFile("test.txt")
+	data, err := ioutil.ReadFile("test2.txt")
 	if err != nil {
 		fmt.Println("File reading error", err)
 		returnString = "No file found"
 	} else {
 		returnString = string(data)
 	}
-	return returnString
+	i1, _ := strconv.Atoi(returnString)
+
+	return i1
 }

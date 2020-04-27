@@ -9,9 +9,11 @@
         <file>qml/pages/StatusBar.qml</file>
         <file>qml/pages/StatusBarForm.ui.qml</file>
         <file>qml/pages/Windows.qml</file>
-        <file>qml/mainGo.qml</file>
+        <file>qml/MainGo.qml</file>
         <file>qml/mainQt.qml</file>
         <file>qml/pages/MenuStack.qml</file>
         <file>qml/pages/MenuStackForm.ui.qml</file>
+        <file>qml/pages/TabTherapy.qml</file>
+        <file>qml/pages/TabHome.qml</file>
     </qresource>
 </RCC>

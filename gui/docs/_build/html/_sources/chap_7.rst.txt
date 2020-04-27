@@ -1,0 +1,33 @@
+====================================
+Essential Variables and Breath Types
+====================================
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+Introduction
+~~~~~~~~~~~~
+
+Mechanical ventilation can be realized with one of three operating principles: intermittent positive pressure ventilation (IPPV), intermittent negative pressure ventilation (INPV), and high-frequency ventilation (HFV). Most ventilators today are IPPV based.
+
+There are several mechanical breath types. The type of mechanical breath is determined by five essential variables:
+
+    1. Triggering: defines when inspiration begins;
+    2. Cycling: defines when inspiration ends;
+    3. Controlling: defines how delivery of inspiratory gas is controlled;
+    4. Targeting: defines the size of a mechanical breath;
+    5. Baseline: defines the baseline pressure at which mechanical breaths occur.
+
+Essential variables
+~~~~~~~~~~~~~~~~~~~~
+
++--------------------+-----------------------+------------------+------------------------+-------------------------+------------------------------------------+
+| Variable           |  Triggering           |  Cycling         |  Controlling           |  Targeting              |  Baseline                                |
++====================+=======================+==================+========================+=========================+==========================================+
+| Common mechanisms  | Time triggering       | Time cycling     | Volume controlling     | Tidal volume            |  Positive end-expiratory pressure (PEEP) |
+|                    | Pressure triggering   | Flow cycling     | Pressure controlling   | Inspiratory pressure    |                                          |
+|                    | Flow triggering       |                  | Adaptive controlling   | Target tidal volume     |                                          |
+|                    | Manual triggering     |                  | Hybrid controlling     |                         |                                          |
++--------------------+-----------------------+------------------+------------------------+-------------------------+------------------------------------------+
+
