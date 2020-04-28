@@ -1,11 +1,14 @@
 package valves
 
-import "fmt"
+import (
+	"fmt"
+	"vent/pkg/dac"
+)
 
 //SolenValve is a custom type struct which contains
 //Solenoid ID, Address and State
 type SolenValve struct {
-	ID      string
+	Name    string
 	Address string
 	state   bool
 }
@@ -13,8 +16,9 @@ type SolenValve struct {
 //PropValve is a custom type struct which contains
 //proportional valve ID, Address and Percentage
 type PropValve struct {
-	ID      string
-	Address string
+	Name    string
+	DacChan uint8
+	DacID   uint8
 	Percent float64
 }
 
@@ -24,10 +28,10 @@ func (valve *SolenValve) SolenCmd(cmd string) {
 	switch cmd {
 	case "open":
 		valve.state = true
-		fmt.Printf("Valve (%v) has opened\n", valve.ID)
+		fmt.Printf("Valve (%v) has opened\n", valve.Name)
 	case "close":
 		valve.state = false
-		fmt.Printf("Valve (%v) has closed\n", valve.ID)
+		fmt.Printf("Valve (%v) has closed\n", valve.Name)
 
 	}
 
@@ -36,6 +40,7 @@ func (valve *SolenValve) SolenCmd(cmd string) {
 //IncrementValve adjusts the proportionality of the proportional valve
 func (valve *PropValve) IncrementValve(percent float64) {
 	valve.Percent = percent
-	fmt.Printf("Valve (%s) opening has been set to %v\n", valve.ID, valve.Percent)
+	dac.WriteDac(valve.DacID, valve.DacChan, valve.Percent/10)
+	fmt.Printf("Valve (%s) opening has been set to %v\n", valve.Name, valve.Percent)
 
 }
