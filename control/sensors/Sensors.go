@@ -28,7 +28,7 @@ func (PS *Pressure) ReadPressure() float32 {
 	//read raw data from source and convert to mmH2O pressure reading
 	AdcSlice, _ := adc.ReadADC(1)
 	VoltageSignal := AdcSlice[PS.ID]
-	PS.MMH2O = VoltageSignal * 2
+	PS.MMH2O = (VoltageSignal - 0.0196) / 0.2802 //initail pressure sensor calibration
 	return PS.MMH2O
 
 }
