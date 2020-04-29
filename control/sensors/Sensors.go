@@ -26,9 +26,10 @@ type Flow struct {
 // Memberane based on its address
 func (PS *Pressure) ReadPressure() float32 {
 	//read raw data from source and convert to mmH2O pressure reading
-	AdcSlice, _ := adc.ReadADC(1)
+	AdcSlice, _ := adc.ReadADC(PS.AdcID)
 	VoltageSignal := AdcSlice[PS.ID]
-	PS.MMH2O = (VoltageSignal - 0.0196) / 0.2802 //initail pressure sensor calibration
+	bar := (VoltageSignal - 0.0196) / 0.2802 //initail pressure sensor calibration
+	PS.MMH2O = bar * 0.10197162129779        // conversion from bar to mmH2O
 	return PS.MMH2O
 
 }
@@ -37,7 +38,7 @@ func (PS *Pressure) ReadPressure() float32 {
 // Memberane based on its address
 func (FS *Flow) ReadFlow() float32 {
 	//read raw data from source and convert to flow rate reading
-	AdcSlice, _ := adc.ReadADC(1)
+	AdcSlice, _ := adc.ReadADC(FS.AdcID)
 	VoltageSignal := AdcSlice[FS.ID]
 	FS.Rate = VoltageSignal * 2
 	return FS.Rate
