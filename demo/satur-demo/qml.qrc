@@ -15,8 +15,5 @@
         <file>qml/pages/MenuStackForm.ui.qml</file>
         <file>qml/pages/TabTherapy.qml</file>
         <file>qml/pages/TabHome.qml</file>
-        <file>qml/pages/MyConstants.js</file>
-        <file>qml/pages/basic/HorizontalBar.qml</file>
-        <file>qml/pages/basic/BreathingText.qml</file>
     </qresource>
 </RCC>
