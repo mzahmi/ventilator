@@ -1,4 +1,4 @@
-package main
+package calibration
 
 import (
 	"bufio"
@@ -56,7 +56,3 @@ func caltest() {
 
 }
 
-func main() {
-	caltest()
-
-}
