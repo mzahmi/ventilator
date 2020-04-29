@@ -2,15 +2,16 @@ package valves
 
 import (
 	"fmt"
-	"vent/pkg/dac"
+	"github.com/mzahmi/ventilator/control/dac"
+	"github.com/mzahmi/ventilator/control/ioexp"
 )
 
 //SolenValve is a custom type struct which contains
 //Solenoid ID, Address and State
 type SolenValve struct {
 	Name    string
-	Address string
-	state   bool
+	State   bool
+	PinMask uint32
 }
 
 //PropValve is a custom type struct which contains
@@ -26,11 +27,13 @@ type PropValve struct {
 func (valve *SolenValve) SolenCmd(cmd string) {
 
 	switch cmd {
-	case "open":
-		valve.state = true
+	case "Open":
+		valve.State = true
+		ioexp.WritePin(valve.PinMask, valve.State)
 		fmt.Printf("Valve (%v) has opened\n", valve.Name)
-	case "close":
-		valve.state = false
+	case "Close":
+		valve.State = false
+		ioexp.WritePin(valve.PinMask, valve.State)
 		fmt.Printf("Valve (%v) has closed\n", valve.Name)
 
 	}
