@@ -28,15 +28,17 @@ func (PS *Pressure) ReadPressure() float32 {
 	//read raw data from source and convert to mmH2O pressure reading
 	AdcSlice, _ := adc.ReadADC(1)
 	VoltageSignal := AdcSlice[PS.ID]
+	PS.MMH2O = VoltageSignal * 2
 	return PS.MMH2O
 
 }
 
 // ReadFlow ... reads raw data from attached sensors to
 // Memberane based on its address
-func (PS *Flow) ReadFlow() float32 {
+func (FS *Flow) ReadFlow() float32 {
 	//read raw data from source and convert to flow rate reading
 	AdcSlice, _ := adc.ReadADC(1)
-	VoltageSignal := AdcSlice[PS.ID]
-	return PS.Rate
+	VoltageSignal := AdcSlice[FS.ID]
+	FS.Rate = VoltageSignal * 2
+	return FS.Rate
 }
