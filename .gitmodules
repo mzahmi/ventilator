@@ -1,3 +1,0 @@
-[submodule "src/periph"]
-	path = src/periph
-	url = https://github.com/google/periph.git

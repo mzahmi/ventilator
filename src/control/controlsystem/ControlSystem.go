@@ -1,5 +1,0 @@
-package controlsystem
-
-func main() {
-
-}
