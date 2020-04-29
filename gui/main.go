@@ -7,137 +7,54 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
-	"strconv"
 	"time"
 
-	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
-	"github.com/therecipe/qt/quick"
-	"periph.io/x/periph/conn/gpio"
-)
-
-var (
-	slider time.Duration = 0
-)
-
-// QmlBridge ... Custom bridge
-type QmlBridge struct {
-	core.QObject
-
-	_ func(data string) `slot:"sendStart"`
-	_ func(data string) `slot:"sendStop"`
-	_ func(value int)   `signal:"breathRate"`
-
-	// cretes onSendTime in qml
-	_ func(data string) `signal:"sendTime"`
-}
-
-// creates variables that will be linked the bridge struct
-var (
-	// qmlBridge    = NewQmlBridge(nil)
-	qmlBridge = NewQmlBridge(nil)
 )
 
 func main() {
-	core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true)
 
-	gui.NewQGuiApplication(len(os.Args), os.Args)
+	// BUTTON connection:
+	// Connects all input variables from qml to go
+	qmlBridge.ConnectSendToGo(func(tidalVolume float32, rate float32, ti float32, peakFlow float32, ir float32, er float32, peep float32, fio2 float32, triggerType int, trigSense float32) {
+		fmt.Println(tidalVolume, rate, ti, peakFlow, ir, er, peep, fio2, triggerType, trigSense)
+		qmlBridge.SendInfo("Success")
+		// // make a struct from the user input
+		// ui := modeselect.UserInput{
+		// 	TidalVolume:        tidalVolume,
+		// 	Rate:               rate,
+		// 	Ti:                 ti,
+		// 	PeakFlow:           peakFlow,
+		// 	IR:                 ir,
+		// 	ER:                 er,
+		// 	PEEP:               peep,
+		// 	PatientTriggerType: triggerType,
+		// 	PressureTrigSense:  trigSense,
+		// }
 
-	// creates a quickview type and
-	// connects the bridge struct with thebridge variable
-	var view = quick.NewQQuickView(nil)
-	view.SetResizeMode(quick.QQuickView__SizeRootObjectToView)
-	// view.RootContext().SetContextProperty("QmlBridge", qmlBridge)
-	view.RootContext().SetContextProperty("QmlBridge", qmlBridge)
-	// location of qml file
-	view.SetSource(core.NewQUrl3("qrc:/qml/MainGo.qml", 0))
-
-	// time counter
-	// counter := 0
-
-	// START BUTTON
-	qmlBridge.ConnectSendStart(func(data string) {
-		fmt.Println(fmt.Println("Start ", data))
-		StartClicked()
-		f, _ := strconv.ParseFloat(data, 8)
-		CalculateBCT(float32(f))
 	})
 
-	// STOP BUTTON
-	qmlBridge.ConnectSendStop(func(data string) {
-		fmt.Println(fmt.Println("Stop", data))
-		StopClicked()
+	// BUTTON connection:
+	// Free Button
+	qmlBridge.ConnectSendModeSelected(func(mode string) {
+		fmt.Println(fmt.Println("Mode selected is ", mode))
 	})
 
-	// initiate host
-	InitiateHost()
-
+	// SEND UI
+	// sends information to QML to display
+	counter := 0
+	// read from a file every second
 	go func() {
-		for {
-			qmlBridge.BreathRate(int(slider))
-			//fmt.Println(readFromFile2())
-			//time.Sleep(time.Second)
-			//counter++
+		i := 0
+		for i <= 100 {
+			qmlBridge.SendToQml(ReadFromFile())
+			time.Sleep(time.Second)
+			counter++
 		}
 	}()
 
-	// control loop
-	go func() {
-		for {
-
-			time.Sleep(time.Millisecond * 200)
-			for !StartBool {
-				slider = 0
-				fmt.Println("Entered endless loop")
-				highBool := true
-
-				for start := time.Now(); time.Since(start) < (time.Millisecond * time.Duration(TI*1000)); {
-					time.Sleep(time.Millisecond * 50)
-					slider = 100 * time.Since(start) / (time.Millisecond * time.Duration(TI*1000))
-					fmt.Println(slider)
-					if highBool {
-						MIns.Out(gpio.High)
-						highBool = false
-					}
-				}
-
-				MIns.Out(gpio.Low)
-
-				for start := time.Now(); time.Since(start) < (time.Millisecond * time.Duration(TE*1000)); {
-					time.Sleep(time.Millisecond * 50)
-					slider = 100 - (100 * time.Since(start) / (time.Millisecond * time.Duration(TE*1000)))
-					fmt.Println(slider)
-					if !highBool {
-						MExp.Out(gpio.High)
-						highBool = true
-					}
-				}
-
-				MExp.Out(gpio.Low)
-			}
-		}
-	}()
-
-	// show the view
-	view.Show()
-
+	// WRAPPER
 	// keep program running until exit window
+	InitView().Show()
 	gui.QGuiApplication_Exec()
-}
-
-func readFromFile2() int {
-	returnString := "20"
-
-	data, err := ioutil.ReadFile("test2.txt")
-	if err != nil {
-		fmt.Println("File reading error", err)
-		returnString = "No file found"
-	} else {
-		returnString = string(data)
-	}
-	i1, _ := strconv.Atoi(returnString)
-
-	return i1
 }

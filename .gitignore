@@ -1,9 +1,7 @@
 
 
 #src/gui/gui qt extras
-src/gui/rcc*
 src/gui/moc*
-src/gui/rcc*
 src/gui/*.
 src/gui/*.bckp
 src/gui/*.autosave
