@@ -339,7 +339,7 @@ func PSV(UI *UserInput) {
 		//Calculate trigger threshhold with PEEP and sensitivity
 		PTrigger := UI.PEEP + UI.PressureTrigSense
 
-		counter := 0
+		counter := 1
 		//Begin loop
 		for !Exit {
 			FlowMonitor := []float32{FIns.ReadFlow()}
@@ -354,9 +354,8 @@ func PSV(UI *UserInput) {
 						FlowMonitor[0] = FlowMonitor[counter] // saves maximum value @ index 0
 					} else if (FlowMonitor[0]*UI.FlowCyclePercent)/100 >= FIns.ReadFlow() {
 						counter = 1
+						FlowMonitor = nil
 						break
-					} else {
-
 					}
 					counter++
 				}
