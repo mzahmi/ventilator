@@ -5,6 +5,7 @@ activated depending on the GUI input. There are 5 main modes:
 	1.	Volume AC
 	2.	Pressure AC
 	3.	PSV
+	4.	SMV
 */
 package modeselect
 
