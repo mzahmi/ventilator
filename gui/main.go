@@ -7,8 +7,8 @@ package main
 
 import (
 	"fmt"
-	"time"
-
+	// "time"
+	"github.com/mzahmi/ventilator/demo/satur"
 	"github.com/therecipe/qt/gui"
 )
 
@@ -20,18 +20,20 @@ func main() {
 		fmt.Println(tidalVolume, rate, ti, peakFlow, ir, er, peep, fio2, triggerType, trigSense)
 		qmlBridge.SendInfo("Success")
 
-		// // make a struct from the user input
-		// ui := modeselect.UserInput{
-		// 	TidalVolume:        tidalVolume,
-		// 	Rate:               rate,
-		// 	Ti:                 ti,
-		// 	PeakFlow:           peakFlow,
-		// 	IR:                 ir,
-		// 	ER:                 er,
-		// 	PEEP:               peep,
-		// 	PatientTriggerType: triggerType,
-		// 	PressureTrigSense:  trigSense,
-		// }
+		// make a struct from the user input
+		ui := satur.UserInput{
+			TidalVolume:        tidalVolume,
+			Rate:               rate,
+			Ti:                 ti,
+			PeakFlow:           peakFlow,
+			IR:                 ir,
+			ER:                 er,
+			PEEP:               peep,
+			PatientTriggerType: triggerType,
+			PressureTrigSense:  trigSense,
+		}
+
+		go satur.PressureControl(&ui)
 
 	})
 
@@ -43,16 +45,16 @@ func main() {
 
 	// SEND UI
 	// sends information to QML to display
-	counter := 0
+	// counter := 0
 	// read from a file every second
-	go func() {
-		i := 0
-		for i <= 100 {
-			qmlBridge.SendToQml(ReadFromFile())
-			time.Sleep(time.Second)
-			counter++
-		}
-	}()
+	// go func() {
+	// 	i := 0
+	// 	for i <= 100 {
+	// 		qmlBridge.SendToQml(ReadFromFile())
+	// 		time.Sleep(time.Second)
+	// 		counter++
+	// 	}
+	// }()
 
 	// WRAPPER
 	// keep program running until exit window
