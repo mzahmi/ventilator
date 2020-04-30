@@ -9,7 +9,7 @@ Window {
     id: window
     visible: true
     width: 800
-    height: 480
+    height: 460
     title: qsTr("Hello World")
     color: Constants.mainbg
 MainGo{

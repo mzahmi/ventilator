@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/mzahmi/ventilator/control/ioexp"
+	"github.com/mzahmi/ventilator/control/rpigpio"
 	// "github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
 )
@@ -34,7 +35,7 @@ type UserInput struct {
 }
 
 // Exit is a global var used as a switch for ventilation on or off
-// var Exit bool
+var Exit bool
 
 // UpdateValues populates a a struct which is recieved by the GUI
 // func UpdateValues(UI *UserInput) {
@@ -227,6 +228,19 @@ func PressureControl(UI *UserInput) {
 	//PIns := sensors.Pressure{Name: "SNS_P_INS", ID: 0, AdcID: 1, MMH2O: 0} //insparatory pressure sensor
 	//PExp := sensors.Pressure{Name: "SNS_P_EXP", ID: 1, AdcID: 1, MMH2O: 0} //expratory pressure sensor
 
+	fmt.Println("beep called")
+	err = rpigpio.BeepOn()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	time.Sleep(1000 * time.Millisecond)
+	err = rpigpio.BeepOff()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	//control loop
 	for {
 		fmt.Println("entered super for loop")
@@ -234,6 +248,12 @@ func PressureControl(UI *UserInput) {
 		//Open main valve MIns controlled by flow sensor PIns
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
 			fmt.Println("INHALE")
+			err := ioexp.WritePin(ioexp.GreenLed, true)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
 			Mv.SolenCmd("Open")
 			MIns.SolenCmd("Open")
 		}
@@ -241,10 +261,26 @@ func PressureControl(UI *UserInput) {
 		MIns.SolenCmd("Close") // closes the valve
 		Mv.SolenCmd("Close")
 
+		err = ioexp.WritePin(ioexp.GreenLed, false)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
 		//Open main valve MExp controlled by flow sensor PExp
 		for start := time.Now(); time.Since(start) < (time.Duration(Te*1000) * time.Millisecond); {
+			err = ioexp.WritePin(ioexp.RedLed, true)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
 			fmt.Println("EXHALE")
 			MExp.SolenCmd("Open")
+		}
+		err = ioexp.WritePin(ioexp.RedLed, false)
+		if err != nil {
+			fmt.Println(err)
+			return
 		}
 		//Close main valve MExp
 		MExp.SolenCmd("Close") // closes the valve
