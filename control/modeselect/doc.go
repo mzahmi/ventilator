@@ -25,13 +25,14 @@ Their characteristics are given in the table below.
 
 The volume assist/control mode allows the operator to directly control tidal volume, rate, and Ti for a desired minute volume.
 The input variables are:
-    a. Tidal volume
-    b. Rate
-    c. Ti (or I:E ratio or peak flow)
-    d. Patient trigger type and sensitivity
-    e. PEEP (positive end-expiratory pressure)
-    f. FiO2
-	g. Flow pattern (possibly).
+
+	a. Tidal volume
+	b. Rate
+	c. Ti (or I:E ratio or peak flow)
+	d. Patient trigger type and sensitivity
+	e. PEEP (positive end-expiratory pressure)
+	f. FiO2
+	g. Flow pattern (possibly)
 
 The triggering window is a defined time slot at late expiration, when the ventilator responds to patient triggering—either by pressure or flow. If the ventilator detects a valid pneumatic signal within the triggering window, it delivers a volume assist breath. If not, it delivers a volume control (time-triggered) breath according to the preset rate. The triggering window is an important technical feature in terms of patient-ventilator synchrony. In a passive patient, all breaths are volume control breaths, and the monitored rate and the set rate are equal. In an active patient, some or all breaths are volume assist breaths, and the monitored rate is higher than the set rate.
 
@@ -39,8 +40,6 @@ The volume A/C mode is intended for ventilated patients who are passive or parti
 
 It is critical to set tidal volume and rate so that the resultant alveolar ventilation matches the patient’s current demand.
 Note that the demand may vary during mechanical ventilation. If so, you need to adjust the ventilator settings.
-
-
 
 Pressure Assist Control Mode
 
