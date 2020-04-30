@@ -23,14 +23,8 @@ Their characteristics are given in the table below.
 	Cycling		Time			Time
 	Controlling	Volume			Volume
 
-The volume A/C mode is intended for ventilated patients who are passive or partially active. It is not a good choice for active patients, especially those with a strong drive, because the patient may not tolerate the inflexible manner of inspiratory gas delivery. Patient-ventilator asynchrony is highly probable.
-
-It is critical to set tidal volume and rate so that the resultant alveolar ventilation matches the patient’s current demand.
-Note that the demand may vary during mechanical ventilation. If so, you need to adjust the ventilator settings.
-
 The volume assist/control mode allows the operator to directly control tidal volume, rate, and Ti for a desired minute volume.
 The input variables are:
-
     a. Tidal volume
     b. Rate
     c. Ti (or I:E ratio or peak flow)
@@ -39,10 +33,18 @@ The input variables are:
     f. FiO2
 	g. Flow pattern (possibly).
 
+The triggering window is a defined time slot at late expiration, when the ventilator responds to patient triggering—either by pressure or flow. If the ventilator detects a valid pneumatic signal within the triggering window, it delivers a volume assist breath. If not, it delivers a volume control (time-triggered) breath according to the preset rate. The triggering window is an important technical feature in terms of patient-ventilator synchrony. In a passive patient, all breaths are volume control breaths, and the monitored rate and the set rate are equal. In an active patient, some or all breaths are volume assist breaths, and the monitored rate is higher than the set rate.
+
+The volume A/C mode is intended for ventilated patients who are passive or partially active. It is not a good choice for active patients, especially those with a strong drive, because the patient may not tolerate the inflexible manner of inspiratory gas delivery. Patient-ventilator asynchrony is highly probable.
+
+It is critical to set tidal volume and rate so that the resultant alveolar ventilation matches the patient’s current demand.
+Note that the demand may vary during mechanical ventilation. If so, you need to adjust the ventilator settings.
+
+
+
 Pressure Assist Control Mode
 
 The pressure A/C mode also allows two breath types: pressure control breaths and pressure assist breaths. Their characteristics are given in the table below.
-
 	Variable	Volume control breath	Volume assist breath
 	---------------------------------------------------------
 	Triggring	Time			Pressure/flow
@@ -61,13 +63,20 @@ The perceived disadvantage of this mode is that an operator cannot directly cont
 
 Pressure support ventilation (PSV) mode
 
-The volume SIMV mode allows three breath types: volume control breaths, volume assist breaths, and pressure support breaths.
+The pressure support ventilation mode allows just one breath type: pressure support breaths.
+	Variable	Pressure support breathe
+	-----------------------------------------
+	Triggring	Pressure/flow
+	Cycling		Flow
+	Controlling	Pressure
 
-	Variable	Volume control breath	Volume assist breath	Pressure support breathe
-	-----------------------------------------------------------------------------------------
-	Triggring	Time			Pressure/flow		Pressure/flow
-	Cycling		Time			Time			Flow
-	Controlling	Volume			Volume			Pressure
+In this mode, an operator sets:
+    a. Inspiratory pressure (also known as pressure support)
+    b. Patient trigger type and sensitivity
+    c. PEEP
+    d. FiO2
+    e. Flow cycling criteria
+    f. Rise time (possibly).
 
 The pressure support ventilation mode is indicated for active patients only. It is the most comfortable mode for this patient population, because they can influence the actual rate, inspiratory time, inspiratory flow, and tidal volume. Obviously, it is contraindicated for the passive patients. Apnoea (backup) ventilation should be activated in this mode. This mode enables the ventilator to adequately compensate for moderate levels of gas leakage.
 
@@ -91,6 +100,27 @@ By design, a ventilator in the PSV mode delivers a mechanical breath only when i
 (More info at https://oxfordmedicine.com/view/10.1093/med/9780198784975.001.0001/med-9780198784975-chapter-10#med-9780198784975-chapter-10-div1-41)
 
 Volume SIMV mode
+
+The volume SIMV mode allows three breath types: volume control breaths, volume assist breaths, and pressure support breaths.
+
+	Variable	Volume control breath	Volume assist breath	Pressure support breathe
+	-----------------------------------------------------------------------------------------
+	Triggring	Time			Pressure/flow		Pressure/flow
+	Cycling		Time			Time			Flow
+	Controlling	Volume			Volume			Pressure
+
+In this mode, an operator sets:
+
+    a. Tidal volume
+    b. Rate (also known as SIMV rate)
+    c. Ti (or I:E)
+    d. Psupport
+    e. Patient trigger type and sensitivity
+    f. Flow cycling
+    g. Rise time (possibly)
+    h. PEEP
+    i. FiO2.
+
 
 Volume control breaths are defined by control settings (a), (b), and (c). Volume assist breaths are defined by control settings (a), (c), and (e). Pressure support breaths are defined by control settings (d), (e), (f), and (g).
 
