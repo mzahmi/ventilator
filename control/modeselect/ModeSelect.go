@@ -1,3 +1,11 @@
+/*
+This package deals with selecting the correct mode, chosen by the user from the GUI's side.
+
+Currently there are 5 Main modes:
+	1.	Volume AC
+	2.	Volume Control
+*/
+
 package modeselect
 
 import (
