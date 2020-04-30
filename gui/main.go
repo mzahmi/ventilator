@@ -19,6 +19,7 @@ func main() {
 	qmlBridge.ConnectSendToGo(func(tidalVolume float32, rate float32, ti float32, peakFlow float32, ir float32, er float32, peep float32, fio2 float32, triggerType int, trigSense float32) {
 		fmt.Println(tidalVolume, rate, ti, peakFlow, ir, er, peep, fio2, triggerType, trigSense)
 		qmlBridge.SendInfo("Success")
+
 		// // make a struct from the user input
 		// ui := modeselect.UserInput{
 		// 	TidalVolume:        tidalVolume,

@@ -1,13 +1,16 @@
+/*
+Package i2c_mux allows to send and read data using i2c protocol
+*/
 package i2c_mux
 
 import (
 	"errors"
 
+	"periph.io/x/periph/conn/gpio"
+	"periph.io/x/periph/conn/gpio/gpioreg"
 	"periph.io/x/periph/conn/i2c"
 	"periph.io/x/periph/conn/i2c/i2creg"
 	"periph.io/x/periph/host"
-	"periph.io/x/periph/conn/gpio"
-	"periph.io/x/periph/conn/gpio/gpioreg"
 )
 
 // all address lines are low (see table one of data sheet for address)

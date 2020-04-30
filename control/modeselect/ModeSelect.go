@@ -1,3 +1,11 @@
+/*
+Package modeselect decides which mode should be used for the ventilator and what related functions whould be
+activated depending on the GUI input. There are 5 main modes:
+
+	1.	Volume AC
+	2.	Pressure AC
+	3.	PSV
+*/
 package modeselect
 
 import (
@@ -36,7 +44,7 @@ type UserInput struct {
 // Exit is a global var used as a switch for ventilation on or off
 var Exit bool
 
-// UpdateValues ...
+// UpdateValues populates a a struct which is recieved by the GUI
 func UpdateValues(UI *UserInput) {
 	BCT := 60 / UI.Rate
 	if UI.Ti != 0 {
@@ -53,7 +61,7 @@ func UpdateValues(UI *UserInput) {
 }
 
 // ModeSelection reads input from the GUI to select the
-// required Mode
+// required Mode using the UserInput.Mode
 func ModeSelection(UI *UserInput) {
 	switch UI.Mode {
 	case "Volume A/C":
@@ -73,7 +81,7 @@ func ModeSelection(UI *UserInput) {
 	}
 }
 
-// VolumeAC ...
+// VolumeAC is one of the main 5 modes of the ventilator
 func VolumeAC(UI *UserInput) {
 	switch UI.BreathType {
 	case "Control":
