@@ -84,13 +84,17 @@ In pressure support ventilation, the baseline pressure (PEEP) is constant.
 
 You may notice that in some ventilators this mode is called CPAP + PSV. CPAP stands for continuous positive airway pressure. The patient breathes unsupported at an elevated baseline pressure. PSV stands for pressure support ventilation. The patient’s spontaneous breaths are mechanically supported. In this mode, both CPAP and PSV can be realized by changing the pressure support setting.
 
-Spontaneous breaths
+PSV Spontaneous breaths
 
 If pressure support is set to zero or close to zero, the patient has to do all the required work of breathing to satisfy the ventilatory demand. Unsupported mechanical breaths are spontaneous breaths, often abbreviated as Spont. Spontaneous breaths in ventilated patients are a great challenge, and should be used only in patients who are stable and in good clinical condition. Their typical application is for weaning trials, also known as spontaneous breathing trials.
 
 Typically the patient breathes spontaneously at a moderate positive baseline pressure (PEEP).
 
-Pressure-supported breaths
+For invasive mechanical ventilation, an endotracheal tube imposes an additional airway resistance to the gas flow in both directions. Even when your intention is to let the patient breathe unsupported, setting a pressure support of 3 or 5 cmH2O may be advised to offset the resistance imposed by the ETT.
+
+Technologically, spontaneous breathing is a performance challenge to a ventilator system. Good PEEP performance requires excellent sensitivity and system responsiveness. Ideally, the baseline pressure should remain stable even when the patient inhales and exhales intensively.
+
+PSV Pressure-supported breaths
 
 If you set pressure support to 10 cmH2O or higher, the patient’s spontaneous breaths are pressure supported. In this case, the ventilator takes over a significant part of the required work of breathing.
 
