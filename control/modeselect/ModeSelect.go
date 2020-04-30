@@ -341,10 +341,14 @@ func PSV(UI *UserInput) {
 				//Open main valve MIns controlled by flow sensor FIns
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.TiMax*1000) * time.Millisecond); {
 					MIns.IncrementValve(PressurePID.Update(float64(PIns.ReadPressure())))
-					if FlowMonitor[counter] < FIns.ReadFlow() {
-						FlowMonitor = append(FlowMonitor, FIns.ReadFlow())
-					} else if FlowMonitor[counter] > FIns.ReadFlow() {
-						FlowMax := FlowMonitor[counter]
+					FlowMonitor = append(FlowMonitor, FIns.ReadFlow())
+					if FlowMonitor[0] < FlowMonitor[counter] {
+						FlowMonitor[0] = FlowMonitor[counter] // saves maximum value @ index 0
+					} else if (FlowMonitor[0]*UI.FlowCyclePercent)/100 >= FIns.ReadFlow() {
+						counter = 1
+						break
+					} else {
+
 					}
 					counter++
 				}
