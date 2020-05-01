@@ -9,6 +9,24 @@ import (
 	"github.com/mzahmi/ventilator/control/valves"
 )
 
+//PressureACSettings is a struct that contains all the variables
+//that will/can be used for Pressure AC mode
+type PressureACSettings struct {
+	BreathType          string
+	PatientTriggerType  string
+	Rate                float32 // BPM
+	Ti                  float32 // inhalation time
+	TiMax               float32 // for PSV mode backup time control
+	Te                  float32 // exhalation time
+	IR                  float32 // inhalation ratio part
+	ER                  float32 // exhalation ratio part
+	PEEP                float32 // 5-20 mmH2O
+	FiO2                float32 // 21% - 100%
+	PressureTrigSense   float32 // -0.5 to 02 mmH2O
+	FlowTrigSense       float32 // 0.5 to 5 Lpm
+	InspiratoryPressure float32
+}
+
 // PressureAC one of the main 5 modes of the ventilator
 func PressureAC(UI *UserInput) {
 	switch UI.BreathType {

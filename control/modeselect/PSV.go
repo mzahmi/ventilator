@@ -7,6 +7,20 @@ import (
 	"github.com/mzahmi/ventilator/control/valves"
 )
 
+//PSVSettings is a struct that contains all the variables
+//that will/can be used for PSV mode
+type PSVSettings struct {
+	PatientTriggerType  string
+	TiMax               float32 // for PSV mode backup time control
+	Te                  float32 // exhalation time
+	PEEP                float32 // 5-20 mmH2O
+	FiO2                float32 // 21% - 100%
+	PressureTrigSense   float32 // -0.5 to 02 mmH2O
+	FlowTrigSense       float32 // 0.5 to 5 Lpm
+	FlowCyclePercent    float32 // for flow cycling ranges from 0 to 100%
+	InspiratoryPressure float32
+}
+
 // PSV one of the main 5 modes of the ventilator. The Triggering type is chosen by the operator.
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Flow

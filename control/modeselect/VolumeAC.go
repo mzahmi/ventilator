@@ -9,6 +9,25 @@ import (
 	"github.com/mzahmi/ventilator/control/valves"
 )
 
+//VolumeACSettings is a struct that contains all the variables
+//that will/can be used for Volume AC mode
+type VolumeACSettings struct {
+	BreathType         string
+	PatientTriggerType string
+	TidalVolume        float32 // ml
+	Rate               float32 // BPM
+	Ti                 float32 // inhalation time
+	TiMax              float32 // for PSV mode backup time control
+	Te                 float32 // exhalation time
+	IR                 float32 // inhalation ratio part
+	ER                 float32 // exhalation ratio part
+	PeakFlow           float32
+	PEEP               float32 // 5-20 mmH2O
+	FiO2               float32 // 21% - 100%
+	PressureTrigSense  float32 // -0.5 to 02 mmH2O
+	FlowTrigSense      float32 // 0.5 to 5 Lpm
+}
+
 // VolumeAC one of the main 5 modes of the ventilator
 func VolumeAC(UI *UserInput) {
 	switch UI.BreathType {
