@@ -2,9 +2,20 @@ package valves
 
 import (
 	"fmt"
+
 	"github.com/mzahmi/ventilator/control/dac"
 	"github.com/mzahmi/ventilator/control/ioexp"
 )
+
+//Inhalation Valve constants
+const Valve_Inhalation_Name = "Inhalation Valve"
+const Valve_Inhalation_DAC_ID = 1
+const Valve_Inhalation_DAC_Chan = 0
+
+//Exhalation Valve constants
+const Valve_Exhalation_Name = "Exhalation Valve"
+const Valve_Exhalation_DAC_ID = 1
+const Valve_Exhalation_DAC_Chan = 1
 
 //SolenValve is a custom type struct which contains
 //Solenoid ID, Address and State
@@ -21,6 +32,36 @@ type PropValve struct {
 	DacChan uint8
 	DacID   uint8
 	Percent float64
+}
+
+//Solenoids
+
+//MIns ... Inhalation valve
+var MIns = SolenValve{
+	Name:    Valve_Inhalation_Name,
+	State:   false,
+	PinMask: ioexp.Solenoid0,
+} //normally closed
+
+//MExp ... Exhalation valve
+var MExp = SolenValve{Name: Valve_Exhalation_Name, State: true, PinMask: ioexp.Solenoid1} //normally open
+
+//Proportional Valves
+
+//InProp ... Inhalation proportional valve
+var InProp = PropValve{
+	Name:    Valve_Inhalation_Name,
+	DacID:   Valve_Inhalation_DAC_ID,
+	DacChan: Valve_Inhalation_DAC_Chan,
+	Percent: 0,
+}
+
+//ExProp ... Exhalation proportional valve
+var ExProp = PropValve{
+	Name:    Valve_Exhalation_Name,
+	DacID:   Valve_Exhalation_DAC_ID,
+	DacChan: Valve_Exhalation_DAC_Chan,
+	Percent: 0,
 }
 
 //SolenCmd switchs on and off the solenoids

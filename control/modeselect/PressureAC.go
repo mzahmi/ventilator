@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mzahmi/ventilator/control/ioexp"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
 )
@@ -28,7 +27,7 @@ type PressureACSettings struct {
 }
 
 // PressureAC one of the main 5 modes of the ventilator
-func PressureAC(UI *UserInput) {
+func PressureAC(UI *PressureACSettings) {
 	switch UI.BreathType {
 	case "Control":
 		PressureControl(UI)
@@ -43,32 +42,23 @@ func PressureAC(UI *UserInput) {
 // 	Triggering:	Time
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureControl(UI *UserInput) {
+func PressureControl(UI *PressureACSettings) {
 	//calculate Te from UI.Ti and BCT
-	UpdateValues(UI)
-
-	// Identify the main valves or solenoids by MIns and MExp
-	MIns := valves.SolenValve{Name: "A_PSV_INS", State: false, PinMask: ioexp.Solenoid0} //normally closed
-	MExp := valves.SolenValve{Name: "A_PSV_EXP", State: true, PinMask: ioexp.Solenoid1}  //normally open
-
-	// Identify the flow sensors by PIns and PExp
-	//PIns := sensors.Pressure{Name: "SNS_P_INS", ID: 0, AdcID: 1, MMH2O: 0} //insparatory pressure sensor
-	//PExp := sensors.Pressure{Name: "SNS_P_EXP", ID: 1, AdcID: 1, MMH2O: 0} //expratory pressure sensor
 
 	//control loop
 	for !Exit {
 		//Open main valve MIns controlled by flow sensor PIns
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
-			MIns.SolenCmd("Open")
+			valves.MIns.SolenCmd("Open")
 		}
 		//Close main valve MIns
-		MIns.SolenCmd("Close") // closes the valve
+		valves.MIns.SolenCmd("Close") // closes the valve
 		//Open main valve MExp controlled by flow sensor PExp
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
-			MExp.SolenCmd("Open")
+			valves.MExp.SolenCmd("Open")
 		}
 		//Close main valve MExp
-		MExp.SolenCmd("Close") // closes the valve
+		valves.MExp.SolenCmd("Close") // closes the valve
 	}
 
 }
@@ -77,20 +67,8 @@ func PressureControl(UI *UserInput) {
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureAssist(UI *UserInput) {
+func PressureAssist(UI *PressureACSettings) {
 
-	UpdateValues(UI)
-	//Initialize  Sensors at inhalation side
-	PIns := sensors.Pressure{Name: "SNS_P_INS", ID: 0, AdcID: 1, MMH2O: 0} //insparatory pressure sensor
-	FIns := sensors.Flow{Name: "SNS_F_INS", ID: 1, AdcID: 1, Rate: 0}
-	//Initialize  Sensors at exhalation side
-	PExp := sensors.Pressure{Name: "SNS_P_EXP", ID: 2, AdcID: 1, MMH2O: 0} //expratory pressure sensor
-	//FExp := sensors.Flow{Name: "SNS_F_EXP", ID: 3, AdcID: 1, Rate: 0}
-	//Initialize valves
-	MIns := valves.PropValve{Name: "A_PSV_INS", DacChan: 0, DacID: 1, Percent: 0} //normally closed
-	MExp := valves.PropValve{Name: "A_PSV_EXP", DacChan: 1, DacID: 1, Percent: 0} //normally open
-	//Initialize PID controller
-	//initiate a PID controller based on the PeakFlow
 	PressurePID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 
 	//Check trigger type
@@ -101,24 +79,24 @@ func PressureAssist(UI *UserInput) {
 		//Begin loop
 		for !Exit {
 			//check if trigger is true
-			if PIns.ReadPressure() <= PTrigger {
+			if sensors.PIns.ReadPressure() <= PTrigger {
 				PressurePID.setpoint = float64(UI.InspiratoryPressure) // Sets PID setpoint to Inspiratory pressure
 				//Open main valve MIns controlled by flow sensor FIns
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
-					MIns.IncrementValve(PressurePID.Update(float64(PIns.ReadPressure())))
+					valves.InProp.IncrementValve(PressurePID.Update(float64(sensors.PIns.ReadPressure())))
 				}
 				//Close main valve MIns
-				MIns.IncrementValve(0) // closes the valve
+				valves.InProp.IncrementValve(0) // closes the valve
 
 				//Open main valve MExp controlled by flow sensor FExp
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
-					if PExp.ReadPressure() <= UI.PEEP {
+					if sensors.PExp.ReadPressure() <= UI.PEEP {
 						break
 					}
-					MExp.IncrementValve(100)
+					valves.ExProp.IncrementValve(100)
 				}
 				//Close main valve MExp
-				MExp.IncrementValve(0) // closes the valve
+				valves.ExProp.IncrementValve(0) // closes the valve
 			}
 		}
 	case "Flow":
@@ -127,24 +105,24 @@ func PressureAssist(UI *UserInput) {
 		//Begin loop
 		for !Exit {
 			//check if trigger is true
-			if FIns.ReadFlow() >= FTrigger {
+			if sensors.FIns.ReadFlow() >= FTrigger {
 				PressurePID.setpoint = float64(UI.InspiratoryPressure) // Sets PID setpoint to Inspiratory pressure
 				//Open main valve MIns controlled by flow sensor FIns
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
-					MIns.IncrementValve(PressurePID.Update(float64(PIns.ReadPressure())))
+					valves.InProp.IncrementValve(PressurePID.Update(float64(sensors.PIns.ReadPressure())))
 				}
 				//Close main valve MIns
-				MIns.IncrementValve(0) // closes the valve
+				valves.InProp.IncrementValve(0) // closes the valve
 
 				//Open main valve MExp controlled by flow sensor FExp
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
-					if PExp.ReadPressure() <= UI.PEEP {
+					if sensors.PExp.ReadPressure() <= UI.PEEP {
 						break
 					}
-					MExp.IncrementValve(100)
+					valves.ExProp.IncrementValve(100)
 				}
 				//Close main valve MExp
-				MExp.IncrementValve(0) // closes the valve
+				valves.ExProp.IncrementValve(0) // closes the valve
 			}
 		}
 	}

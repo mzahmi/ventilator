@@ -45,39 +45,28 @@ func VolumeAC(UI *UserInput) {
 // 	Cycling: 	Time
 // 	Control: 	Volume
 func VolumeControl(UI *UserInput) {
-	//calculate Te from UI.Ti and BCT
-	UpdateValues(UI)
 
 	//initiate a PID controller based on the PeakFlow
 	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
-	//Initialize  Sensors at inhalation side
-	//PIns := sensors.Pressure{Name: "SNS_P_INS", ID: 0, AdcID: 1, MMH2O: 0} //insparatory pressure sensor
-	FIns := sensors.Flow{Name: "SNS_F_INS", ID: 1, AdcID: 1, Rate: 0}
-	//Initialize  Sensors at exhalation side
-	PExp := sensors.Pressure{Name: "SNS_P_EXP", ID: 2, AdcID: 1, MMH2O: 0} //expratory pressure sensor
-	//FExp := sensors.Flow{Name: "SNS_F_EXP", ID: 3, AdcID: 1, Rate: 0}
-	//Initialize valves
-	MIns := valves.PropValve{Name: "A_PSV_INS", DacChan: 0, DacID: 1, Percent: 0} //normally closed
-	MExp := valves.PropValve{Name: "A_PSV_EXP", DacChan: 1, DacID: 1, Percent: 0} //normally open
 
 	//control loop
 	for !Exit {
 		FlowPID.setpoint = float64(UI.PeakFlow) // Sets the PID setpoint
 		//Open main valve MIns controlled by flow sensor PIns
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
-			MIns.IncrementValve(FlowPID.Update(float64(FIns.ReadFlow())))
+			valves.InProp.IncrementValve(FlowPID.Update(float64(sensors.FIns.ReadFlow())))
 		}
 		//Close main valve MIns
-		MIns.IncrementValve(0) // closes the valve
+		valves.InProp.IncrementValve(0) // closes the valve
 		//Open main valve MExp controlled by flow sensor PExp
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
-			if PExp.ReadPressure() <= UI.PEEP {
+			if sensors.PExp.ReadPressure() <= UI.PEEP {
 				break
 			}
-			MExp.IncrementValve(100)
+			valves.ExProp.IncrementValve(100)
 		}
 		//Close main valve MExp
-		MExp.IncrementValve(0) // closes the valve
+		valves.ExProp.IncrementValve(0) // closes the valve
 	}
 
 }
@@ -87,18 +76,7 @@ func VolumeControl(UI *UserInput) {
 // 	Cycling: 	Time
 // 	Control: 	Volume
 func VolumeAssist(UI *UserInput) {
-	UpdateValues(UI)
-	//Initialize  Sensors at inhalation side
-	PIns := sensors.Pressure{Name: "SNS_P_INS", ID: 0, AdcID: 1, MMH2O: 0} //insparatory pressure sensor
-	FIns := sensors.Flow{Name: "SNS_F_INS", ID: 1, AdcID: 1, Rate: 0}
-	//Initialize  Sensors at exhalation side
-	//PExp := sensors.Pressure{Name: "SNS_P_EXP", ID: 2, AdcID: 1, MMH2O: 0} //expratory pressure sensor
-	FExp := sensors.Flow{Name: "SNS_F_EXP", ID: 3, AdcID: 1, Rate: 0}
-	//Initialize valves
-	MIns := valves.PropValve{Name: "A_PSV_INS", DacChan: 0, DacID: 1, Percent: 0} //normally closed
-	MExp := valves.PropValve{Name: "A_PSV_EXP", DacChan: 1, DacID: 1, Percent: 0} //normally open
-	//Initialize PID controller
-	//initiate a PID controller based on the PeakFlow
+
 	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 
 	//Check trigger type
@@ -109,21 +87,21 @@ func VolumeAssist(UI *UserInput) {
 		//Begin loop
 		for !Exit {
 			//check if trigger is true
-			if PIns.ReadPressure() <= PTrigger {
+			if sensors.PIns.ReadPressure() <= PTrigger {
 				FlowPID.setpoint = float64(UI.PeakFlow) // Sets PID setpoint to PeakFlow
 				//Open main valve MIns controlled by flow sensor FIns
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti) * time.Second); {
-					MIns.IncrementValve(FlowPID.Update(float64(FIns.ReadFlow())))
+					valves.InProp.IncrementValve(FlowPID.Update(float64(sensors.FIns.ReadFlow())))
 				}
 				//Close main valve MIns
-				MIns.IncrementValve(0) // closes the valve
+				valves.InProp.IncrementValve(0) // closes the valve
 
 				//Open main valve MExp controlled by flow sensor FExp
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Te) * time.Second); {
-					MExp.IncrementValve(FlowPID.Update(float64(FExp.ReadFlow())))
+					valves.ExProp.IncrementValve(FlowPID.Update(float64(sensors.FExp.ReadFlow())))
 				}
 				//Close main valve MExp
-				MExp.IncrementValve(0) // closes the valve
+				valves.ExProp.IncrementValve(0) // closes the valve
 			}
 		}
 	case "Flow":
@@ -132,21 +110,21 @@ func VolumeAssist(UI *UserInput) {
 		//Begin loop
 		for !Exit {
 			//check if trigger is true
-			if PIns.ReadPressure() >= FTrigger {
+			if sensors.PIns.ReadPressure() >= FTrigger {
 				FlowPID.setpoint = float64(UI.PeakFlow) // Sets PID setpoint to PeakFlow
 				//Open main valve MIns controlled by flow sensor FIns
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti) * time.Second); {
-					MIns.IncrementValve(FlowPID.Update(float64(FIns.ReadFlow())))
+					valves.InProp.IncrementValve(FlowPID.Update(float64(sensors.FIns.ReadFlow())))
 				}
 				//Close main valve MIns
-				MIns.IncrementValve(0) // closes the valve
+				valves.InProp.IncrementValve(0) // closes the valve
 
 				//Open main valve MExp controlled by flow sensor FExp
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Te) * time.Second); {
-					MExp.IncrementValve(FlowPID.Update(float64(FExp.ReadFlow())))
+					valves.ExProp.IncrementValve(FlowPID.Update(float64(sensors.FExp.ReadFlow())))
 				}
 				//Close main valve MExp
-				MExp.IncrementValve(0) // closes the valve
+				valves.ExProp.IncrementValve(0) // closes the valve
 			}
 		}
 
