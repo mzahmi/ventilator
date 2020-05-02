@@ -27,12 +27,12 @@ type PressureACSettings struct {
 }
 
 // PressureAC one of the main 5 modes of the ventilator
-func PressureAC(UI *PressureACSettings) {
+func (UI *PressureACSettings) PressureAC() {
 	switch UI.BreathType {
 	case "Control":
-		PressureControl(UI)
+		UI.PressureControl()
 	case "Assist":
-		PressureAssist(UI)
+		UI.PressureAssist()
 	default:
 		fmt.Println("Enter valid breath type")
 	}
@@ -42,7 +42,7 @@ func PressureAC(UI *PressureACSettings) {
 // 	Triggering:	Time
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureControl(UI *PressureACSettings) {
+func (UI *PressureACSettings) PressureControl() {
 	//calculate Te from UI.Ti and BCT
 
 	//control loop
@@ -67,7 +67,7 @@ func PressureControl(UI *PressureACSettings) {
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureAssist(UI *PressureACSettings) {
+func (UI *PressureACSettings) PressureAssist() {
 
 	PressurePID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 

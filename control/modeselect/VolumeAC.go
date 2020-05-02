@@ -29,12 +29,12 @@ type VolumeACSettings struct {
 }
 
 // VolumeAC one of the main 5 modes of the ventilator
-func VolumeAC(UI *UserInput) {
+func (UI *VolumeACSettings) VolumeAC() {
 	switch UI.BreathType {
 	case "Control":
-		//VolumeControl(UI)
+		UI.VolumeControl()
 	case "Assist":
-		//VolumeAssist(UI)
+		UI.VolumeAssist()
 	default:
 		fmt.Println("Enter valid breath type")
 	}
@@ -44,7 +44,7 @@ func VolumeAC(UI *UserInput) {
 // 	Triggering:	Time
 // 	Cycling: 	Time
 // 	Control: 	Volume
-func VolumeControl(UI *UserInput) {
+func (UI *VolumeACSettings) VolumeControl() {
 
 	//initiate a PID controller based on the PeakFlow
 	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
@@ -75,7 +75,7 @@ func VolumeControl(UI *UserInput) {
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Time
 // 	Control: 	Volume
-func VolumeAssist(UI *UserInput) {
+func (UI *VolumeACSettings) VolumeAssist() {
 
 	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 

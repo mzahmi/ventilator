@@ -25,7 +25,7 @@ type PSVSettings struct {
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Flow
 // 	Control: 	Pressure
-func PSV(UI *UserInput) {
+func (UI *PSVSettings) PSV() {
 
 	PressurePID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 
