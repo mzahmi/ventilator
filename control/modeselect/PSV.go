@@ -75,16 +75,16 @@ func (UI *PSVSettings) PSV() {
 		//Begin loop
 		for !Exit {
 			//check if trigger is true
-			if sensors.FIns.ReadFlow() >= FTrigger {
+			if sensors.FIns.ReadFlow() >= FTrigger { //need to mkae sure of unit convention Lpm or mL
 				PressurePID.setpoint = float64(UI.InspiratoryPressure) // Sets PID setpoint to Inspiratory pressure
 				//Open main valve MIns controlled by flow sensor FIns
-				for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
+				for start := time.Now(); time.Since(start) < (time.Duration(UI.TiMax*1000) * time.Millisecond); {
 					valves.InProp.IncrementValve(PressurePID.Update(float64(sensors.PIns.ReadPressure())))
 				}
 				//Close main valve MIns
 				valves.InProp.IncrementValve(0) // closes the valve
 
-				//Open main valve MExp controlled by flow sensor FExp
+				//Open main valve MExp controlled
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
 					if sensors.PExp.ReadPressure() <= UI.PEEP {
 						break
