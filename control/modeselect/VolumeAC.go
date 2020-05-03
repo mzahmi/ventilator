@@ -17,7 +17,6 @@ type VolumeACSettings struct {
 	TidalVolume        float32 // ml
 	Rate               float32 // BPM
 	Ti                 float32 // inhalation time
-	TiMax              float32 // for PSV mode backup time control
 	Te                 float32 // exhalation time
 	IR                 float32 // inhalation ratio part
 	ER                 float32 // exhalation ratio part

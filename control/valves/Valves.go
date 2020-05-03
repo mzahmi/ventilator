@@ -44,7 +44,11 @@ var MIns = SolenValve{
 } //normally closed
 
 //MExp ... Exhalation valve
-var MExp = SolenValve{Name: Valve_Exhalation_Name, State: true, PinMask: ioexp.Solenoid1} //normally open
+var MExp = SolenValve{
+	Name:    Valve_Exhalation_Name,
+	State:   true,
+	PinMask: ioexp.Solenoid1,
+} //normally open
 
 //Proportional Valves
 
