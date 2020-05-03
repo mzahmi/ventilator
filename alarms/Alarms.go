@@ -30,7 +30,7 @@ Lower Limit:
 func TidalVolumeAlarms(UpperLimit, LowerLimit float32) error {
 	if sensors.FIns.ReadFlow() >= UpperLimit {
 		return errors.New("Upper limit of tidal volume reached")
-	} else if sensors.FIns.ReadFlow() <= LowerLimit {
+	} else if sensors.FExp.ReadFlow() <= LowerLimit {
 		return errors.New("Upper limit of tidal volume reached")
 	} else {
 		return nil
