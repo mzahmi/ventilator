@@ -22,11 +22,10 @@ func calibrate() {
 
 	w := bufio.NewWriter(f)
 
-	PIns := sensors.Pressure{Name: "SNS_P_INS", ID: 0, AdcID: 1, MMH2O: 0}
 	for start := time.Now(); time.Since(start) < (time.Second * 30); {
-		AdcSlice, err := adc.ReadADC(PIns.AdcID)
+		AdcSlice, err := adc.ReadADC(sensors.PIns.AdcID)
 		check(err)
-		VoltageSignal := AdcSlice[PIns.ID]
+		VoltageSignal := AdcSlice[sensors.PIns.AdcChan]
 		PressureReading := VoltageSignal * 3
 		_, err = fmt.Fprintf(w, "Voltage: %v\t Pressure: %v\n", VoltageSignal, PressureReading)
 		check(err)
@@ -55,4 +54,3 @@ func caltest() {
 	}
 
 }
-

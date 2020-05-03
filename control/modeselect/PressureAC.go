@@ -2,8 +2,10 @@ package modeselect
 
 import (
 	"fmt"
+	"log"
 	"time"
 
+	"github.com/mzahmi/ventilator/alarms"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
 )
@@ -23,6 +25,8 @@ type PressureACSettings struct {
 	PressureTrigSense   float32 // -0.5 to -2.0 mmH2O
 	FlowTrigSense       float32 // 0.5 to 5 Lpm
 	InspiratoryPressure float32 // Also known as P_control
+	UpperLimitVT        float32 // upper limit of tidal volume
+	LowerLimitVt        float32 // lower limit of tidal volume
 }
 
 /* PressureAC has a triggering window, which opens at late expiration.
@@ -69,8 +73,8 @@ func (UI *PressureACSettings) PressureControl() {
 	//calculate Te from UI.Ti and BCT
 	UI.UpdateValues()
 	//initiate Pressure PID based on readings from PIns
-	PressurePID := NewPIDController(0.5, 0.5, 0.5)     // takes in P, I, and D values to be set trial and error
-	FlowPID.setpoint = float64(UI.InspiratoryPressure) // Sets the PID setpoint to inspiratory pressure
+	PressurePID := NewPIDController(0.5, 0.5, 0.5)         // takes in P, I, and D values to be set trial and error
+	PressurePID.setpoint = float64(UI.InspiratoryPressure) // Sets the PID setpoint to inspiratory pressure
 
 	//control loop; it loops unitll Exit bool is set to false
 	for !Exit {
@@ -82,7 +86,7 @@ func (UI *PressureACSettings) PressureControl() {
 		//Close main valve InProp
 		valves.InProp.IncrementValve(0)
 
-		//Open main valve MExp controlled by flow sensor PExp
+		//Open main valve MExp controlled by pressure sensor PExp
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
 			if sensors.PExp.ReadPressure() <= UI.PEEP {
 				break
@@ -120,6 +124,13 @@ func (UI *PressureACSettings) PressureAssist() {
 				//Open main valve InProp controlled by pressure sensor PIns and check tidal volume alarms
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
 					//check for tidal volume alarms
+					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
+					if err != nil {
+						log.Println(err)
+						//or we can use panic
+						//panic(err)
+						break
+					}
 					valves.InProp.IncrementValve(PressurePID.Update(float64(sensors.PIns.ReadPressure())))
 				}
 				//Close main valve InProp
@@ -128,6 +139,13 @@ func (UI *PressureACSettings) PressureAssist() {
 				//Open main valve ExProp and check for PEEP value and tidal volume alarms
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
 					//check for tidal volume alarms
+					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
+					if err != nil {
+						log.Println(err)
+						//or we can use panic
+						//panic(err)
+						break
+					}
 					if sensors.PExp.ReadPressure() <= UI.PEEP {
 						break
 					}
@@ -147,6 +165,13 @@ func (UI *PressureACSettings) PressureAssist() {
 				//Open main valve InProp controlled by pressure sensor PIns
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
 					//check for tidal volume alarms
+					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
+					if err != nil {
+						log.Println(err)
+						//or we can use panic
+						//panic(err)
+						break
+					}
 					valves.InProp.IncrementValve(PressurePID.Update(float64(sensors.PIns.ReadPressure())))
 				}
 
@@ -155,6 +180,14 @@ func (UI *PressureACSettings) PressureAssist() {
 
 				//Open main valve ExProp and check for PEEP value and tidal volume alarms
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
+					//check for tidal volume alarms
+					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
+					if err != nil {
+						log.Println(err)
+						//or we can use panic
+						//panic(err)
+						break
+					}
 					if sensors.PExp.ReadPressure() <= UI.PEEP {
 						break
 					}
