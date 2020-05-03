@@ -19,11 +19,13 @@ Technical Alarms And Application Alarms
 
 A ventilator can have a number of alarms. They can be roughly divided into two categories: technical alarms and application alarms.
 
-	Technical alarms	Application alarms
-	---------------------------------------------------------------------------------------------------------------
-	◆ Technical problems of ventilator and accessories (design, production, and maintenance)	◆ Leak or occlusion of ventilator system in which ventilator and accessories are technically in order
-	◆ Electrical supply problems	◆ Problems with patient’s pulmonary system, e.g. pneumothorax
-	◆ Gas (air and oxygen) supply problems	◆ Improper ventilator setting
+	Technical alarms											Application alarms
+	-------------------------------------------------------------------------------------------------------------
+	◆ Technical problems of ventilator and 						◆ Leak or occlusion of ventilator system in which
+	accessories (design, production, and maintenance)			ventilator and accessories are technically in order
+	◆ Electrical supply problems								◆ Problems with patient’s pulmonary system,
+	◆ Gas (air and oxygen) supply problems						e.g. pneumothorax
+																◆ Improper ventilator setting
 
 Technical Alarms
 
