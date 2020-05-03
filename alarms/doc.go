@@ -15,27 +15,21 @@ Being so designed, after every breath the ventilator compares the monitored peak
 
 The principle is applicable to all ventilator alarms, simple or complex.
 
-12.2.2 Technical alarms and application alarms
+Technical Alarms And Application Alarms
 
+A ventilator can have a number of alarms. They can be roughly divided into two categories: technical alarms and application alarms.
 
-A ventilator can have a number of alarms. They can be roughly divided into two categories: technical alarms and application alarms. Refer to Table 12.1.
+	Technical alarms																			Application alarms
+	---------------------------------------------------------------------------------------------------------------
+	◆ Technical problems of ventilator and accessories (design, production, and maintenance)	◆ Leak or occlusion of ventilator system in which ventilator and accessories are technically in order
+	◆ Electrical supply problems																◆ Problems with patient’s pulmonary system, e.g. pneumothorax
+	◆ Gas (air and oxygen) supply problems														◆ Improper ventilator setting
 
-Table 12.1 Two categories of ventilator alarm
-Technical alarms
-Application alarms
-◆ Technical problems of ventilator and accessories (design, production, and maintenance)
-◆ Electrical supply problems
-◆ Gas (air and oxygen) supply problems
-◆ Leak or occlusion of ventilator system in which ventilator and accessories are technically in order
-◆ Problems with patient’s pulmonary system, e.g. pneumothorax
-◆ Improper ventilator setting
-Technical alarms
-
+Technical Alarms
 
 Technical alarms are related to abnormalities of the ventilator itself, the electrical supply, or the gas (air and oxygen) supplies. Ventilator abnormalities can have various origins, such as problems with ventilator design and development, problems with production, and problems with device maintenance and service.
 
-Application alarms
-
+Application Alarms
 
 At this point, let’s return to some fundamental points about mechanical ventilation. We know that the equipment required for mechanical ventilation is a ventilator system composed of six parts. A ventilator is just one of them. A ventilator system works properly only when all three conditions are satisfied:
 
