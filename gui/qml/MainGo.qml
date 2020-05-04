@@ -1,57 +1,85 @@
 import QtQuick 2.0
-import "pages"
+import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.0
+import "./src/variables/fontawesome.js" as FontAwesome
+import "./src/lists"
+import "./material/qml/material"
+import "./config.js" as Config
+
+//        Button {
+//            id: button
+//            x: 34
+//            y: 218
+//            text: qsTr("Button")
+//            Connections{
+//                target: QmlBridge
+//            }
+//            onClicked: QmlBridge.sendToGo("hello from qml")
+//        }
+
 
 Item {
-    id: window
+    id: element
     width: 800
     height: 460
+    FontLoader { id: webFont; source: "./src/variables/fontawesome-webfont.ttf" }
 
-    Rectangle {
-        id: color_rectangle
-        height: 230
-        color: "#edf0f4"
-        anchors.top: parent.top
-        anchors.topMargin: 0
-        anchors.right: parent.right
-        anchors.rightMargin: 0
+    Menulist{
+        id: sidebar
         anchors.left: parent.left
         anchors.leftMargin: 0
-    }
-
-
-    ColumnLayout {
         anchors.bottom: parent.bottom
         anchors.top: parent.top
         anchors.topMargin: 0
+        width: Config.sidebar_width
+
+    }
+
+    Rectangle {
+        id: mainview
+        color: "#ffffff"
+        anchors.left: sidebar.right
         anchors.right: parent.right
-        anchors.rightMargin: 0
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        spacing: 0
+        anchors.bottom: parent.bottom
+        anchors.top: parent.top
 
 
+        StackLayout {
+            id: stackLayout
+            anchors.fill: parent
+            currentIndex: sidebar.currentView
 
+            Item {
+                id: viewmonitor
+                anchors.fill: parent
+                ViewMonitor{
+                    anchors.fill: parent
+                }
+            }
 
-        StatusBar{
-            Layout.fillWidth: true
-            activeFocusOnTab: false
+            Item {
+                id: viewmode
+                anchors.fill: parent
+                ViewMode{
+                    anchors.fill: parent
+                }
+            }
+            Item {
+                id: viewpatient
+                anchors.fill: parent
+                ViewPatient{
 
+                }
 
-        }
+            }
+            Item {
+                id: viewsettings
+                anchors.fill: parent
+                ViewSettings{
 
-        InfoDock{
-            height: 100
-            Layout.fillWidth: true
+                }
 
-
-        }
-        MenuStack{
-            height: 270
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-
+            }
         }
     }
 
@@ -59,6 +87,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:1;anchors_height:245}D{i:2;anchors_x:0;anchors_y:0}
+    D{i:2;anchors_height:400;anchors_width:200}D{i:3;anchors_width:150}
 }
 ##^##*/

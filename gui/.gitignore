@@ -1,26 +1,5 @@
-
-
-## gui qt extras
-rcc*
+# build files
+build*
 moc*
 rcc*
-*.
-*.bckp
-*.autosave
-build-gui-Desktop*
-rcc*
-log.txt
-*.jsc
-*.log
-*.pro.user
-*.qmake.stash
-*.qmlc
-*.so
-*.trace
-*.vagrant
-.DS_Store
-Mfile*
 deploy
-windows
-linux
-_build

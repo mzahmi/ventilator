@@ -1,63 +1,48 @@
-/*
-singal : from go to qml
-slot : from qml to go
-*/
-
 package main
 
 import (
 	"fmt"
-	// "time"
-	"github.com/mzahmi/ventilator/demo/satur"
-	"github.com/therecipe/qt/gui"
+	"math/rand"
+	"os"
+	"time"
+
+	"github.com/therecipe/qt/charts"
+	"github.com/therecipe/qt/core"
+	"github.com/therecipe/qt/qml"
+	"github.com/therecipe/qt/widgets"
 )
 
+func InitializeCharts() { _ = charts.QChart{} }
+
 func main() {
+	core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true)
 
-	// BUTTON connection:
-	// Connects all input variables from qml to go
-	qmlBridge.ConnectSendToGo(func(tidalVolume float32, rate float32, ti float32, peakFlow float32, ir float32, er float32, peep float32, fio2 float32, triggerType int, trigSense float32) {
-		fmt.Println(tidalVolume, rate, ti, peakFlow, ir, er, peep, fio2, triggerType, trigSense)
-		qmlBridge.SendInfo("Success")
+	InitializeCharts()
+	app := widgets.NewQApplication(len(os.Args), os.Args)
+	engine := qml.NewQQmlApplicationEngine(nil)
+	var qmlBridge = NewQmlBridge(nil)
 
-		// make a struct from the user input
-		ui := satur.UserInput{
-			TidalVolume:        tidalVolume,
-			Rate:               rate,
-			Ti:                 ti,
-			PeakFlow:           peakFlow,
-			IR:                 ir,
-			ER:                 er,
-			PEEP:               peep,
-			PatientTriggerType: triggerType,
-			PressureTrigSense:  trigSense,
+	engine.RootContext().SetContextProperty("QmlBridge", qmlBridge)
+	engine.Load(core.NewQUrl3("qrc:/qml/MainQt.qml", 0))
+
+	qmlBridge.ConnectSendToGo(func(data string) string {
+		fmt.Println("go:", data)
+		return "hello from go"
+	})
+
+	go func() {
+		for range time.NewTicker(time.Millisecond * 500).C {
+			randnumber := rand.Intn(30)
+			qmlBridge.SendToQml(randnumber)
 		}
+	}()
 
-		go satur.PressureControl(&ui)
+	app.Exec()
+}
 
-	})
+type QmlBridge struct {
+	core.QObject
 
-	// BUTTON connection:
-	// Free Button
-	qmlBridge.ConnectSendModeSelected(func(mode string) {
-		fmt.Println(fmt.Println("Mode selected is ", mode))
-	})
-
-	// SEND UI
-	// sends information to QML to display
-	// counter := 0
-	// read from a file every second
-	// go func() {
-	// 	i := 0
-	// 	for i <= 100 {
-	// 		qmlBridge.SendToQml(ReadFromFile())
-	// 		time.Sleep(time.Second)
-	// 		counter++
-	// 	}
-	// }()
-
-	// WRAPPER
-	// keep program running until exit window
-	InitView().Show()
-	gui.QGuiApplication_Exec()
+	_ func(data int)           `signal:"sendToQml"`
+	_ func(data string) string `slot:"sendToGo"`
 }
