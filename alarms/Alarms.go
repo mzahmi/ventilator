@@ -2,9 +2,15 @@ package alarms
 
 import (
 	"errors"
+	"fmt"
+	"log"
+	"time"
 
 	"github.com/mzahmi/ventilator/control/sensors"
+	"github.com/mzahmi/ventilator/pkg/rpigpio"
 )
+
+var AlarmReset bool
 
 /* TidalVolumeAlarms sets the upper and lower limits of the tidal volume alarms based on the operator input
 
@@ -35,4 +41,106 @@ func TidalVolumeAlarms(UpperLimit, LowerLimit float32) error {
 	} else {
 		return nil
 	}
+}
+
+/*
+ Alarm priorities
+*/
+
+/* HighAlert is a High alarm priority
+
+The consequence may be serious injury or death
+causes:
+	◆ Electrical power or gas failure
+	◆ Minute volume too low
+	◆ Apnoea
+	◆ Airway disconnection
+
+Alarm message on red background
+
+A series of 5 beeps in this sequence, repeated: ▯▯▯_▯▯____▯▯▯_▯▯ */
+func HighAlert(msg string) {
+	fmt.Println(msg)
+	tm := 400 * time.Millisecond
+	ts := 3000 * time.Millisecond
+	td := 1000 * time.Millisecond
+	for i := 1; !AlarmReset; i++ {
+		err := rpigpio.BeepOn()
+		if err != nil {
+			log.Println(err)
+		}
+		time.Sleep(tm)
+		err = rpigpio.BeepOff()
+		if err != nil {
+			log.Println(err)
+		}
+		time.Sleep(tm)
+		if i%3 == 0 {
+			time.Sleep(td)
+		}
+		if i%5 == 0 {
+			time.Sleep(ts)
+			i = 0
+		}
+	}
+}
+
+/* MediumAlert is a medium alarm priority
+
+The consequence may be serious if the abnormality persists
+causes:
+	◆ High total rate
+	◆ Inappropriate PEEP/CPAP
+	◆ Inappropriate FiO2
+
+Alarm message on yellow background
+
+A series of 3 beeps in this sequence, repeated: ▯▯▯____▯▯▯*/
+
+func MediumAlert(msg string) {
+	fmt.Println(msg)
+	tm := 400 * time.Millisecond
+	ts := 3000 * time.Millisecond
+	for i := 1; !AlarmReset; i++ {
+		err := rpigpio.BeepOn()
+		if err != nil {
+			log.Println(err)
+		}
+		time.Sleep(tm)
+		err = rpigpio.BeepOff()
+		if err != nil {
+			log.Println(err)
+		}
+		time.Sleep(tm)
+		if i%3 == 0 {
+			time.Sleep(ts)
+			i = 0
+		}
+	}
+}
+
+/* LowAlert is a low alarm priority
+
+The consequence may be moderate if the abnormality persists
+causes:
+	◆ Compliance/resistance change
+	◆ High tidal volume
+
+Alarm message on yellow background
+
+A series of 2 beeps, not repeated: ▯▯*/
+
+func LowAlert(msg string) {
+	fmt.Println(msg)
+	tm := 400 * time.Millisecond
+	err := rpigpio.BeepOn()
+	if err != nil {
+		log.Println(err)
+	}
+	time.Sleep(tm)
+	err = rpigpio.BeepOff()
+	if err != nil {
+		log.Println(err)
+	}
+	time.Sleep(tm)
 }

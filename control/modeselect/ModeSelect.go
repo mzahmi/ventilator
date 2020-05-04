@@ -51,6 +51,7 @@ func UpdateValues(UI *UserInput) {
 // ModeSelection reads input from the GUI to select the
 // required Mode from the user input struct
 func ModeSelection(UI *UserInput) {
+	UpdateValues(UI) // calculates missing values
 	switch UI.Mode {
 	case "Volume A/C":
 		fmt.Println("Volume Assisted Control Mode selected")
