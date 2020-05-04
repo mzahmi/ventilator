@@ -114,6 +114,7 @@ Item {
                 width: 194
                 height: 120
                 color: "#ffffff"
+
                 Card {
                     id: card1
                     anchors.fill: parent
@@ -156,6 +157,13 @@ Item {
                         text: qsTr("+20 / -20")
                         font.pixelSize: 18
                     }
+                }
+                MouseArea{
+                    anchors.fill: parent
+                    Connections{
+                        target: QmlBridge
+                    }
+                    onReleased: QmlBridge.sendToGo("hi")
                 }
             }
 
@@ -228,8 +236,9 @@ Designer {
     D{i:0;anchors_height:200;anchors_width:200;anchors_x:18;anchors_y:46;autoSize:true;height:480;width:640}
 D{i:2;anchors_height:300;anchors_width:300;anchors_x:162;anchors_y:29}D{i:8;anchors_width:200}
 D{i:10;anchors_height:400;anchors_width:153;anchors_x:87;anchors_y:0}D{i:11;anchors_height:156;anchors_width:198;anchors_x:0;anchors_y:0}
-D{i:17;anchors_height:400;anchors_width:153;anchors_x:87;anchors_y:0}D{i:23;anchors_height:400;anchors_width:153;anchors_x:87;anchors_y:0}
-D{i:18;anchors_height:156;anchors_width:198;anchors_x:0;anchors_y:0}D{i:24;anchors_height:156;anchors_width:198;anchors_x:0;anchors_y:0}
-D{i:1;anchors_height:200;anchors_width:200}
+D{i:16;anchors_height:156;anchors_width:198;anchors_x:0;anchors_y:0}D{i:15;anchors_height:400;anchors_width:153;anchors_x:87;anchors_y:0}
+D{i:24;anchors_height:156;anchors_width:198;anchors_x:0;anchors_y:0}D{i:23;anchors_height:400;anchors_width:153;anchors_x:87;anchors_y:0}
+D{i:25;anchors_height:400;anchors_width:153;anchors_x:87;anchors_y:0}D{i:20;anchors_height:156;anchors_width:198;anchors_x:0;anchors_y:0}
+D{i:26;anchors_height:156;anchors_width:198;anchors_x:0;anchors_y:0}D{i:1;anchors_height:200;anchors_width:200}
 }
 ##^##*/
