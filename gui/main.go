@@ -31,7 +31,7 @@ func main() {
 	})
 
 	go func() {
-		for range time.NewTicker(time.Millisecond * 500).C {
+		for range time.NewTicker(time.Millisecond * 50).C {
 			randnumber := rand.Intn(30)
 			qmlBridge.SendToQml(randnumber)
 		}
