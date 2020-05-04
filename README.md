@@ -15,7 +15,7 @@ sudo apt install golang
 ### Install QML GoLang Wrapper
 ```
 export GO111MODULE=off; go get -v github.com/therecipe/qt/cmd/... && $(go env GOPATH)/bin/qtsetup test && $(go env GOPATH)/bin/qtsetup -test=false
-export PATH=$PATH:/home/$USER/go/bin/
+echo export PATH=$PATH:/home/$USER/go/bin/ >> ~/.bashrc
 ```
 ### Install GoLang Dependencies
 
