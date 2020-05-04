@@ -24,8 +24,9 @@ type UserInput struct {
 	FlowTrigSense       float32 // 0.5 to 5 Lpm
 	FlowCyclePercent    float32 // for flow cycling ranges from 0 to 100%
 	PressureSupport     float32 // needs to be defined
-	InspiratoryPressure float32
-	PressureControl     float32
+	InspiratoryPressure float32 // Also known as P_control
+	UpperLimitVT        float32 // upper limit of tidal volume
+	LowerLimitVt        float32 // lower limit of tidal volume
 }
 
 // Exit is a global var used as a switch for ventilation on or off
@@ -53,11 +54,13 @@ func ModeSelection(UI *UserInput) {
 	switch UI.Mode {
 	case "Volume A/C":
 		fmt.Println("Volume Assisted Control Mode selected")
-		//VolumeAC(UI)
+		VolumeAC(UI)
 	case "Pressure A/C":
 		fmt.Println("Pressure Assisted Control Mode selected")
+		PressureAC(UI)
 	case "PSV":
 		fmt.Println("Pressure Support Control Mode selected")
+		PSV(UI)
 	case "V-SMIV":
 		fmt.Println("Volume SIMV Mode selected")
 	case "P-SIMV":

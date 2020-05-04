@@ -10,25 +10,6 @@ import (
 	"github.com/mzahmi/ventilator/control/valves"
 )
 
-//PressureACSettings is a struct that contains all the variables
-//that will/can be used for Pressure AC mode
-type PressureACSettings struct {
-	BreathType          string
-	PatientTriggerType  string
-	Rate                float32 // BPM
-	Ti                  float32 // inhalation time
-	Te                  float32 // exhalation time
-	IR                  float32 // inhalation ratio part
-	ER                  float32 // exhalation ratio part
-	PEEP                float32 // 5-20 mmH2O
-	FiO2                float32 // 21% - 100%
-	PressureTrigSense   float32 // -0.5 to -2.0 mmH2O
-	FlowTrigSense       float32 // 0.5 to 5 Lpm
-	InspiratoryPressure float32 // Also known as P_control
-	UpperLimitVT        float32 // upper limit of tidal volume
-	LowerLimitVt        float32 // lower limit of tidal volume
-}
-
 /* PressureAC has a triggering window, which opens at late expiration.
 If the ventilator detects a valid pneumatic signal during the triggering window,
 it delivers a pressure assist breath. If not, it delivers a pressure control
@@ -54,12 +35,12 @@ The perceived disadvantage of this mode is that an operator cannot directly
 control tidal volume. The resultant tidal volume may be unstable when the patient’s
 breathing effort and/or respiratory mechanics change. Therefore, you should
 carefully set the upper and lower limits of the tidal volume alarm.*/
-func (UI *PressureACSettings) PressureAC() {
+func PressureAC(UI *UserInput) {
 	switch UI.BreathType {
 	case "Control":
-		UI.PressureControl()
+		PressureControl(UI)
 	case "Assist":
-		UI.PressureAssist()
+		PressureAssist(UI)
 	default:
 		fmt.Println("Enter valid breath type")
 	}
@@ -69,9 +50,7 @@ func (UI *PressureACSettings) PressureAC() {
 // 	Triggering:	Time
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func (UI *PressureACSettings) PressureControl() {
-	//calculate Te from UI.Ti and BCT
-	UI.UpdateValues()
+func PressureControl(UI *UserInput) {
 	//initiate Pressure PID based on readings from PIns
 	PressurePID := NewPIDController(0.5, 0.5, 0.5)         // takes in P, I, and D values to be set trial and error
 	PressurePID.setpoint = float64(UI.InspiratoryPressure) // Sets the PID setpoint to inspiratory pressure
@@ -80,6 +59,7 @@ func (UI *PressureACSettings) PressureControl() {
 	for !Exit {
 		//Open main valve MIns controlled by pressure sensor PIns
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
+			//check for alarms
 			valves.InProp.IncrementValve(PressurePID.Update(float64(sensors.PIns.ReadPressure())))
 		}
 
@@ -88,6 +68,7 @@ func (UI *PressureACSettings) PressureControl() {
 
 		//Open main valve MExp controlled by pressure sensor PExp
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
+			// check for alarms
 			if sensors.PExp.ReadPressure() <= UI.PEEP {
 				break
 			}
@@ -103,9 +84,7 @@ func (UI *PressureACSettings) PressureControl() {
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func (UI *PressureACSettings) PressureAssist() {
-	//calculate Te from UI.Ti and BCT
-	UI.UpdateValues()
+func PressureAssist(UI *UserInput) {
 	//initiate Pressure PID based on readings from PIns
 	PressurePID := NewPIDController(0.5, 0.5, 0.5)         // takes in P, I, and D values to be set trial and error
 	PressurePID.setpoint = float64(UI.InspiratoryPressure) // Sets PID setpoint to Inspiratory pressure
@@ -197,16 +176,5 @@ func (UI *PressureACSettings) PressureAssist() {
 				valves.ExProp.IncrementValve(0) // closes the valve
 			}
 		}
-	}
-}
-
-// UpdateValues populates a a struct which is recieved by the GUI
-func (UI *PressureACSettings) UpdateValues() {
-	BCT := 60 / UI.Rate
-	if UI.Ti != 0 {
-		UI.Te = BCT - UI.Ti
-	} else if UI.IR != 0 {
-		UI.Ti = UI.IR / (UI.IR + UI.ER)
-		UI.Te = BCT - UI.Ti
 	}
 }
