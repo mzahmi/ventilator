@@ -2,7 +2,7 @@ package tests
 
 import (
 	"bufio"
-	"log"
+	"fmt"
 	"os"
 	"time"
 
@@ -21,12 +21,22 @@ func check(err error) {
 func PressureTest(PS *sensors.Pressure) {
 	f, err := os.Create("PressureTest.txt")
 	check(err)
-	defer f.close()
+	defer f.Close()
 	w := bufio.NewWriter(f)
-
-	for start := time.Now(); time.Since(start) < (time.Second * 60); {
-		for x := range time.Tick(time.Second) {
-			_, err = fmt.Fprintf("%t\tThe pressure reading from %s is %v\n", time.Now(), PS.Name, PS.ReadPressure())
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+	done := make(chan bool)
+	go func() {
+		time.Sleep(60 * time.Second)
+		done <- true
+	}()
+	for {
+		select {
+		case <-done:
+			fmt.Println("Sensor calibration done")
+			return
+		case t := <-ticker.C:
+			_, err = fmt.Fprintf(w, "%v\tThe pressure reading from %s is %v\n", t, PS.Name, PS.ReadPressure())
 			check(err)
 		}
 	}
@@ -37,12 +47,22 @@ func PressureTest(PS *sensors.Pressure) {
 func FlowTest(FS *sensors.Flow) {
 	f, err := os.Create("FlowTest.txt")
 	check(err)
-	defer f.close()
+	defer f.Close()
 	w := bufio.NewWriter(f)
-
-	for start := time.Now(); time.Since(start) < (time.Second * 60); {
-		for x := range time.Tick(time.Second) {
-			_, err = fmt.Fprintf("%t\tThe pressure reading from %s is %v\n", time.Now(), FS.Name, FS.ReadFlow())
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+	done := make(chan bool)
+	go func() {
+		time.Sleep(60 * time.Second)
+		done <- true
+	}()
+	for {
+		select {
+		case <-done:
+			fmt.Println("Sensor calibration done")
+			return
+		case t := <-ticker.C:
+			_, err = fmt.Fprintf(w, "%v\tThe pressure reading from %s is %v\n", t, FS.Name, FS.ReadFlow())
 			check(err)
 		}
 	}

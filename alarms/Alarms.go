@@ -35,9 +35,37 @@ Lower Limit:
 	◆ For an active patient, 50% less than the expected tidal volume */
 func TidalVolumeAlarms(UpperLimit, LowerLimit float32) error {
 	if sensors.FIns.ReadFlow() >= UpperLimit {
-		return errors.New("Upper limit of tidal volume reached")
+		msg := "Upper limit of tidal volume reached"
+		HighAlert(msg)
+		return errors.New(msg)
 	} else if sensors.FExp.ReadFlow() <= LowerLimit {
-		return errors.New("Upper limit of tidal volume reached")
+		msg := "Lower limit of tidal volume reached"
+		LowAlert(msg)
+		return errors.New(msg)
+	} else {
+		return nil
+	}
+}
+
+/* AirwayPressureAlarms sets the upper and lower limits of the Peak airway pressure based on the operator input
+
+Recommended setting:
+Upper Limit:
+	◆ For a passive patient, 10 cmH2O above the expected peak pressure
+	◆ For an active patient, 15 cmH2O above the expected peak pressure
+Lower Limit:
+	◆ For a passive patient, 5 cmH2O below the expected peak pressure
+	◆ For an active patient, 5 to 10 cmH2O below the expected peak pressure
+*/
+func AirwayPressureAlarms(UpperLimit, LowerLimit float32) error {
+	if sensors.PIns.ReadPressure() >= UpperLimit {
+		msg := "Upper limit of Airway Pressure reached"
+		HighAlert(msg)
+		return errors.New(msg)
+	} else if sensors.PIns.ReadPressure() <= LowerLimit {
+		msg := "Lower limit of Airway Pressure reached"
+		LowAlert(msg)
+		return errors.New(msg)
 	} else {
 		return nil
 	}
@@ -96,7 +124,6 @@ causes:
 Alarm message on yellow background
 
 A series of 3 beeps in this sequence, repeated: ▯▯▯____▯▯▯*/
-
 func MediumAlert(msg string) {
 	fmt.Println(msg)
 	tm := 400 * time.Millisecond
@@ -129,7 +156,6 @@ causes:
 Alarm message on yellow background
 
 A series of 2 beeps, not repeated: ▯▯*/
-
 func LowAlert(msg string) {
 	fmt.Println(msg)
 	tm := 400 * time.Millisecond
