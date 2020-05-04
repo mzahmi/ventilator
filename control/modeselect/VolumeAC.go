@@ -1,4 +1,4 @@
-// Package modeselect Deals with the Volume AC
+// Package modeselect ...
 package modeselect
 
 import (
