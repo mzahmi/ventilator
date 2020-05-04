@@ -23,7 +23,7 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: 0
 
-            Chart1{
+            BasicChart1{
                 anchors.fill: parent
 
             }

@@ -1,5 +1,6 @@
 // color
 var bg_color = "#444444"
+var color_primary = "#4f41ff"
 
 // sizes
 var window_width = 800
