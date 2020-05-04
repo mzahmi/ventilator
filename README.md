@@ -6,15 +6,24 @@
 
 On Ubuntu / Debian
 
+### Install GoLang
+
 ```
 sudo apt install golang
 ```
 
+### Install QML GoLang Wrapper
 ```
 export GO111MODULE=off; go get -v github.com/therecipe/qt/cmd/... && $(go env GOPATH)/bin/qtsetup test && $(go env GOPATH)/bin/qtsetup -test=false
+export PATH=$PATH:/home/$USER/go/bin/
+```
+### Install GoLang Dependencies
+
+```
+go get github.com/tarm/serial
 ```
 
-## Install 
+## Install Ventilator Software 
 
 ```
 git clone https://github.com/mzahmi/ventilator/
