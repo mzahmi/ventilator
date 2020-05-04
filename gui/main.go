@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/mzahmi/ventilator/control/modeselect"
 	"github.com/therecipe/qt/charts"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/qml"
@@ -27,6 +28,32 @@ func main() {
 
 	qmlBridge.ConnectSendToGo(func(data string) string {
 		fmt.Println("go:", data)
+		var ui_input = modeselect.UserInput{
+			"dsda",
+			"dsda",
+			"dsda",
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+		}
+		modeselect.ModeSelection(&ui_input)
 		return "hello from go"
 	})
 
