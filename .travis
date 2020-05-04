@@ -1,0 +1,36 @@
+# Continious Integration Configuration File for semantic exploration Package
+# Author: Tarek Taha
+# Date  : 04/05/2020
+sudo: required
+dist: xenial
+language: generic
+python:
+  - "2.7"
+compiler:
+  - gcc
+notifications:
+  email:
+    recipients:
+    - tarek.taha@gmail.com
+    on_success: change #[always|never|change] # default: change
+    on_failure: change #[always|never|change] # default: always
+
+env:
+  global:
+    # Some Global variables can go here
+    - GLOBAL_VAR="global_var"
+  #matrix:
+  #  - ROS_DISTRO="kinetic" ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu
+# Install prerequisites and/or dependencies required by the system
+before_install: 
+  - ls
+# Use this to install any prerequisites or dependencies necessary to run your build
+install: 
+  # Create workspace
+  - ls
+# Use this to prepare your build for testing e.g. copy database configurations, environment variables, etc.
+before_script: 
+- source ~/.bashrc
+# All commands must exit with code 0 on success. Anything else is considered failure
+script:
+ - ls
