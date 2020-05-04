@@ -15,8 +15,8 @@ type UserInput struct {
 	Ti                  float32 // inhalation time
 	TiMax               float32 // for PSV mode backup time control
 	Te                  float32 // exhalation time
-	IR                  float32 // inhalation ratio part
-	ER                  float32 // exhalation ratio part
+	IR                  float32 // inhalation ratio part IR:IE
+	ER                  float32 // exhalation ratio part IR:IE
 	PeakFlow            float32
 	PEEP                float32 // 5-20 mmH2O
 	FiO2                float32 // 21% - 100%
@@ -27,6 +27,9 @@ type UserInput struct {
 	InspiratoryPressure float32 // Also known as P_control
 	UpperLimitVT        float32 // upper limit of tidal volume
 	LowerLimitVt        float32 // lower limit of tidal volume
+	RiseTime            float32 // needs to be defined
+	UpperLimitPIP       float32 // upper limit of airway peak prssure
+	LowerLimitPIP       float32 // lower limit of airway peak pressure
 }
 
 // Exit is a global var used as a switch for ventilation on or off
@@ -46,10 +49,10 @@ func UpdateValues(UI *UserInput) {
 		UI.Ti = (60 * UI.TidalVolume) / (UI.PeakFlow * 1000)
 		UI.Te = BCT - UI.Ti
 	}
+	UI.PEEP = 10 * UI.PEEP // conversion from cmH2O to mmH2O
 }
 
-// ModeSelection reads input from the GUI to select the
-// required Mode from the user input struct
+// ModeSelection reads input from the GUI to select the required Mode from the user input struct
 func ModeSelection(UI *UserInput) {
 	UpdateValues(UI) // calculates missing values
 	switch UI.Mode {
