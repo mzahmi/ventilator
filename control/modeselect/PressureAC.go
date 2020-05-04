@@ -59,7 +59,12 @@ func PressureControl(UI *UserInput) {
 	for !Exit {
 		//Open main valve MIns controlled by pressure sensor PIns
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
-			//check for alarms
+			//check for tidal volume alarms
+			err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
+			if err != nil {
+				log.Println(err)
+				break
+			}
 			valves.InProp.IncrementValve(PressurePID.Update(float64(sensors.PIns.ReadPressure())))
 		}
 
@@ -68,10 +73,19 @@ func PressureControl(UI *UserInput) {
 
 		//Open main valve MExp controlled by pressure sensor PExp
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
-			// check for alarms
+			//check for tidal volume alarms
+			err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
+			if err != nil {
+				log.Println(err)
+				break
+			}
+
+			//check for PEEP
 			if sensors.PExp.ReadPressure() <= UI.PEEP {
 				break
 			}
+
+			// Open ExProp valve
 			valves.ExProp.IncrementValve(100)
 		}
 		//Close main valve ExProp
@@ -97,6 +111,7 @@ func PressureAssist(UI *UserInput) {
 
 		//control loop; it loops unitll Exit bool is set to false
 		for !Exit {
+
 			//check if trigger is true
 			if sensors.PIns.ReadPressure() <= PTrigger {
 
@@ -106,8 +121,6 @@ func PressureAssist(UI *UserInput) {
 					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
 					if err != nil {
 						log.Println(err)
-						//or we can use panic
-						//panic(err)
 						break
 					}
 					valves.InProp.IncrementValve(PressurePID.Update(float64(sensors.PIns.ReadPressure())))
@@ -117,19 +130,23 @@ func PressureAssist(UI *UserInput) {
 
 				//Open main valve ExProp and check for PEEP value and tidal volume alarms
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
+
 					//check for tidal volume alarms
 					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
 					if err != nil {
 						log.Println(err)
-						//or we can use panic
-						//panic(err)
 						break
 					}
+
+					//check for PEEP
 					if sensors.PExp.ReadPressure() <= UI.PEEP {
 						break
 					}
+
+					//open ExProp valve
 					valves.ExProp.IncrementValve(100)
 				}
+
 				//Close main valve ExProp
 				valves.ExProp.IncrementValve(0) // closes the valve
 			}
@@ -147,8 +164,6 @@ func PressureAssist(UI *UserInput) {
 					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
 					if err != nil {
 						log.Println(err)
-						//or we can use panic
-						//panic(err)
 						break
 					}
 					valves.InProp.IncrementValve(PressurePID.Update(float64(sensors.PIns.ReadPressure())))
@@ -163,13 +178,15 @@ func PressureAssist(UI *UserInput) {
 					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
 					if err != nil {
 						log.Println(err)
-						//or we can use panic
-						//panic(err)
 						break
 					}
+
+					//Check for PEEP
 					if sensors.PExp.ReadPressure() <= UI.PEEP {
 						break
 					}
+
+					//Open ExProp valve
 					valves.ExProp.IncrementValve(100)
 				}
 				//Close main valve MExp
