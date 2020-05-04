@@ -21,3 +21,9 @@ git clone https://github.com/mzahmi/ventilator/
 ```
 
 All code and details related to the open ventilator project.
+
+```
+$ cd ventilator/gui
+qtdeploy test desktop .
+
+```
