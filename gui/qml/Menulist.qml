@@ -2,6 +2,7 @@ import QtQuick 2.0
 import "./src/variables/fontawesome.js" as FontAwesome
 import "./src/lists"
 import "./config.js" as Config
+import QtQuick.Layouts 1.0
 
 Item {
     id: sidebar
@@ -10,7 +11,7 @@ Item {
     Rectangle{
 
         id: sidebarrectangle
-        width: 150
+        width: Config.sidebar_width
         color: Config.bg_color
         anchors.bottom: parent.bottom
         anchors.left: parent.left
@@ -93,145 +94,6 @@ Item {
         }
 
         Text {
-            id: element2
-            x: 88
-            y: 186
-            color: "#ffffff"
-            text: qsTr("7.5")
-            font.pixelSize: 38
-        }
-
-        Text {
-            id: element3
-            x: 68
-            y: 227
-            color: "#ffffff"
-            text: qsTr("ExpMinVol")
-            styleColor: "#ffffff"
-            font.pixelSize: 16
-        }
-
-        Text {
-            id: element4
-            x: 9
-            y: 202
-            color: "#ffffff"
-            text: qsTr("10")
-            font.pixelSize: 12
-        }
-
-        Text {
-            id: element5
-            x: 13
-            y: 239
-            color: "#ffffff"
-            text: qsTr("4")
-            font.pixelSize: 12
-        }
-
-        Text {
-            id: element6
-            x: 114
-            y: 246
-            color: "#f9f9f9"
-            text: qsTr("l/min")
-            font.pixelSize: 12
-        }
-
-        Text {
-            id: element7
-            x: 79
-            y: 275
-            color: "#ffffff"
-            text: qsTr("500")
-            font.pixelSize: 38
-        }
-
-        Text {
-            id: element8
-            x: 114
-            y: 316
-            color: "#ffffff"
-            text: qsTr("VTE")
-            font.pixelSize: 16
-            styleColor: "#ffffff"
-        }
-
-        Text {
-            id: element9
-            x: 8
-            y: 291
-            color: "#ffffff"
-            text: qsTr("750")
-            font.pixelSize: 12
-        }
-
-        Text {
-            id: element10
-            x: 8
-            y: 321
-            color: "#ffffff"
-            text: qsTr("250")
-            font.pixelSize: 12
-        }
-
-        Text {
-            id: element11
-            x: 129
-            y: 334
-            color: "#f9f9f9"
-            text: qsTr("ml")
-            font.pixelSize: 12
-        }
-
-        Text {
-            id: element12
-            x: 100
-            y: 354
-            color: "#ffffff"
-            text: qsTr("20")
-            horizontalAlignment: Text.AlignRight
-            font.pixelSize: 38
-        }
-
-        Text {
-            id: element13
-            x: 111
-            y: 395
-            color: "#ffffff"
-            text: qsTr("Rate")
-            font.pixelSize: 16
-            styleColor: "#ffffff"
-        }
-
-        Text {
-            id: element14
-            x: 8
-            y: 370
-            color: "#ffffff"
-            text: qsTr("23")
-            font.pixelSize: 12
-        }
-
-        Text {
-            id: element15
-            x: 12
-            y: 400
-            color: "#ffffff"
-            text: qsTr("8")
-            font.pixelSize: 12
-        }
-
-        Text {
-            id: element16
-            x: 110
-            y: 413
-            color: "#f9f9f9"
-            text: qsTr("b/min")
-            font.pixelSize: 12
-        }
-
-        Text {
             id: element17
             x: 13
             y: 438
@@ -258,6 +120,260 @@ Item {
             text: "\uf043"
             font.pixelSize: 12
         }
+
+        RowLayout {
+            id: monitorrow
+            property int pip:25
+            property int vt: 10
+            property int rate: 15
+            property int peep: 4
+            property int fio2: 25
+            property string mode: "PAC"
+
+            y: 170
+            anchors.left: parent.left
+            anchors.right: parent.right
+            Connections{
+                target: QmlBridge
+                onSendMonitor:{
+                    monitorrow.pip = pip
+                    monitorrow.vt = vt
+                    monitorrow.rate = rate
+                    monitorrow.peep = peep
+                    monitorrow.fio2=fio2
+                    monitorrow.mode = mode
+
+                }
+            }
+
+
+
+
+            ColumnLayout {
+                id: column1
+                width:Config.sidebar_width
+
+                Text {
+                    id: piptext
+                    color: "#ffffff"
+                    text: monitorrow.pip
+                    Layout.fillWidth: true
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    font.pixelSize: 36
+                }
+
+                Text {
+                    id: element2
+                    color: "#ffffff"
+                    text: qsTr("PIP")
+                    Layout.fillWidth: true
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    styleColor: "#ffffff"
+                    font.pixelSize: 16
+                }
+
+                Text {
+                    id: element3
+                    color: "#f9f9f9"
+                    text: qsTr("cmH2O")
+                    Layout.fillWidth: true
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    font.pixelSize: 12
+                }
+            }
+
+            ColumnLayout {
+                id: column2
+                width: Config.sidebar_height/2
+                Text {
+                    id: element4
+                    color: "#ffffff"
+                    text: monitorrow.vt
+                    font.pixelSize: 36
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                Text {
+                    id: element5
+                    color: "#ffffff"
+                    text: qsTr("Vt")
+                    font.pixelSize: 16
+                    styleColor: "#ffffff"
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                Text {
+                    id: element7
+                    color: "#f9f9f9"
+                    text: qsTr("ml")
+                    font.pixelSize: 12
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+        }
+
+        RowLayout {
+            y: 257
+            anchors.left: parent.left
+            anchors.right: parent.right
+            ColumnLayout {
+                id: column3
+                Text {
+                    id: element8
+                    color: "#ffffff"
+                    text: monitorrow.rate
+                    font.pixelSize: 36
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                Text {
+                    id: element9
+                    color: "#ffffff"
+                    text: qsTr("Rate")
+                    font.pixelSize: 16
+                    styleColor: "#ffffff"
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                Text {
+                    id: element10
+                    color: "#f9f9f9"
+                    text: qsTr("BPM")
+                    font.pixelSize: 12
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+
+            ColumnLayout {
+                id: column4
+                width: Config.sidebar_height/2
+                Text {
+                    id: element11
+                    color: "#ffffff"
+                    text: monitorrow.peep
+                    font.pixelSize: 36
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                Text {
+                    id: element12
+                    color: "#ffffff"
+                    text: qsTr("PEEP")
+                    font.pixelSize: 16
+                    styleColor: "#ffffff"
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                Text {
+                    id: element13
+                    color: "#f9f9f9"
+                    text: qsTr("cmH2O")
+                    font.pixelSize: 12
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+        }
+
+        RowLayout {
+            y: 345
+            anchors.left: parent.left
+            anchors.right: parent.right
+            ColumnLayout {
+                width: Config.sidebar_height/2
+                id: column5
+                Text {
+                    id: element14
+                    color: "#ffffff"
+                    text: monitorrow.fio2
+                    font.pixelSize: 36
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                Text {
+                    id: element15
+                    color: "#ffffff"
+                    text: qsTr("FIO2")
+                    font.pixelSize: 16
+                    styleColor: "#ffffff"
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                Text {
+                    id: element16
+                    color: "#f9f9f9"
+                    text: qsTr("%")
+                    font.pixelSize: 12
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+
+            ColumnLayout {
+                width: Config.sidebar_height/2
+                id: column6
+                Text {
+                    id: element20
+                    color: "#ffffff"
+                    text: monitorrow.mode
+                    font.pixelSize: 36
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                Text {
+                    id: element21
+                    color: "#ffffff"
+                    text: qsTr("Mode")
+                    font.pixelSize: 16
+                    styleColor: "#ffffff"
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                Text {
+                    id: element22
+                    color: "#f9f9f9"
+                    font.pixelSize: 12
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+        }
     }
 
 }
+
+/*##^##
+Designer {
+    D{i:13;anchors_x:2}D{i:22;anchors_x:2}D{i:31;anchors_x:2}
+}
+##^##*/

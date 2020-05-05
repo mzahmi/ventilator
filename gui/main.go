@@ -6,20 +6,22 @@ import (
 	"os"
 	"time"
 
-	"github.com/mzahmi/ventilator/control/modeselect"
+	// "github.com/mzahmi/ventilator/control/modeselect"
 	"github.com/therecipe/qt/charts"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/qml"
 	"github.com/therecipe/qt/widgets"
 )
 
+func RecieveModeSettings(ie int, pip int, bpm int, pmax int, peep int, fio2 int) {
+	fmt.Println(ie, pip, bpm, pmax, peep, fio2)
+}
+
 func InitializeCharts() { _ = charts.QChart{} }
 
 func main() {
 	core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true)
 
-	// System Check
-	// Check that all system components work as expected before running the GUI
 	InitializeCharts()
 	app := widgets.NewQApplication(len(os.Args), os.Args)
 	engine := qml.NewQQmlApplicationEngine(nil)
@@ -30,39 +32,30 @@ func main() {
 
 	qmlBridge.ConnectSendToGo(func(data string) string {
 		fmt.Println("go:", data)
-		var ui_input = modeselect.UserInput{
-			"dsda",
-			"dsda",
-			"dsda",
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0,
-		}
-		modeselect.ModeSelection(&ui_input)
 		return "hello from go"
+	})
+
+	qmlBridge.ConnectSendPAC(func(ie int, pip int, bpm int, pmax int, peep int, fio2 int) {
+		RecieveModeSettings(ie, pip, bpm, pmax, peep, fio2)
 	})
 
 	go func() {
 		for range time.NewTicker(time.Millisecond * 50).C {
 			randnumber := rand.Intn(30)
 			qmlBridge.SendToQml(randnumber)
+		}
+	}()
+
+	go func() {
+		for range time.NewTicker(time.Second * 1).C {
+
+			pip := rand.Intn(30)
+			vt := rand.Intn(30)
+			rate := rand.Intn(30)
+			peep := rand.Intn(30)
+			fio2 := rand.Intn(30)
+			mode := "PAC"
+			qmlBridge.SendMonitor(pip, vt, rate, peep, fio2, mode)
 		}
 	}()
 
@@ -86,6 +79,8 @@ func main() {
 type QmlBridge struct {
 	core.QObject
 
-	_ func(data int)           `signal:"sendToQml"`
-	_ func(data string) string `slot:"sendToGo"`
+	_ func(data int)                                                   `signal:"sendToQml"`
+	_ func(pip int, vt int, rate int, peep int, fio2 int, mode string) `signal:"sendMonitor"`
+	_ func(data string) string                                         `slot:"sendToGo"`
+	_ func(ie int, pip int, bpm int, pmax int, peep int, fio2 int)     `slot:"sendPAC"`
 }

@@ -22,19 +22,6 @@ Item {
     id: element
     width: 800
     height: 460
-    FontLoader { id: webFont; source: "./src/variables/fontawesome-webfont.ttf" }
-
-    Menulist{
-        id: sidebar
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.bottom: parent.bottom
-        anchors.top: parent.top
-        anchors.topMargin: 0
-        width: Config.sidebar_width
-
-    }
-
     Rectangle {
         id: mainview
         color: "#ffffff"
@@ -83,10 +70,24 @@ Item {
         }
     }
 
+    FontLoader { id: webFont; source: "./src/variables/fontawesome-webfont.ttf" }
+
+    Menulist{
+        id: sidebar
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+        anchors.bottom: parent.bottom
+        anchors.top: parent.top
+        anchors.topMargin: 0
+        width: Config.sidebar_width
+
+    }
+
+
 }
 
 /*##^##
 Designer {
-    D{i:2;anchors_height:400;anchors_width:200}D{i:3;anchors_width:150}
+    D{i:1;anchors_width:150}D{i:12;anchors_height:400;anchors_width:200}
 }
 ##^##*/
