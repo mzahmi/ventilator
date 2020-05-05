@@ -97,7 +97,7 @@ func (FS *Flow) ReadFlow() float32 {
 	return FS.Rate
 }
 
-fun readAll()
+func readAllSensors() {
 {
-	read all sensors (pressure and flow and propotional valves)
+	// read all sensors (pressure and flow and propotional valves)
 }
