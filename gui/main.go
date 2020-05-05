@@ -18,6 +18,8 @@ func InitializeCharts() { _ = charts.QChart{} }
 func main() {
 	core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true)
 
+	// System Check
+	// Check that all system components work as expected before running the GUI
 	InitializeCharts()
 	app := widgets.NewQApplication(len(os.Args), os.Args)
 	engine := qml.NewQQmlApplicationEngine(nil)
