@@ -6,6 +6,7 @@ import (
 
 	"github.com/mzahmi/ventilator/control/ioexp"
 	"github.com/mzahmi/ventilator/control/rpigpio"
+
 	// "github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
 )
@@ -15,18 +16,18 @@ import (
 type UserInput struct {
 	// Mode                string
 	// BreathType          string
-	TidalVolume         float32 // ml
-	Rate                float32 // BPM
-	Ti                  float32 // inhalation time
+	TidalVolume float32 // ml
+	Rate        float32 // BPM
+	Ti          float32 // inhalation time
 	// TiMax               float32 // for PSV mode backup time control
 	// Te                  float32 // exhalation time
-	PeakFlow            float32
-	IR                  float32 // inhalation ratio part
-	ER                  float32 // exhalation ratio part
-	PEEP                float32 // 5-20 mmH2O
-	FiO2                float32 // 21% - 100%
-	PatientTriggerType  int
-	PressureTrigSense   float32 // -0.5 to 02 mmH2O
+	PeakFlow           float32
+	IR                 float32 // inhalation ratio part
+	ER                 float32 // exhalation ratio part
+	PEEP               float32 // 5-20 mmH2O
+	FiO2               float32 // 21% - 100%
+	PatientTriggerType int
+	PressureTrigSense  float32 // -0.5 to 02 mmH2O
 	// FlowTrigSense       float32 // 0.5 to 5 Lpm
 	// FlowCyclePercent    float32 // for flow cycling ranges from 0 to 100%
 	// PressureSupport     float32 // needs to be defined
@@ -208,11 +209,7 @@ var Exit bool
 // PressureControl ...
 func PressureControl(UI *UserInput) {
 	fmt.Println("entered function")
-	err := ioexp.InitChip()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+
 	//calculate Te from UI.Ti and BCT
 	// UpdateValues(UI)
 	BCT := 60 / UI.Rate
@@ -220,7 +217,7 @@ func PressureControl(UI *UserInput) {
 	UI.PeakFlow = (60 * UI.TidalVolume) / (UI.Ti * 1000)
 
 	// Identify the main valves or solenoids by MIns and MExp
-	Mv := valves.SolenValve{Name: "main", State: false, PinMask: ioexp.Solenoid0} //normally closed
+	Mv := valves.SolenValve{Name: "main", State: false, PinMask: ioexp.Solenoid0}        //normally closed
 	MIns := valves.SolenValve{Name: "A_PSV_INS", State: false, PinMask: ioexp.Solenoid1} //normally closed
 	MExp := valves.SolenValve{Name: "A_PSV_EXP", State: true, PinMask: ioexp.Solenoid2}  //normally open
 
