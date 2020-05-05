@@ -5,9 +5,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/mzahmi/ventilator/control/alarms"
-	"github.com/mzahmi/ventilator/control/sensors"
-	"github.com/mzahmi/ventilator/control/valves"
+	"vent/control/alarms"
+	"vent/control/sensors"
+	"vent/control/valves"
 )
 
 /* PressureAC has a triggering window, which opens at late expiration.

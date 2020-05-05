@@ -3,7 +3,7 @@ package modeselect
 import (
 	"fmt"
 
-	"github.com/mzahmi/ventilator/control/alarms"
+	"vent/control/alarms"
 )
 
 // UserInput is a custome type struct that contains the global
@@ -66,13 +66,10 @@ func ModeSelection(UI *UserInput) {
 	switch UI.Mode {
 	case "Volume A/C":
 		fmt.Println("Volume Assisted Control Mode selected")
-		VolumeAC(UI)
 	case "Pressure A/C":
 		fmt.Println("Pressure Assisted Control Mode selected")
-		PressureAC(UI)
 	case "PSV":
 		fmt.Println("Pressure Support Control Mode selected")
-		PSV(UI)
 	case "V-SMIV":
 		fmt.Println("Volume SIMV Mode selected")
 	case "P-SIMV":

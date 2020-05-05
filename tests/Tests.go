@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/mzahmi/ventilator/control/sensors"
+	"vent/control/sensors"
 )
 
 func check(err error) {

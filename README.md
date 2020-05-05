@@ -26,7 +26,7 @@ go get github.com/tarm/serial
 ## Install Ventilator Software 
 
 ```
-git clone https://github.com/mzahmi/ventilator/
+git clone https://vent/
 ```
 
 All code and details related to the open ventilator project.

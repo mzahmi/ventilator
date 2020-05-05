@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mzahmi/ventilator/control/sensors"
-	"github.com/mzahmi/ventilator/control/valves"
+	"vent/control/sensors"
+	"vent/control/valves"
 )
 
 // VolumeAC one of the main 5 modes of the ventilator

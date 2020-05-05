@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mzahmi/ventilator/control/ioexp"
-	"github.com/mzahmi/ventilator/control/rpigpio"
+	"vent/control/ioexp"
+	"vent/control/rpigpio"
 
-	// "github.com/mzahmi/ventilator/control/sensors"
-	"github.com/mzahmi/ventilator/control/valves"
+	// "vent/control/sensors"
+	"vent/control/valves"
 )
 
 // UserInput is a custome type struct that contains the global
@@ -226,7 +226,7 @@ func PressureControl(UI *UserInput) {
 	//PExp := sensors.Pressure{Name: "SNS_P_EXP", ID: 1, AdcID: 1, MMH2O: 0} //expratory pressure sensor
 
 	fmt.Println("beep called")
-	err = rpigpio.BeepOn()
+	err := rpigpio.BeepOn()
 	if err != nil {
 		fmt.Println(err)
 		return

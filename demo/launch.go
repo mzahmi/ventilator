@@ -1,11 +1,10 @@
-//example of the proposed launch file using channels
-package launch
+package demo
 
 import (
 	"fmt"
 
-	"github.com/mzahmi/ventilator/control/modeselect"
-	"github.com/mzahmi/ventilator/control/sensors"
+	"vent/control/modeselect"
+	"vent/control/sensors"
 )
 
 type SensorsReading struct {

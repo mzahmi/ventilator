@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mzahmi/ventilator/control/adc"
-	"github.com/mzahmi/ventilator/control/dac"
-	"github.com/mzahmi/ventilator/control/ioexp"
-	"github.com/mzahmi/ventilator/control/rpigpio"
+	"vent/control/adc"
+	"vent/control/dac"
+	"vent/control/ioexp"
+	"vent/control/rpigpio"
 )
 
 //InitHardware ... this function should be called at the beginning of main.

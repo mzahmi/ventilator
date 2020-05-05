@@ -3,8 +3,8 @@ package valves
 import (
 	"fmt"
 
-	"github.com/mzahmi/ventilator/control/dac"
-	"github.com/mzahmi/ventilator/control/ioexp"
+	"vent/control/dac"
+	"vent/control/ioexp"
 )
 
 //Inhalation Valve constants

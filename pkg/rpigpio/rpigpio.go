@@ -52,7 +52,7 @@ func gpioLow(gpio_name string) error {
 
 // returning 6 pointers to the buttons and an error
 func InitButtons() (gpio.PinIO, gpio.PinIO, gpio.PinIO, gpio.PinIO, gpio.PinIO, gpio.PinIO, error) {
-
+	
 	// btn1 -> GPIO19
 	// btn2 -> GPIO13
 	// btn3 -> GPIO6

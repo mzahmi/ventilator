@@ -52,7 +52,7 @@ func ReadADC(adcID uint8) ([]float32, error) {
 
 	// Convert the spi.Port into a spi.Conn so it can be used for communication.
 	spiConn, err := spiPort.Connect(1*physic.MegaHertz, spi.NoCS, 8)
-
+	
 	if err != nil {
 		return adcReadResult, errors.New("failed to connect to spi0")
 	}

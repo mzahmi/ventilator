@@ -3,8 +3,8 @@ package modeselect
 import (
 	"time"
 
-	"github.com/mzahmi/ventilator/control/sensors"
-	"github.com/mzahmi/ventilator/control/valves"
+	"vent/control/sensors"
+	"vent/control/valves"
 )
 
 // PSV one of the main 5 modes of the ventilator. The Triggering type is chosen by the operator.

@@ -6,18 +6,45 @@ import (
 	"os"
 	"time"
 
-	// "github.com/mzahmi/ventilator/control/modeselect"
+	"vent/control/modeselect"
+	"vent/control/sensors"
+
 	"github.com/therecipe/qt/charts"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/qml"
 	"github.com/therecipe/qt/widgets"
 )
 
-func RecieveModeSettings(ie int, pip int, bpm int, pmax int, peep int, fio2 int) {
-	fmt.Println(ie, pip, bpm, pmax, peep, fio2)
+var UI = modeselect.UserInput{
+	Mode:                "NA",
+	BreathType:          "NA",
+	PatientTriggerType:  "NA",
+	TidalVolume:         0,
+	Rate:                0,
+	Ti:                  0,
+	TiMax:               0,
+	Te:                  0,
+	IR:                  0,
+	ER:                  0,
+	PeakFlow:            0,
+	PEEP:                0,
+	FiO2:                0,
+	PressureTrigSense:   0,
+	FlowTrigSense:       0,
+	FlowCyclePercent:    0,
+	PressureSupport:     0,
+	InspiratoryPressure: 0,
+	UpperLimitVT:        0,
+	LowerLimitVt:        0,
+	RiseTime:            0,
+	UpperLimitPIP:       0,
+	LowerLimitPIP:       0,
+	MinuteVolume:        0,
+	UpperLimitMV:        0,
+	LowerLimitMV:        0,
+	UpperLimitRR:        0,
+	LowerLimitRR:        0,
 }
-
-func InitializeCharts() { _ = charts.QChart{} }
 
 func main() {
 	core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true)
@@ -46,35 +73,47 @@ func main() {
 		}
 	}()
 
+	//read sensors check alarms and send data to gui
 	go func() {
-		for range time.NewTicker(time.Second * 1).C {
-
-			pip := rand.Intn(30)
-			vt := rand.Intn(30)
-			rate := rand.Intn(30)
-			peep := rand.Intn(30)
-			fio2 := rand.Intn(30)
-			mode := "PAC"
-			qmlBridge.SendMonitor(pip, vt, rate, peep, fio2, mode)
-		}
+		//Read sensors
+		pip := int(sensors.PIns.ReadPressure())
+		vt := int(sensors.FIns.ReadFlow())
+		rate := UI.Rate
+		peep := int(sensors.PExp.ReadPressure())
+		fio2 := UI.FiO2
+		mode := UI.Mode
+		//send values to GUI
+		qmlBridge.SendMonitor(pip, vt, rate, peep, fio2, mode)
 	}()
 
-	// read sensors check alarms and send data to gui
-	// go readingAndDisplay()
-	// {
-	// 	//sensors read all
-	// 	//check alarms
-	// 	//send/share to GUI
-	// }
+	//Receive mode settings and run mode
+	go func() {
 
-	// // run the required ventilation mode
-	// go ventilationControl()
-
-	// // run command line interface
-	// go cli()
+	}()
 
 	app.Exec()
 }
+
+func RecieveModeSettings(ie int, pip int, bpm int, pmax int, peep int, fio2 int) {
+	switch ie {
+	case 0:
+		UI.IR = 1
+		UI.ER = 2
+	case 1:
+		UI.IR = 1
+		UI.ER = 3
+	default:
+		fmt.Println("srsly?")
+	}
+	UI.UpperLimitPIP = float32(pip)
+	UI.Rate = float32(bpm)
+	UI.InspiratoryPressure = float32(pmax)
+	UI.PEEP = float32(peep)
+	UI.FiO2 = float32(fio2)
+	fmt.Println(ie, pip, bpm, pmax, peep, fio2)
+}
+
+func InitializeCharts() { _ = charts.QChart{} }
 
 type QmlBridge struct {
 	core.QObject

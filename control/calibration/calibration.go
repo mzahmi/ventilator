@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/mzahmi/ventilator/control/adc"
-	"github.com/mzahmi/ventilator/control/sensors"
+	"vent/control/adc"
+	"vent/control/sensors"
 )
 
 func check(err error) {
