@@ -64,8 +64,9 @@ func UpdateValues(UI *UserInput) {
 func ModeSelection(UI *UserInput) {
 	UpdateValues(UI) // calculates missing values
 	switch UI.Mode {
-	case "Volume A/C":
-		fmt.Println("Volume Assisted Control Mode selected")
+	case "Pressure Control":
+		fmt.Println("Pressure Control Mode selected")
+		PressureAC(UI)
 	case "Pressure A/C":
 		fmt.Println("Pressure Assisted Control Mode selected")
 	case "PSV":

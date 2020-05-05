@@ -62,10 +62,6 @@ func main() {
 		return "hello from go"
 	})
 
-	qmlBridge.ConnectSendPAC(func(ie int, pip int, bpm int, pmax int, peep int, fio2 int) {
-		RecieveModeSettings(ie, pip, bpm, pmax, peep, fio2)
-	})
-
 	go func() {
 		for range time.NewTicker(time.Millisecond * 50).C {
 			randnumber := rand.Intn(30)
@@ -88,7 +84,10 @@ func main() {
 
 	//Receive mode settings and run mode
 	go func() {
-
+		qmlBridge.ConnectSendPAC(func(ie int, pip int, bpm int, pmax int, peep int, fio2 int) {
+			RecieveModeSettings(ie, pip, bpm, pmax, peep, fio2)
+		})
+		modeselect.ModeSelection(&UI)
 	}()
 
 	app.Exec()
@@ -103,14 +102,13 @@ func RecieveModeSettings(ie int, pip int, bpm int, pmax int, peep int, fio2 int)
 		UI.IR = 1
 		UI.ER = 3
 	default:
-		fmt.Println("srsly?")
+		fmt.Println("invalid IE ratio")
 	}
 	UI.UpperLimitPIP = float32(pip)
 	UI.Rate = float32(bpm)
 	UI.InspiratoryPressure = float32(pmax)
 	UI.PEEP = float32(peep)
 	UI.FiO2 = float32(fio2)
-	fmt.Println(ie, pip, bpm, pmax, peep, fio2)
 }
 
 func InitializeCharts() { _ = charts.QChart{} }

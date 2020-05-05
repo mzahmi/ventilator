@@ -10,7 +10,7 @@ import (
 	"vent/control/valves"
 )
 
-/* PressureAC has a triggering window, which opens at late expiration.
+/* PressureAC ... has a triggering window, which opens at late expiration.
 If the ventilator detects a valid pneumatic signal during the triggering window,
 it delivers a pressure assist breath. If not, it delivers a pressure control
 (time-triggered) breath according to the set rate. The set Pcontrol applies to
