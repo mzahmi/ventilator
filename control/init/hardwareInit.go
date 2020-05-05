@@ -7,6 +7,7 @@ import (
 	"github.com/mzahmi/ventilator/control/adc"
 	"github.com/mzahmi/ventilator/control/dac"
 	"github.com/mzahmi/ventilator/control/ioexp"
+	"github.com/mzahmi/ventilator/control/rpigpio"
 )
 
 //InitHardware ... this function should be called at the beginning of main.
@@ -35,7 +36,7 @@ func initI2C() {
 	}
 	//Beep test
 	fmt.Println("beep called")
-	err := rpigpio.BeepOn()
+	err = rpigpio.BeepOn()
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -123,7 +124,7 @@ func initADC() {
 
 	fmt.Println("readAdc called")
 
-	adcReadResults, err := adc.ReadADC(1)
+	_, err := adc.ReadADC(1)
 	if err != nil {
 		fmt.Println(err)
 		return
