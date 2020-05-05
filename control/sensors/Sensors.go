@@ -96,3 +96,8 @@ func (FS *Flow) ReadFlow() float32 {
 	FS.Rate = VoltageSignal * 2
 	return FS.Rate
 }
+
+func readAllSensors() {
+{
+	// read all sensors (pressure and flow and propotional valves)
+}

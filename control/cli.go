@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+// Implementation of a command line interface
 func main() {
 	var Option int
 	fmt.Println("Welcome to DFF Ventilator CLI")

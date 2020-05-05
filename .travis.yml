@@ -1,13 +1,21 @@
 # Continious Integration Configuration File for semantic exploration Package
 # Author: Tarek Taha
-# Date  : 04/05/2020
+# Date  : 04/05/2020     
 sudo: required
-dist: xenial
+dist: bionic
 language: generic
-python:
-  - "2.7"
-compiler:
-  - gcc
+services:
+  - xvfb
+addons:
+  apt:
+    packages:
+      - qt5-default
+      - qtdeclarative5-dev
+      - libqt5charts5-dev
+      - libqt5serialport5-dev
+cache:
+    directories:
+        - "~/go"
 notifications:
   email:
     recipients:
@@ -27,6 +35,14 @@ before_install:
 # Use this to install any prerequisites or dependencies necessary to run your build
 install: 
   # Create workspace
+  - ls
+  - sudo apt install golang
+  - export GO111MODULE=off; go get -v github.com/therecipe/qt/cmd/... && $(go env GOPATH)/bin/qtsetup test && $(go env GOPATH)/bin/qtsetup -test=false
+  - echo export PATH=$PATH:/home/$USER/go/bin/ >> ~/.bashrc
+  - go get github.com/tarm/serial
+  - mkdir -p ~/workspace
+  - cd ~/workspace
+  - go get github.com/mzahmi/ventilator
   - ls
 # Use this to prepare your build for testing e.g. copy database configurations, environment variables, etc.
 before_script: 
