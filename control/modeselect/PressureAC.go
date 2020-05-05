@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/mzahmi/ventilator/alarms"
+	"github.com/mzahmi/ventilator/control/alarms"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
 )

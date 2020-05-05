@@ -7,7 +7,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/mzahmi/ventilator/control/modeselect"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/pkg/rpigpio"
 )
@@ -228,25 +227,4 @@ func LowAlert(msg string) {
 		log.Println(err)
 	}
 	time.Sleep(tm)
-}
-
-/*CheckAlarms ...*/
-func CheckAlarms(UI *modeselect.UserInput) error {
-	errPIP := AirwayPressureAlarms(UI.UpperLimitPIP, UI.LowerLimitPIP)
-	errVT := TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
-	errMV := ExpiratoryMinuteVolumeAlarms(UI.UpperLimitMV, UI.LowerLimitMV)
-	errRR := RespiratoryRateAlarms(UI.UpperLimitRR, UI.LowerLimitRR)
-
-	if errPIP != nil {
-		return errPIP
-	} else if errVT != nil {
-		return errVT
-	} else if errMV != nil {
-		return errMV
-	} else if errRR != nil {
-		return errRR
-	} else {
-		return nil
-	}
-
 }

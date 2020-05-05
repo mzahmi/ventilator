@@ -2,6 +2,8 @@ package modeselect
 
 import (
 	"fmt"
+
+	"github.com/mzahmi/ventilator/control/alarms"
 )
 
 // UserInput is a custome type struct that contains the global
@@ -79,4 +81,25 @@ func ModeSelection(UI *UserInput) {
 		fmt.Println("No Ventilator Mode selected")
 		return
 	}
+}
+
+/*CheckAlarms ...*/
+func CheckAlarms(UI *UserInput) error {
+	errPIP := alarms.AirwayPressureAlarms(UI.UpperLimitPIP, UI.LowerLimitPIP)
+	errVT := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
+	errMV := alarms.ExpiratoryMinuteVolumeAlarms(UI.UpperLimitMV, UI.LowerLimitMV)
+	errRR := alarms.RespiratoryRateAlarms(UI.UpperLimitRR, UI.LowerLimitRR)
+
+	if errPIP != nil {
+		return errPIP
+	} else if errVT != nil {
+		return errVT
+	} else if errMV != nil {
+		return errMV
+	} else if errRR != nil {
+		return errRR
+	} else {
+		return nil
+	}
+
 }
