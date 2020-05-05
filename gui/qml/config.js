@@ -1,6 +1,8 @@
 // color
 var bg_color = "#444444"
-var color_primary = "#4f41ff"
+var color_primary = "#03A9F4"
+var color_light = "#67daff"
+var color_dark = "#007ac1"
 
 // sizes
 var window_width = 800
