@@ -36,11 +36,11 @@ Lower Limit:
 	◆ For an active patient, 50% less than the expected tidal volume */
 func TidalVolumeAlarms(UpperLimit, LowerLimit float32) error {
 	if sensors.FIns.ReadFlow() >= UpperLimit {
-		msg := "Upper limit of tidal volume reached"
+		msg := "High tidal volume"
 		HighAlert(msg)
 		return errors.New(msg)
 	} else if sensors.FExp.ReadFlow() <= LowerLimit {
-		msg := "Lower limit of tidal volume reached"
+		msg := "Low tidal volume"
 		LowAlert(msg)
 		return errors.New(msg)
 	} else {
@@ -60,11 +60,67 @@ Lower Limit:
 */
 func AirwayPressureAlarms(UpperLimit, LowerLimit float32) error {
 	if sensors.PIns.ReadPressure() >= UpperLimit {
-		msg := "Upper limit of Airway Pressure reached"
+		msg := "Airway Pressure high"
 		HighAlert(msg)
 		return errors.New(msg)
 	} else if sensors.PIns.ReadPressure() <= LowerLimit {
-		msg := "Lower limit of Airway Pressure reached"
+		msg := "Airway Pressure low"
+		LowAlert(msg)
+		return errors.New(msg)
+	} else {
+		return nil
+	}
+}
+
+/* ExpiratoryMinuteVolumeAlarms
+
+Recommended setting for adults:
+Upper limit:
+	◆ For a passive patient, 20% greater than the expected minute volume
+	◆ For an active patient, 50% greater than the expected minute volume
+Lower Limit:
+	◆ For a passive patient, 20% less than the expected minute volume
+	◆ For an active patient, 50% less than the expected minute volume
+*/
+func ExpiratoryMinuteVolumeAlarms(UpperLimit, LowerLimit float32) error {
+	if sensors.FExp.ReadFlow() >= UpperLimit {
+		msg := "High minute volume"
+		HighAlert(msg)
+		return errors.New(msg)
+	} else if sensors.FExp.ReadFlow() <= LowerLimit {
+		msg := "Low minute volume"
+		LowAlert(msg)
+		return errors.New(msg)
+	} else {
+		return nil
+	}
+}
+
+/* RespiratoryRateAlarms
+
+High and low respiratory rate alarms are based on the monitored total rate of all
+valid mechanical breaths. Respiratory rate directly affects minute volume.
+
+A mechanical breath can be triggered in two ways: time triggering and patient
+triggering (pressure of flow). Time triggering is reliable and rigid, while
+patient triggering is not 100% reliable. Missed triggering and auto-triggering
+are possible.
+
+Recommended setting for adults:
+Upper limit:
+	◆ For a passive patient, 10 breaths per minute greater than the expected total rate
+	◆ For an active patient, 15 breaths per minute greater than the expected total rate
+Lower Limit:
+	◆ For a passive patient, 10 breaths per minute less than the expected total rate
+	◆ For an active patient, 15 breaths per minute less than the expected total rate
+*/
+func RespiratoryRateAlarms(UpperLimit, LowerLimit float32) error {
+	if sensors.FExp.ReadFlow() >= UpperLimit {
+		msg := "High Rate"
+		HighAlert(msg)
+		return errors.New(msg)
+	} else if sensors.FExp.ReadFlow() <= LowerLimit {
+		msg := "Low Rate"
 		LowAlert(msg)
 		return errors.New(msg)
 	} else {
@@ -170,4 +226,9 @@ func LowAlert(msg string) {
 		log.Println(err)
 	}
 	time.Sleep(tm)
+}
+
+/*CheckAlarms ...*/
+func CheckAlarms(UI *UserInput) {
+
 }

@@ -30,6 +30,11 @@ type UserInput struct {
 	RiseTime            float32 // needs to be defined
 	UpperLimitPIP       float32 // upper limit of airway peak prssure
 	LowerLimitPIP       float32 // lower limit of airway peak pressure
+	MinuteVolume        float32 // minute volume in Lpm is the amount of gas expired per minute.
+	UpperLimitMV        float32 // upper limit of minute volume
+	LowerLimitMV        float32 // lower limit of minute volume
+	UpperLimitRR        float32 // upper limit of monitored BPM
+	LowerLimitRR        float32 // lower limit of monitored BPM
 }
 
 // Exit is a global var used as a switch for ventilation on or off
@@ -49,7 +54,8 @@ func UpdateValues(UI *UserInput) {
 		UI.Ti = (60 * UI.TidalVolume) / (UI.PeakFlow * 1000)
 		UI.Te = BCT - UI.Ti
 	}
-	UI.PEEP = 10 * UI.PEEP // conversion from cmH2O to mmH2O
+	UI.PEEP = 10 * UI.PEEP                     // conversion from cmH2O to mmH2O
+	UI.MinuteVolume = UI.TidalVolume * UI.Rate // calculation of minute volume MV = VT * BPM
 }
 
 // ModeSelection reads input from the GUI to select the required Mode from the user input struct
