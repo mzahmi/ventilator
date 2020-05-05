@@ -37,7 +37,9 @@ install:
   # Create workspace
   - ls
   - sudo apt install golang
-  - export GO111MODULE=off; go get -v github.com/therecipe/qt/cmd/... && $(go env GOPATH)/bin/qtsetup test && $(go env GOPATH)/bin/qtsetup -test=false
+  - export GO111MODULE=off; go get -v github.com/therecipe/qt/cmd/... 
+  #- $(go env GOPATH)/bin/qtsetup test
+  - $(go env GOPATH)/bin/qtsetup -test=false
   - echo export PATH=$PATH:/home/$USER/go/bin/ >> ~/.bashrc
   - go get github.com/tarm/serial
   - mkdir -p ~/workspace
