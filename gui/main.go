@@ -65,18 +65,18 @@ func main() {
 	}()
 
 	// read sensors check alarms and send data to gui
-	go readingAndDisplay()
-	{
-		//sensors read all
-		//check alarms
-		//send/share to GUI
-	}
+	// go readingAndDisplay()
+	// {
+	// 	//sensors read all
+	// 	//check alarms
+	// 	//send/share to GUI
+	// }
 
-	// run the required ventilation mode
-	go ventilationControl()
+	// // run the required ventilation mode
+	// go ventilationControl()
 
-	// run command line interface
-	go cli()
+	// // run command line interface
+	// go cli()
 
 	app.Exec()
 }

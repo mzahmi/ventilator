@@ -97,7 +97,12 @@ func (FS *Flow) ReadFlow() float32 {
 	return FS.Rate
 }
 
-func readAllSensors() {
-{
-	// read all sensors (pressure and flow and propotional valves)
+// ReadAllSensors constantly reading input from the sensors and returns their readings
+// in this order: PIns, PExp, FIns, FExp readings
+func ReadAllSensors() (InputPress, OutputPress, InputFlow, OutputFlow float32) {
+	InputPress = PIns.ReadPressure()
+	OutputPress = PExp.ReadPressure()
+	InputFlow = FIns.ReadFlow()
+	OutputFlow = FExp.ReadFlow()
+	return InputPress, OutputPress, InputFlow, OutputFlow
 }
