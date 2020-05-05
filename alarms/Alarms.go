@@ -7,6 +7,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/mzahmi/ventilator/control/modeselect"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/pkg/rpigpio"
 )
@@ -33,7 +34,8 @@ Upper limit:
 	◆ For an active patient, 50% greater than the expected tidal volume
 Lower Limit:
 	◆ For a passive adult patient, 100 to 150 ml less than the expected tidal volume
-	◆ For an active patient, 50% less than the expected tidal volume */
+	◆ For an active patient, 50% less than the expected tidal volume
+*/
 func TidalVolumeAlarms(UpperLimit, LowerLimit float32) error {
 	if sensors.FIns.ReadFlow() >= UpperLimit {
 		msg := "High tidal volume"
@@ -229,6 +231,22 @@ func LowAlert(msg string) {
 }
 
 /*CheckAlarms ...*/
-func CheckAlarms(UI *UserInput) {
+func CheckAlarms(UI *modeselect.UserInput) error {
+	errPIP := AirwayPressureAlarms(UI.UpperLimitPIP, UI.LowerLimitPIP)
+	errVT := TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
+	errMV := ExpiratoryMinuteVolumeAlarms(UI.UpperLimitMV, UI.LowerLimitMV)
+	errRR := RespiratoryRateAlarms(UI.UpperLimitRR, UI.LowerLimitRR)
+
+	if errPIP != nil {
+		return errPIP
+	} else if errVT != nil {
+		return errVT
+	} else if errMV != nil {
+		return errMV
+	} else if errRR != nil {
+		return errRR
+	} else {
+		return nil
+	}
 
 }
