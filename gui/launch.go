@@ -1,3 +1,4 @@
+//example of the proposed launch file using channels
 package launch
 
 import (
@@ -36,6 +37,7 @@ func Launch() {
 	go func() {
 		//ventilation control
 		modeselect.ModeSelection(&modeselect.UserInput{})
+		// define a better exit trigger
 	}()
 
 	// extract from channels to populate the chart and see the alarms
