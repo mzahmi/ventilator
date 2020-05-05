@@ -36,7 +36,7 @@ before_install:
 install: 
   # Create workspace
   - ls
-  - sudo apt install golang
+  - sudo apt install golang libpulse-mainloop-glib0
   - export GO111MODULE=off; go get -v github.com/therecipe/qt/cmd/... 
   #- $(go env GOPATH)/bin/qtsetup test
   - $(go env GOPATH)/bin/qtsetup -test=false
