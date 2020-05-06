@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 	"os"
 	"time"
 
@@ -64,22 +63,25 @@ func main() {
 
 	go func() {
 		for range time.NewTicker(time.Millisecond * 50).C {
-			randnumber := rand.Intn(30)
-			qmlBridge.SendToQml(randnumber)
+			pressurevalue := int(sensors.PIns.ReadPressure())
+			qmlBridge.SendToQml(pressurevalue)
 		}
 	}()
 
 	//read sensors check alarms and send data to gui
 	go func() {
-		//Read sensors
-		pip := int(sensors.PIns.ReadPressure())
-		vt := int(sensors.FIns.ReadFlow())
-		rate := UI.Rate
-		peep := int(sensors.PExp.ReadPressure())
-		fio2 := UI.FiO2
-		mode := UI.Mode
-		//send values to GUI
-		qmlBridge.SendMonitor(pip, vt, rate, peep, fio2, mode)
+		for {
+			//Read sensors
+			pip := int(sensors.PIns.ReadPressure())
+			vt := int(sensors.FIns.ReadFlow())
+			rate := UI.Rate
+			peep := int(sensors.PExp.ReadPressure())
+			fio2 := UI.FiO2
+			mode := UI.Mode
+			//send values to GUI
+			qmlBridge.SendMonitor(pip, vt, rate, peep, fio2, mode)
+		}
+
 	}()
 
 	//Receive mode settings and run mode
