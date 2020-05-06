@@ -2,7 +2,7 @@
 package sensors
 
 import (
-	"vent/control/adc"
+	"github.com/mzahmi/ventilator/control/adc"
 )
 
 //Inhalation pressure sensor constants

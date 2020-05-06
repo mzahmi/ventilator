@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	"vent/control/ioexp"
-	"vent/control/rpigpio"
+	"github.com/mzahmi/ventilator/control/ioexp"
+	"github.com/mzahmi/ventilator/control/rpigpio"
 
-	// "vent/control/sensors"
-	"vent/control/valves"
+	// "github.com/mzahmi/ventilator/control/sensors"
+	"github.com/mzahmi/ventilator/control/valves"
 )
 
 // UserInput is a custome type struct that contains the global
@@ -35,7 +35,7 @@ type UserInput struct {
 	// PressureControl     float32
 }
 
-// Exit is a global var used as a switch for ventilation on or off
+// Exit is a global var used as a switch for github.com/mzahmi/ventilatorilation on or off
 var Exit bool
 
 // UpdateValues populates a a struct which is recieved by the GUI
@@ -70,12 +70,12 @@ var Exit bool
 // 	case "P-SIMV":
 // 		fmt.Println("Pressure SIMV Mode selected")
 // 	default:
-// 		fmt.Println("No Ventilator Mode selected")
+// 		fmt.Println("No github.com/mzahmi/ventilatorilator Mode selected")
 // 		return
 // 	}
 // }
 
-// // VolumeAC is one of the main 5 modes of the ventilator
+// // VolumeAC is one of the main 5 modes of the github.com/mzahmi/ventilatorilator
 // func VolumeAC(UI *UserInput) {
 // 	switch UI.BreathType {
 // 	case "Control":
@@ -359,7 +359,7 @@ func PressureControl(UI *UserInput) {
 // 	}
 // }
 
-// // PSV Pressure support ventilation mode
+// // PSV Pressure support github.com/mzahmi/ventilatorilation mode
 // func PSV(UI *UserInput) {
 // 	UpdateValues(UI)
 // 	//Initialize  Sensors at inhalation side

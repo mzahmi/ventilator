@@ -1,4 +1,4 @@
-# Ventinator software [![Build Status](https://travis-ci.org/mzahmi/ventilator.svg?branch=master)](https://travis-ci.org/mzahmi/ventilator)
+# github.com/mzahmi/ventilatorinator software [![Build Status](https://travis-ci.org/mzahmi/github.com/mzahmi/ventilatorilator.svg?branch=master)](https://travis-ci.org/mzahmi/github.com/mzahmi/ventilatorilator)
 
 ## Install
 
@@ -23,23 +23,23 @@ echo export PATH=$PATH:/home/$USER/go/bin/ >> ~/.bashrc
 go get github.com/tarm/serial
 ```
 
-## Install Ventilator Software 
+## Install github.com/mzahmi/ventilatorilator Software 
 
 ```
-git clone https://vent/
+git clone https://github.com/mzahmi/ventilator/
 ```
 
-All code and details related to the open ventilator project.
+All code and details related to the open github.com/mzahmi/ventilatorilator project.
 
 ```
-$ cd ventilator/gui
+$ cd github.com/mzahmi/ventilatorilator/gui
 qtdeploy test desktop .
 
 ```
 
 # Build Qt (with Extra Modules) on a Raspberry-Pi 4
 
-Tutorial from <https://www.tal.org/tutorials/building-qt-512-raspberry-pi> but I found some bugs so here is an updated version. This will build qt with the necissary dependancies to run the vent software on a raspberry pi 4 running raspbien.
+Tutorial from <https://www.tal.org/tutorials/building-qt-512-raspberry-pi> but I found some bugs so here is an updated version. This will build qt with the necissary dependancies to run the github.com/mzahmi/ventilator software on a raspberry pi 4 running raspbien.
 
 ### Download the Qt 5.12.7 source archive
 

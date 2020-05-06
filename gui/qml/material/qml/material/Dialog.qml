@@ -30,7 +30,7 @@ Popup {
         }
 
         MouseArea {
-            id: eventEater
+            id: egithub.com/mzahmi/ventilatorEater
             anchors.fill: parent
             enabled: (popup.state == "visible")
         }

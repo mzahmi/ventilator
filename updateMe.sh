@@ -1,4 +1,4 @@
-sudo git remote add https://vent.git
+sudo git remote add https://github.com/mzahmi/ventilator.git
 
 sudo git fetch upstream
 

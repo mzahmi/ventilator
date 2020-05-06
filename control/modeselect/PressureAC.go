@@ -5,18 +5,18 @@ import (
 	"log"
 	"time"
 
-	"vent/control/alarms"
-	"vent/control/sensors"
-	"vent/control/valves"
+	"github.com/mzahmi/ventilator/control/alarms"
+	"github.com/mzahmi/ventilator/control/sensors"
+	"github.com/mzahmi/ventilator/control/valves"
 )
 
 /* PressureAC ... has a triggering window, which opens at late expiration.
-If the ventilator detects a valid pneumatic signal during the triggering window,
+If the github.com/mzahmi/ventilatorilator detects a valid pneumatic signal during the triggering window,
 it delivers a pressure assist breath. If not, it delivers a pressure control
 (time-triggered) breath according to the set rate. The set Pcontrol applies to
 both breath types (Pressure Control Breath and Preassure Assist Breath).
 
-In the pressure A/C mode, all breaths are pressure controlled if the ventilated
+In the pressure A/C mode, all breaths are pressure controlled if the github.com/mzahmi/ventilatorilated
 patient is passive, and the monitored rate and the set rate are roughly equal.
 If the patient is active, some or all breaths are pressure assist breaths,
 and the monitored rate is typically higher than the set rate.
@@ -27,9 +27,9 @@ The pressure A/C mode is suitable for passive or partially active patients.
 It can also be used in active patients with weak respiratory drive,
 because this mode allows the patient to influence rate, inspiratory flow,
 and tidal volume. Compared to the volume assist/control mode,
-pressure assist/control has a considerably lower incidence of patient-ventilator
+pressure assist/control has a considerably lower incidence of patient-github.com/mzahmi/ventilatorilator
 asynchrony. Another advantage of pressure assist/control is that this mode enables
-the ventilator to compensate for moderate levels of gas leakage.
+the github.com/mzahmi/ventilatorilator to compensate for moderate levels of gas leakage.
 
 The perceived disadvantage of this mode is that an operator cannot directly
 control tidal volume. The resultant tidal volume may be unstable when the patient’s

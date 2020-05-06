@@ -44,7 +44,7 @@ install:
   - go get github.com/tarm/serial
   - mkdir -p ~/workspace
   - cd ~/workspace
-  - go get vent
+  - go get github.com/mzahmi/ventilator
   - ls
 # Use this to prepare your build for testing e.g. copy database configurations, environment variables, etc.
 before_script: 

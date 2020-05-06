@@ -3,7 +3,7 @@ package modeselect
 import (
 	"fmt"
 
-	"vent/control/alarms"
+	"github.com/mzahmi/ventilator/control/alarms"
 )
 
 // UserInput is a custome type struct that contains the global
@@ -39,7 +39,7 @@ type UserInput struct {
 	LowerLimitRR        float32 // lower limit of monitored BPM
 }
 
-// Exit is a global var used as a switch for ventilation on or off
+// Exit is a global var used as a switch for github.com/mzahmi/ventilatorilation on or off
 var Exit bool
 
 // UpdateValues populates a a struct which is recieved by the GUI
@@ -76,7 +76,7 @@ func ModeSelection(UI *UserInput) {
 	case "P-SIMV":
 		fmt.Println("Pressure SIMV Mode selected")
 	default:
-		fmt.Println("No Ventilator Mode selected")
+		fmt.Println("No github.com/mzahmi/ventilatorilator Mode selected")
 		return
 	}
 }

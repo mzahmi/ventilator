@@ -3,8 +3,8 @@ package demo
 import (
 	"fmt"
 
-	"vent/control/modeselect"
-	"vent/control/sensors"
+	"github.com/mzahmi/ventilator/control/modeselect"
+	"github.com/mzahmi/ventilator/control/sensors"
 )
 
 type SensorsReading struct {
@@ -34,7 +34,7 @@ func Launch() {
 	}()
 
 	go func() {
-		//ventilation control
+		//github.com/mzahmi/ventilatorilation control
 		modeselect.ModeSelection(&modeselect.UserInput{})
 		// define a better exit trigger
 	}()

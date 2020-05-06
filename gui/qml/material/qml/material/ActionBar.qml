@@ -11,7 +11,7 @@ Item {
     property bool raised: false
 
     MouseArea {
-        id: eventEater
+        id: egithub.com/mzahmi/ventilatorEater
         anchors.fill: parent
     }
 

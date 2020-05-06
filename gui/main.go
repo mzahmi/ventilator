@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	"vent/control/modeselect"
-	"vent/control/sensors"
+	"github.com/mzahmi/ventilator/control/modeselect"
+	"github.com/mzahmi/ventilator/control/sensors"
 
 	"github.com/therecipe/qt/charts"
 	"github.com/therecipe/qt/core"
@@ -74,9 +74,9 @@ func main() {
 			//Read sensors
 			pip := int(sensors.PIns.ReadPressure())
 			vt := int(sensors.FIns.ReadFlow())
-			rate := UI.Rate
+			rate := int(UI.Rate)
 			peep := int(sensors.PExp.ReadPressure())
-			fio2 := UI.FiO2
+			fio2 := int(UI.FiO2)
 			mode := UI.Mode
 			//send values to GUI
 			qmlBridge.SendMonitor(pip, vt, rate, peep, fio2, mode)

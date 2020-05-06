@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"vent/control/sensors"
-	"vent/control/valves"
+	"github.com/mzahmi/ventilator/control/sensors"
+	"github.com/mzahmi/ventilator/control/valves"
 )
 
-// VolumeAC one of the main 5 modes of the ventilator
+// VolumeAC one of the main 5 modes of the github.com/mzahmi/ventilatorilator
 func VolumeAC(UI *UserInput) {
 	switch UI.BreathType {
 	case "Control":

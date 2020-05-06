@@ -21,7 +21,7 @@ Item {
         anchors.fill: parent
         enabled: (popup.state == "visible")
         onClicked: {
-            // Eats the event, and up to desendants to decide whether to close the dialog
+            // Eats the egithub.com/mzahmi/ventilator, and up to desendants to decide whether to close the dialog
             mouse.accepted = true
             backgroundClicked()
         }

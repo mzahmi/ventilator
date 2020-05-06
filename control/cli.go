@@ -7,8 +7,8 @@ import (
 // Implementation of a command line interface
 func main() {
 	var Option int
-	fmt.Println("Welcome to DFF Ventilator CLI")
-	fmt.Println(`Please Select Vent Mode from the following:
+	fmt.Println("Welcome to DFF github.com/mzahmi/ventilatorilator CLI")
+	fmt.Println(`Please Select github.com/mzahmi/ventilator Mode from the following:
 	1 = Volume AC
 	2 = Pressure AC
 	3 = PSV

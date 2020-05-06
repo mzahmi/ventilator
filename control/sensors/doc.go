@@ -1,7 +1,7 @@
 /*
 Package sensors
 
-This package declares the sensors onboard the ventilator system as type struct (Pressure and Flow) which indicates
+This package declares the sensors onboard the github.com/mzahmi/ventilatorilator system as type struct (Pressure and Flow) which indicates
 the two types of sensors that are in operation.
 
 The system contains four sensors; two pressure sensors and two flow sensors. They are distributed over the evenly on the

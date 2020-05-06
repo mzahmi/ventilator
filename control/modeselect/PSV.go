@@ -3,11 +3,11 @@ package modeselect
 import (
 	"time"
 
-	"vent/control/sensors"
-	"vent/control/valves"
+	"github.com/mzahmi/ventilator/control/sensors"
+	"github.com/mzahmi/ventilator/control/valves"
 )
 
-// PSV one of the main 5 modes of the ventilator. The Triggering type is chosen by the operator.
+// PSV one of the main 5 modes of the github.com/mzahmi/ventilatorilator. The Triggering type is chosen by the operator.
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Flow
 // 	Control: 	Pressure
@@ -61,7 +61,7 @@ func PSV(UI *UserInput) {
 		//Begin loop
 		for !Exit {
 			//check if trigger is true
-			if sensors.FIns.ReadFlow() >= FTrigger { //need to mkae sure of unit convention Lpm or mL
+			if sensors.FIns.ReadFlow() >= FTrigger { //need to mkae sure of unit congithub.com/mzahmi/ventilatorion Lpm or mL
 				PressurePID.setpoint = float64(UI.InspiratoryPressure) // Sets PID setpoint to Inspiratory pressure
 				//Open main valve MIns controlled by flow sensor FIns
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.TiMax*1000) * time.Millisecond); {

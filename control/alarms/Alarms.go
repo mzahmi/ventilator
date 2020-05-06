@@ -7,8 +7,8 @@ import (
 	"log"
 	"time"
 
-	"vent/control/sensors"
-	"vent/pkg/rpigpio"
+	"github.com/mzahmi/ventilator/control/sensors"
+	"github.com/mzahmi/ventilator/pkg/rpigpio"
 )
 
 var AlarmReset bool
