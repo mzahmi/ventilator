@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -9,7 +10,8 @@ import (
 	"time"
 
 	"github.com/fatih/structs"
-	"github.com/gomodule/redigo/redis"
+	"github.com/go-redis/redis"
+	"github.com/mzahmi/ventilator/control/sensors"
 )
 
 type UserInput struct {
@@ -98,21 +100,69 @@ func parameterPublisher(c chan UserInput) {
 
 func cli(c chan UserInput) {
 
-	conn, err := redis.Dial("tcp", "dupi1.local:6379")
+	client := redis.NewClient(&redis.Options{
+		Addr:     "dupi1.local:6379",
+		Password: "",
+		DB:       0,
+	})
+	pong, err := client.Ping().Result()
+	fmt.Println(pong, err)
+
+	json, err := json.Marshal(UserInput{
+		Mode:                "NA",
+		BreathType:          "NA",
+		PatientTriggerType:  "NA",
+		TidalVolume:         0,
+		Rate:                0,
+		Ti:                  0,
+		TiMax:               0,
+		Te:                  0,
+		IR:                  0,
+		ER:                  0,
+		PeakFlow:            0,
+		PEEP:                0,
+		FiO2:                0,
+		PressureTrigSense:   0,
+		FlowTrigSense:       0,
+		FlowCyclePercent:    0,
+		PressureSupport:     0,
+		InspiratoryPressure: 0,
+		UpperLimitVT:        0,
+		LowerLimitVt:        0,
+		RiseTime:            0,
+		UpperLimitPIP:       0,
+		LowerLimitPIP:       0,
+		MinuteVolume:        0,
+		UpperLimitMV:        0,
+		LowerLimitMV:        0,
+		UpperLimitRR:        0,
+		LowerLimitRR:        0,
+	})
+
+	err = client.Set("PARAMS", json, 0).Err()
 	if err != nil {
-		log.Fatal(err)
-	}
-	_, err = conn.Do("SET", "io:pressure", 100)
-	if err != nil {
-		fmt.Print("Error")
+		fmt.Println(err)
 	}
 
-	reply, err := redis.String(conn.Do("GET", "io:pressure"))
-
+	val, err := client.Get("PARAMS").Result()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
-	fmt.Println(reply)
+
+	fmt.Println(val)
+
+	// err = client.Set("IO:pressure", 100, 0).Err()
+	// // if there has been an error setting the value
+	// // handle the error
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+
+	// val, err := client.Get("IO:pressure").Result()
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println("IO:pressure = ", val)
 
 	parameters := structs.Names(&UserInput{})
 
@@ -163,13 +213,16 @@ func cli(c chan UserInput) {
 
 		if words[0] == "lsp" {
 			fmt.Println("Displaying the list of parameters")
-			fmt.Println(strings.Join(parameters, "\n"))
+			fmt.Println(strings.Join(parameters, "\t\n"))
 			continue
 		}
 
 		if words[0] == "lss" {
 			fmt.Println("Displaying the list of sensors")
-			fmt.Println(strings.Join(parameters, "\n"))
+			fmt.Println("	PIns")
+			fmt.Println("	PExp")
+			fmt.Println("	FInsp")
+			fmt.Println("	FExp")
 			continue
 		}
 
@@ -180,12 +233,23 @@ func cli(c chan UserInput) {
 		}
 
 		if words[0] == "r" {
-			/*
-				switch words[1]; {
-				case "":
-
-				}
-			*/
+			//TODO: this should be read throught the channel to minimize potential conflicts
+			switch words[1] {
+			case "PIns":
+				val := sensors.PIns.ReadPressure()
+				fmt.Println("PIns:", val)
+			case "PExp":
+				val := sensors.PExp.ReadPressure()
+				fmt.Println("PExp:", val)
+			case "FIns":
+				val := sensors.FIns.ReadFlow()
+				fmt.Println("FIns:", val)
+			case "FExp":
+				val := sensors.FExp.ReadFlow()
+				fmt.Println("FExp:", val)
+			default:
+				fmt.Println("Unknow sensors")
+			}
 			continue
 		}
 
@@ -204,7 +268,7 @@ func cli(c chan UserInput) {
 		}
 		fmt.Println("Unknown input")
 	}
-	defer conn.Close()
+	//defer conn.Close()
 }
 
 func main() {
