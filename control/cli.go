@@ -162,6 +162,19 @@ func cli(c chan UserInput) {
 		}
 
 		if words[0] == "lsp" {
+			fmt.Println("Displaying the list of parameters")
+			fmt.Println(strings.Join(parameters, "\n"))
+			continue
+		}
+
+		if words[0] == "lss" {
+			fmt.Println("Displaying the list of sensors")
+			fmt.Println(strings.Join(parameters, "\n"))
+			continue
+		}
+
+		if words[0] == "lsa" {
+			fmt.Println("Displaying the list of actuators")
 			fmt.Println(strings.Join(parameters, "\n"))
 			continue
 		}
