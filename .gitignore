@@ -21,6 +21,4 @@ src/gui/Mfile*
 src/gui/deploy
 src/gui/windows
 src/gui/docs/_*
-*.mod
-*.sum
 *.DS_Store
