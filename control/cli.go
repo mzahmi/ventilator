@@ -2,9 +2,7 @@ package main
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -14,68 +12,6 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/mzahmi/ventilator/control/sensors"
 )
-
-type UserInput struct {
-	Mode                string
-	BreathType          string
-	PatientTriggerType  string
-	TidalVolume         float32 // ml
-	Rate                float32 // BPM
-	Ti                  float32 // inhalation time
-	TiMax               float32 // for PSV mode backup time control
-	Te                  float32 // exhalation time
-	IR                  float32 // inhalation ratio part IR:IE
-	ER                  float32 // exhalation ratio part IR:IE
-	PeakFlow            float32
-	PEEP                float32 // 5-20 mmH2O
-	FiO2                float32 // 21% - 100%
-	PressureTrigSense   float32 // -0.5 to 02 mmH2O
-	FlowTrigSense       float32 // 0.5 to 5 Lpm
-	FlowCyclePercent    float32 // for flow cycling ranges from 0 to 100%
-	PressureSupport     float32 // needs to be defined
-	InspiratoryPressure float32 // Also known as P_control
-	UpperLimitVT        float32 // upper limit of tidal volume
-	LowerLimitVt        float32 // lower limit of tidal volume
-	RiseTime            float32 // needs to be defined
-	UpperLimitPIP       float32 // upper limit of airway peak prssure
-	LowerLimitPIP       float32 // lower limit of airway peak pressure
-	MinuteVolume        float32 // minute volume in Lpm is the amount of gas expired per minute.
-	UpperLimitMV        float32 // upper limit of minute volume
-	LowerLimitMV        float32 // lower limit of minute volume
-	UpperLimitRR        float32 // upper limit of monitored BPM
-	LowerLimitRR        float32 // lower limit of monitored BPM
-}
-
-var UI = UserInput{
-	Mode:                "NA",
-	BreathType:          "NA",
-	PatientTriggerType:  "NA",
-	TidalVolume:         0,
-	Rate:                0,
-	Ti:                  0,
-	TiMax:               0,
-	Te:                  0,
-	IR:                  0,
-	ER:                  0,
-	PeakFlow:            0,
-	PEEP:                0,
-	FiO2:                0,
-	PressureTrigSense:   0,
-	FlowTrigSense:       0,
-	FlowCyclePercent:    0,
-	PressureSupport:     0,
-	InspiratoryPressure: 0,
-	UpperLimitVT:        0,
-	LowerLimitVt:        0,
-	RiseTime:            0,
-	UpperLimitPIP:       0,
-	LowerLimitPIP:       0,
-	MinuteVolume:        0,
-	UpperLimitMV:        0,
-	LowerLimitMV:        0,
-	UpperLimitRR:        0,
-	LowerLimitRR:        0,
-}
 
 func info() {
 	fmt.Println("CLI v1.0 Info:\n")
@@ -101,50 +37,7 @@ func cli(wg *sync.WaitGroup, c chan UserInput) {
 	pong, err := client.Ping().Result()
 	fmt.Println(pong, err)
 
-	json, err := json.Marshal(UserInput{
-		Mode:                "NA",
-		BreathType:          "NA",
-		PatientTriggerType:  "NA",
-		TidalVolume:         0,
-		Rate:                0,
-		Ti:                  0,
-		TiMax:               0,
-		Te:                  0,
-		IR:                  0,
-		ER:                  0,
-		PeakFlow:            0,
-		PEEP:                0,
-		FiO2:                0,
-		PressureTrigSense:   0,
-		FlowTrigSense:       0,
-		FlowCyclePercent:    0,
-		PressureSupport:     0,
-		InspiratoryPressure: 0,
-		UpperLimitVT:        0,
-		LowerLimitVt:        0,
-		RiseTime:            0,
-		UpperLimitPIP:       0,
-		LowerLimitPIP:       0,
-		MinuteVolume:        0,
-		UpperLimitMV:        0,
-		LowerLimitMV:        0,
-		UpperLimitRR:        0,
-		LowerLimitRR:        0,
-	})
-
-	_ = ioutil.WriteFile("test.json", json, 0644)
-
-	err = client.Set("PARAMS", json, 0).Err()
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	val, err := client.Get("PARAMS").Result()
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println(val)
+	params.initParams()
 
 	// err = client.Set("IO:pressure", 100, 0).Err()
 	// // if there has been an error setting the value
@@ -265,6 +158,7 @@ func cli(wg *sync.WaitGroup, c chan UserInput) {
 	}
 }
 
+/*
 func main() {
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -272,3 +166,4 @@ func main() {
 	go cli(&wg, ch)
 	wg.Wait()
 }
+*/

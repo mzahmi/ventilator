@@ -2,71 +2,32 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"sync"
 	"time"
 
 	"github.com/mzahmi/ventilator/control/modeselect"
 	"github.com/mzahmi/ventilator/control/sensors"
-
 	"github.com/therecipe/qt/charts"
 	"github.com/therecipe/qt/core"
-	"github.com/therecipe/qt/qml"
-	"github.com/therecipe/qt/widgets"
 )
 
-var UI = modeselect.UserInput{
-	Mode:                "NA",
-	BreathType:          "NA",
-	PatientTriggerType:  "NA",
-	TidalVolume:         0,
-	Rate:                0,
-	Ti:                  0,
-	TiMax:               0,
-	Te:                  0,
-	IR:                  0,
-	ER:                  0,
-	PeakFlow:            0,
-	PEEP:                0,
-	FiO2:                0,
-	PressureTrigSense:   0,
-	FlowTrigSense:       0,
-	FlowCyclePercent:    0,
-	PressureSupport:     0,
-	InspiratoryPressure: 0,
-	UpperLimitVT:        0,
-	LowerLimitVt:        0,
-	RiseTime:            0,
-	UpperLimitPIP:       0,
-	LowerLimitPIP:       0,
-	MinuteVolume:        0,
-	UpperLimitMV:        0,
-	LowerLimitMV:        0,
-	UpperLimitRR:        0,
-	LowerLimitRR:        0,
-}
-
 func main() {
-	core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true)
+	/*
+		core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true)
+		InitializeCharts()
+		app := widgets.NewQApplication(len(os.Args), os.Args)
+		engine := qml.NewQQmlApplicationEngine(nil)
+		var qmlBridge = NewQmlBridge(nil)
 
-	InitializeCharts()
-	app := widgets.NewQApplication(len(os.Args), os.Args)
-	engine := qml.NewQQmlApplicationEngine(nil)
-	var qmlBridge = NewQmlBridge(nil)
+		engine.RootContext().SetContextProperty("QmlBridge", qmlBridge)
+		engine.Load(core.NewQUrl3("qrc:/qml/MainQt.qml", 0))
 
-	engine.RootContext().SetContextProperty("QmlBridge", qmlBridge)
-	engine.Load(core.NewQUrl3("qrc:/qml/MainQt.qml", 0))
-
-	qmlBridge.ConnectSendToGo(func(data string) string {
-		fmt.Println("go:", data)
-		return "hello from go"
-	})
-
-	go func() {
-		for range time.NewTicker(time.Millisecond * 50).C {
-			pressurevalue := int(sensors.PIns.ReadPressure())
-			qmlBridge.SendToQml(pressurevalue)
-		}
-	}()
+		qmlBridge.ConnectSendToGo(func(data string) string {
+			fmt.Println("go:", data)
+			return "hello from go"
+		})
+	*/
+	var wg sync.WaitGroup
 
 	//read sensors check alarms and send data to gui
 	go func() {
@@ -79,7 +40,7 @@ func main() {
 			fio2 := int(UI.FiO2)
 			mode := UI.Mode
 			//send values to GUI
-			qmlBridge.SendMonitor(pip, vt, rate, peep, fio2, mode)
+			//qmlBridge.SendMonitor(pip, vt, rate, peep, fio2, mode)			
 		}
 
 	}()
@@ -91,6 +52,11 @@ func main() {
 		})
 		modeselect.ModeSelection(&UI)
 	}()
+
+	wg.Add(1)
+	ch := make(chan UserInput)
+	go cli(&wg, ch)
+	wg.Wait()
 
 	app.Exec()
 }
