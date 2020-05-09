@@ -101,7 +101,7 @@ func parameterPublisher(c chan UserInput) {
 func cli(c chan UserInput) {
 
 	client := redis.NewClient(&redis.Options{
-		Addr:     "dupi1.local:6379",
+		Addr:     "localhost:6379",
 		Password: "",
 		DB:       0,
 	})
