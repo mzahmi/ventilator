@@ -4,10 +4,11 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
-	"time"
+	"sync"
 
 	"github.com/fatih/structs"
 	"github.com/go-redis/redis"
@@ -90,16 +91,8 @@ func info() {
 	fmt.Println("	list parameters: lsp")
 }
 
-func parameterPublisher(c chan UserInput) {
-	for i := 0; ; i++ {
-		UI.UpperLimitMV = float32(i)
-		c <- UI
-		time.Sleep(1 * time.Second)
-	}
-}
-
-func cli(c chan UserInput) {
-
+func cli(wg *sync.WaitGroup, c chan UserInput) {
+	defer wg.Done()
 	client := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "",
@@ -138,6 +131,8 @@ func cli(c chan UserInput) {
 		UpperLimitRR:        0,
 		LowerLimitRR:        0,
 	})
+
+	_ = ioutil.WriteFile("test.json", json, 0644)
 
 	err = client.Set("PARAMS", json, 0).Err()
 	if err != nil {
@@ -268,14 +263,12 @@ func cli(c chan UserInput) {
 		}
 		fmt.Println("Unknown input")
 	}
-	//defer conn.Close()
 }
 
 func main() {
+	var wg sync.WaitGroup
+	wg.Add(1)
 	ch := make(chan UserInput)
-	go parameterPublisher(ch)
-	go cli(ch)
-	for {
-
-	}
+	go cli(&wg, ch)
+	wg.Wait()
 }
