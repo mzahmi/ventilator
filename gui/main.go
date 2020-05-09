@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"sync"
 	"time"
 
@@ -9,25 +10,34 @@ import (
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/therecipe/qt/charts"
 	"github.com/therecipe/qt/core"
+	"github.com/therecipe/qt/qml"
+	"github.com/therecipe/qt/widgets"
 )
 
 func main() {
-	/*
-		core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true)
-		InitializeCharts()
-		app := widgets.NewQApplication(len(os.Args), os.Args)
-		engine := qml.NewQQmlApplicationEngine(nil)
-		var qmlBridge = NewQmlBridge(nil)
+	core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true)
 
-		engine.RootContext().SetContextProperty("QmlBridge", qmlBridge)
-		engine.Load(core.NewQUrl3("qrc:/qml/MainQt.qml", 0))
+	InitializeCharts()
+	app := widgets.NewQApplication(len(os.Args), os.Args)
+	engine := qml.NewQQmlApplicationEngine(nil)
+	var qmlBridge = NewQmlBridge(nil)
 
-		qmlBridge.ConnectSendToGo(func(data string) string {
-			fmt.Println("go:", data)
-			return "hello from go"
-		})
-	*/
+	engine.RootContext().SetContextProperty("QmlBridge", qmlBridge)
+	engine.Load(core.NewQUrl3("qrc:/qml/MainQt.qml", 0))
+
+	qmlBridge.ConnectSendToGo(func(data string) string {
+		fmt.Println("go:", data)
+		return "hello from go"
+	})
+
 	var wg sync.WaitGroup
+
+	go func() {
+		for range time.NewTicker(time.Millisecond * 50).C {
+			pressurevalue := int(sensors.PIns.ReadPressure())
+			qmlBridge.SendToQml(pressurevalue)
+		}
+	}()
 
 	//read sensors check alarms and send data to gui
 	go func() {
@@ -40,7 +50,7 @@ func main() {
 			fio2 := int(UI.FiO2)
 			mode := UI.Mode
 			//send values to GUI
-			//qmlBridge.SendMonitor(pip, vt, rate, peep, fio2, mode)			
+			qmlBridge.SendMonitor(pip, vt, rate, peep, fio2, mode)
 		}
 
 	}()
@@ -53,11 +63,13 @@ func main() {
 		modeselect.ModeSelection(&UI)
 	}()
 
-	wg.Add(1)
-	ch := make(chan UserInput)
-	go cli(&wg, ch)
-	wg.Wait()
-
+	// Enable the CLI
+	/*
+		wg.Add(1)
+		ch := make(chan UserInput)
+		go cli(&wg, ch)
+		wg.Wait()
+	*/
 	app.Exec()
 }
 

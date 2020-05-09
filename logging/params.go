@@ -1,4 +1,4 @@
-package main
+package params
 import (
 	"bufio"
 	"encoding/json"
@@ -85,5 +85,4 @@ func initParams()
 		fmt.Println(err)
 	}			
 	fmt.Println(val)
-
 }

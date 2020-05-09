@@ -36,7 +36,6 @@ func cli(wg *sync.WaitGroup, c chan UserInput) {
 	})
 	pong, err := client.Ping().Result()
 	fmt.Println(pong, err)
-
 	params.initParams()
 
 	// err = client.Set("IO:pressure", 100, 0).Err()
@@ -158,7 +157,6 @@ func cli(wg *sync.WaitGroup, c chan UserInput) {
 	}
 }
 
-/*
 func main() {
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -166,4 +164,3 @@ func main() {
 	go cli(&wg, ch)
 	wg.Wait()
 }
-*/
