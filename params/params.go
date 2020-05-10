@@ -117,4 +117,5 @@ func InitParams() {
 		fmt.Println(err)
 	}
 	fmt.Println(val)
+	//fmt.Println(val{"Mode"})
 }

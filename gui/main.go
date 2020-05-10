@@ -48,7 +48,6 @@ func main() {
 			temp, _ = client.Get("BPM").Result()
 			temp1, _ = strconv.ParseFloat(temp, 32)
 			UI.Rate = float32(temp1)
-			//fmt.Println(UI.Rate)
 			check, _ := client.Get("start").Result()
 			if check == "true" {
 				start <- true
