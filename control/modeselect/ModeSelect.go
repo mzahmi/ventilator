@@ -34,12 +34,12 @@ func UpdateValues(UI *params.UserInput) {
 }
 
 // ModeSelection reads input from the GUI to select the required Mode from the user input struct
-func ModeSelection(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup) {
+func ModeSelection(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
 	UpdateValues(UI) // calculates missing values
 	switch UI.Mode {
 	case "Pressure Control":
 		fmt.Println("Pressure Control Mode selected")
-		PressureAC(UI, s, wg)
+		PressureAC(UI, s, wg, readStatus)
 	case "Pressure A/C":
 		fmt.Println("Pressure Assisted Control Mode selected")
 	case "PSV":

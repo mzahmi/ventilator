@@ -37,13 +37,13 @@ The perceived disadvantage of this mode is that an operator cannot directly
 control tidal volume. The resultant tidal volume may be unstable when the patient’s
 breathing effort and/or respiratory mechanics change. Therefore, you should
 carefully set the upper and lower limits of the tidal volume alarm.*/
-func PressureAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup) {
+func PressureAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
 	defer wg.Done()
 	switch UI.BreathType {
 	case "Control":
-		PressureControl(UI, s, wg)
+		PressureControl(UI, s, wg, readStatus)
 	case "Assist":
-		PressureAssist(UI, s, wg)
+		PressureAssist(UI, s, wg, readStatus)
 	default:
 		fmt.Println("Enter valid breath type")
 	}
@@ -53,14 +53,16 @@ func PressureAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.Wa
 // 	Triggering:	Time
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup) {
+func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
 	defer wg.Done()
 	//initiate Pressure PID based on readings from PIns
 	PressurePID := NewPIDController(0.5, 0.5, 0.5)         // takes in P, I, and D values to be set trial and error
 	PressurePID.setpoint = float64(UI.InspiratoryPressure) // Sets the PID setpoint to inspiratory pressure
 
 	//control loop; it loops unitll Exit bool is set to false
-	for !Exit {
+	for {
+		// TODO: read channel
+		// if it's stop or exit then close valves and break loop
 		//Open main valve MIns controlled by pressure sensor PIns
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
 			//check for tidal volume alarms
@@ -102,7 +104,7 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup) {
+func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
 	defer wg.Done()
 	//initiate Pressure PID based on readings from PIns
 	PressurePID := NewPIDController(0.5, 0.5, 0.5)         // takes in P, I, and D values to be set trial and error

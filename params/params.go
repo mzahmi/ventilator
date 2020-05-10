@@ -29,7 +29,7 @@ type UserInput struct {
 	PressureSupport     float32 // needs to be defined
 	InspiratoryPressure float32 // Also known as P_control
 	UpperLimitVT        float32 // upper limit of tidal volume
-	LowerLimitVt        float32 // lower limit of tidal volume
+	LowerLimitVT        float32 // lower limit of tidal volume
 	RiseTime            float32 // needs to be defined
 	UpperLimitPIP       float32 // upper limit of airway peak prssure
 	LowerLimitPIP       float32 // lower limit of airway peak pressure
@@ -61,7 +61,7 @@ var DefaultParams = UserInput{
 	PressureSupport:     0,
 	InspiratoryPressure: 0,
 	UpperLimitVT:        0,
-	LowerLimitVt:        0,
+	LowerLimitVT:        0,
 	RiseTime:            0,
 	UpperLimitPIP:       0,
 	LowerLimitPIP:       0,
@@ -80,14 +80,27 @@ func fileExists(filename string) bool {
 	return !info.IsDir()
 }
 
-func InitParams() {
-	client := redis.NewClient(&redis.Options{
-		Addr:     "dupi1.local:6379",
-		Password: "",
-		DB:       0,
-	})
-	pong, err := client.Ping().Result()
-	fmt.Println(pong, err)
+func ReadParams(client *redis.Client) (DefaultParams UserInput) {
+	val, err := client.Get("PARAMS").Result()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(val)
+	json.Unmarshal([]byte(val), &DefaultParams)
+	return DefaultParams
+}
+
+func WriteParams(client *redis.Client, DefaultParams UserInput) error {
+	json, err := json.Marshal(DefaultParams)
+
+	err = client.Set("PARAMS", json, 0).Err()
+	if err != nil {
+		fmt.Println(err)
+	}
+	return err
+}
+
+func InitParams(client *redis.Client) {
 
 	if fileExists("params.json") {
 		//Load json file and put in redis
@@ -117,5 +130,6 @@ func InitParams() {
 		fmt.Println(err)
 	}
 	fmt.Println(val)
-	//fmt.Println(val{"Mode"})
+	json.Unmarshal([]byte(val), &DefaultParams)
+	//fmt.Println(DefaultParams.Mode)
 }

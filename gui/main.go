@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 	"sync"
-	"time"
 
 	"github.com/go-redis/redis"
 	"github.com/mzahmi/ventilator/control/cli"
@@ -29,30 +27,22 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	s := make(chan sensors.SensorsReading)
 	//exit := make(chan bool)
-	start := make(chan bool)
+	//start := make(chan bool)
+	readStatus := make(chan string)
 
 	client.Set("start", "false", 0).Err() // clears previous entry of the start in redis
 
-	params.InitParams()
+	params.InitParams(client)
 
 	// Checks if GUI changed params and pushed to redis
 	go func() {
 		defer wg.Done()
 		for {
-			temp, _ := client.Get("IE").Result()
-			temp1, _ := strconv.ParseFloat(temp, 32)
-			UI.ER = float32(temp1)
-			UI.IR = 1
-			temp, _ = client.Get("BPM").Result()
-			temp1, _ = strconv.ParseFloat(temp, 32)
-			UI.Rate = float32(temp1)
-			check, _ := client.Get("start").Result()
-			if check == "true" {
-				start <- true
-				continue
-			}
+			status, _ := client.Get("status").Result()
+			readStatus <- status
 		}
 	}()
 
@@ -72,18 +62,24 @@ func main() {
 	go func() {
 		defer wg.Done()
 		for {
-			select {
-			case <-start:
-				go modeselect.PressureControl(&UI, s, &wg)
-			case <-time.After(240 * time.Second):
-				fmt.Println("about to exit program")
-				return
+			for val := range readStatus {
+				if val == "start" {
+					go modeselect.ModeSelection(&UI, s, &wg, readStatus)
+					client.Set("status", "ventilating", 0).Err()
+					readStatus <- "ventilating"
+					// write to redis status = ventilating
+				} else if val == "stop" {
+					// stop function to stop ventilation
+				} else if val == "exit" {
+					// exit program
+					// exit <- true
+				}
 			}
 		}
 	}()
 
 	// Provides CLI interface
 	wg.Add(5)
-	go cli.Run(&wg, s)
+	go cli.Run(&wg, s, client, readStatus)
 	wg.Wait()
 }
