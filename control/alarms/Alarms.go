@@ -228,3 +228,26 @@ func LowAlert(msg string) {
 	}
 	time.Sleep(tm)
 }
+
+/*
+Technical Alarms
+A ventilator system requires stable and continuous supplies of pressurized oxygen
+and air for its proper functioning. The normal working pressure of both supplies
+is typically between 2 or 3 and 6 or 6.5 bars (between 200 or 300 and 600 or 650 kPa,
+or between 29 or 43.5 and 87 or 94 psi)
+*/
+
+/*
+OxygenSupplyAlarm indicates oxygen supply pressure is less than the lower limit of 2 or 3 bars
+*/
+
+func OxygenSupplyAlarm(LowerO2Press float32) error {
+	if sensors.FIns.ReadFlow() >= LowerO2Press {
+		msg := "Low O2 supply"
+		MediumAlert(msg)
+		return errors.New(msg)
+	} else {
+		return nil
+	}
+
+}
