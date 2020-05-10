@@ -4,46 +4,17 @@ import (
 	"fmt"
 
 	"github.com/mzahmi/ventilator/control/alarms"
+	"github.com/mzahmi/ventilator/params"
 )
 
-// UserInput is a custome type struct that contains the global
+// params.UserInput is a custome type struct that contains the global
 // variables input by the user or operator
-type UserInput struct {
-	Mode                string
-	BreathType          string
-	PatientTriggerType  string
-	TidalVolume         float32 // ml
-	Rate                float32 // BPM
-	Ti                  float32 // inhalation time
-	TiMax               float32 // for PSV mode backup time control
-	Te                  float32 // exhalation time
-	IR                  float32 // inhalation ratio part IR:IE
-	ER                  float32 // exhalation ratio part IR:IE
-	PeakFlow            float32
-	PEEP                float32 // 5-20 mmH2O
-	FiO2                float32 // 21% - 100%
-	PressureTrigSense   float32 // -0.5 to 02 mmH2O
-	FlowTrigSense       float32 // 0.5 to 5 Lpm
-	FlowCyclePercent    float32 // for flow cycling ranges from 0 to 100%
-	PressureSupport     float32 // needs to be defined
-	InspiratoryPressure float32 // Also known as P_control
-	UpperLimitVT        float32 // upper limit of tidal volume
-	LowerLimitVt        float32 // lower limit of tidal volume
-	RiseTime            float32 // needs to be defined
-	UpperLimitPIP       float32 // upper limit of airway peak prssure
-	LowerLimitPIP       float32 // lower limit of airway peak pressure
-	MinuteVolume        float32 // minute volume in Lpm is the amount of gas expired per minute.
-	UpperLimitMV        float32 // upper limit of minute volume
-	LowerLimitMV        float32 // lower limit of minute volume
-	UpperLimitRR        float32 // upper limit of monitored BPM
-	LowerLimitRR        float32 // lower limit of monitored BPM
-}
 
 // Exit is a global var used as a switch for github.com/mzahmi/ventilatorilation on or off
 var Exit bool
 
 // UpdateValues populates a a struct which is recieved by the GUI
-func UpdateValues(UI *UserInput) {
+func UpdateValues(UI *params.UserInput) {
 	BCT := 60 / UI.Rate
 	if UI.Ti != 0 {
 		UI.Te = BCT - UI.Ti
@@ -61,7 +32,7 @@ func UpdateValues(UI *UserInput) {
 }
 
 // ModeSelection reads input from the GUI to select the required Mode from the user input struct
-func ModeSelection(UI *UserInput) {
+func ModeSelection(UI *params.UserInput) {
 	UpdateValues(UI) // calculates missing values
 	switch UI.Mode {
 	case "Pressure Control":
@@ -82,7 +53,7 @@ func ModeSelection(UI *UserInput) {
 }
 
 /*CheckAlarms ...*/
-func CheckAlarms(UI *UserInput) error {
+func CheckAlarms(UI *params.UserInput) error {
 	errPIP := alarms.AirwayPressureAlarms(UI.UpperLimitPIP, UI.LowerLimitPIP)
 	errVT := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
 	errMV := alarms.ExpiratoryMinuteVolumeAlarms(UI.UpperLimitMV, UI.LowerLimitMV)
