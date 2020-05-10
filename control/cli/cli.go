@@ -31,26 +31,12 @@ func info() {
 func Run(wg *sync.WaitGroup, s chan sensors.SensorsReading) {
 	defer wg.Done()
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     "dupi1.local:6379",
 		Password: "",
 		DB:       0,
 	})
 	pong, err := client.Ping().Result()
 	fmt.Println(pong, err)
-	params.InitParams()
-
-	// err = client.Set("IO:pressure", 100, 0).Err()
-	// // if there has been an error setting the value
-	// // handle the error
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-
-	// val, err := client.Get("IO:pressure").Result()
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// fmt.Println("IO:pressure = ", val)
 
 	parameters := structs.Names(&params.UserInput{})
 

@@ -95,8 +95,9 @@ func InitParams() {
 		if err != nil {
 			fmt.Println(err)
 		}
+		byteValue, _ := ioutil.ReadAll(jsonFile)
+		err = client.Set("PARAMS", byteValue, 0).Err()
 
-		err = client.Set("PARAMS", jsonFile, 0).Err()
 		if err != nil {
 			fmt.Println(err)
 		}
