@@ -239,10 +239,16 @@ or between 29 or 43.5 and 87 or 94 psi)
 
 /*
 OxygenSupplyAlarm indicates oxygen supply pressure is less than the lower limit of 2 or 3 bars
-*/
 
+The oxygen supply pressure is too low because of:
+	◆ Unexpected interruption of central oxygen supply
+	◆ A significant leak or disconnection in the oxygen supply route, i.e. hose or fitting
+	◆ Nearly empty oxygen cylinder
+
+If an air supply is available, mechanical ventilation should continue with air alone
+*/
 func OxygenSupplyAlarm(LowerO2Press float32) error {
-	if sensors.PIns.ReadPressure() <= LowerO2Press {
+	if sensors.PIns.ReadPressure() <= LowerO2Press { // change to oxygen supply sensor reading
 		msg := "Low O2 supply"
 		MediumAlert(msg)
 		return errors.New(msg)
@@ -251,12 +257,68 @@ func OxygenSupplyAlarm(LowerO2Press float32) error {
 	}
 }
 
+/*
+AirSupplyAlarms indicates air supply pressure is less than the lower limit of 2 or 3 bars
+
+The air supply pressure is too low because of:
+	◆ Unexpected interruption of central air supply
+	◆ A significant leak or disconnection in the air supply route, i.e. hose or fitting
+	◆ Nearly empty air cylinder
+	◆ Defective air compressor
+
+If an oxygen supply is available, mechanical ventilation should continue with 100% oxygen
+*/
 func AirSupplyAlarm(LowerAirPress float32) error {
-	if sensors.PIns.ReadPressure() <= LowerAirPress {
+	if sensors.PIns.ReadPressure() <= LowerAirPress { // change to air supply sensor reading
 		msg := "Low Air supply"
 		MediumAlert(msg)
 		return errors.New(msg)
 	} else {
 		return nil
 	}
+}
+
+/*
+AirAndO2SupplyAlarm indicates both air and oxygen supply pressures are less than 2 or 3 bars
+
+Both air and oxygen supply pressures are too low
+
+If both gas supplies fail at the same time, a ventilator system cannot continue to function.
+The ventilator automatically switches to the ambient state.
+*/
+func AirAndO2SupplyAlarm(airerr, o2err error) error {
+	if (airerr != nil) && (o2err != nil) {
+		msg := "Gas supply is low"
+		HighAlert(msg)
+		return errors.New(msg)
+	} else {
+		return nil
+	}
+}
+
+/*
+FiO2Alarms ndicate that the current inspiratory O2 concentration is outside the set range
+High Alram:
+	The monitored FiO2 is 5% to 7% above the set FiO2 for a defined duration, e.g. 30 s
+Low Alarm:
+	The monitored FiO2 is 5% or 7% below the set FiO2 for a defined duration, e.g. 30 s
+Common causes:
+	◆ Faulty ventilator mixing function
+	◆ Faulty oxygen monitoring, e.g. defective or uncalibrated oxygen cell
+	◆ Low FiO2 due to use of an oxygen concentrator. Standard oxygen supplies provide pure oxygen. O2 from a concentrator may be as low as 90%
+*/
+
+func FiO2Alarms(UpperLimit, LowerLimit float32) error {
+	if sensors.PIns.ReadPressure() >= UpperLimit { // change to oxygen sensor reading
+		msg := "FiO2 is High"
+		HighAlert(msg)
+		return errors.New(msg)
+	} else if sensors.PIns.ReadPressure() <= LowerLimit { // change to oxygen sensor reading
+		msg := "FiO2 is Low"
+		LowAlert(msg)
+		return errors.New(msg)
+	} else {
+		return nil
+	}
+
 }

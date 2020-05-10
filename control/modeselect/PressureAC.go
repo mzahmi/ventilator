@@ -3,6 +3,7 @@ package modeselect
 import (
 	"fmt"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/mzahmi/ventilator/control/alarms"
@@ -36,12 +37,13 @@ The perceived disadvantage of this mode is that an operator cannot directly
 control tidal volume. The resultant tidal volume may be unstable when the patient’s
 breathing effort and/or respiratory mechanics change. Therefore, you should
 carefully set the upper and lower limits of the tidal volume alarm.*/
-func PressureAC(UI *params.UserInput, s chan sensors.SensorsReading) {
+func PressureAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup) {
+	defer wg.Done()
 	switch UI.BreathType {
 	case "Control":
-		PressureControl(UI, s)
+		PressureControl(UI, s, wg)
 	case "Assist":
-		PressureAssist(UI, s)
+		PressureAssist(UI, s, wg)
 	default:
 		fmt.Println("Enter valid breath type")
 	}
@@ -51,7 +53,8 @@ func PressureAC(UI *params.UserInput, s chan sensors.SensorsReading) {
 // 	Triggering:	Time
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading) {
+func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup) {
+	defer wg.Done()
 	//initiate Pressure PID based on readings from PIns
 	PressurePID := NewPIDController(0.5, 0.5, 0.5)         // takes in P, I, and D values to be set trial and error
 	PressurePID.setpoint = float64(UI.InspiratoryPressure) // Sets the PID setpoint to inspiratory pressure
@@ -99,7 +102,8 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading) {
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading) {
+func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup) {
+	defer wg.Done()
 	//initiate Pressure PID based on readings from PIns
 	PressurePID := NewPIDController(0.5, 0.5, 0.5)         // takes in P, I, and D values to be set trial and error
 	PressurePID.setpoint = float64(UI.InspiratoryPressure) // Sets PID setpoint to Inspiratory pressure

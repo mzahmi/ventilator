@@ -7,17 +7,17 @@ import (
 	"time"
 
 	"github.com/go-redis/redis"
+	"github.com/mzahmi/ventilator/control/cli"
 	"github.com/mzahmi/ventilator/control/initialization"
 	"github.com/mzahmi/ventilator/control/modeselect"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/params"
-	"github.com/mzahmi/ventilator/control/cli"
 )
 
 var UI = params.DefaultParams
+var wg sync.WaitGroup
 
 func main() {
-	var wg sync.WaitGroup
 	initialization.HardwareInit()
 	//establish connection with redis
 	client := redis.NewClient(&redis.Options{
@@ -72,7 +72,7 @@ func main() {
 		for {
 			select {
 			case <-start:
-				go modeselect.PressureControl(&UI, s)
+				go modeselect.PressureControl(&UI, s, &wg)
 			case <-time.After(240 * time.Second):
 				fmt.Println("about to exit program")
 				return
@@ -81,7 +81,7 @@ func main() {
 	}()
 
 	// Provides CLI interface
-	wg.Add(4)
+	wg.Add(5)
 	go cli.Run(&wg, s)
 	wg.Wait()
 }
