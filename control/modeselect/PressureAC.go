@@ -61,8 +61,6 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 
 	//control loop; it loops unitll Exit bool is set to false
 	for {
-		// TODO: read channel
-		// if it's stop or exit then close valves and break loop
 		//Open main valve MIns controlled by pressure sensor PIns
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
 			//check for tidal volume alarms
@@ -96,6 +94,13 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 		}
 		//Close main valve ExProp
 		valves.ExProp.IncrementValve(0)
+		// if it's stop or exit then close valves and break loop
+		trig := <-readStatus
+		if (trig == "stop") || (trig == "exit") {
+			break
+		} else {
+			continue
+		}
 	}
 
 }
@@ -117,8 +122,7 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 		PTrigger := UI.PEEP + UI.PressureTrigSense
 
 		//control loop; it loops unitll Exit bool is set to false
-		for !Exit {
-
+		for {
 			//check if trigger is true
 			if sensors.PIns.ReadPressure() <= PTrigger {
 
@@ -157,12 +161,19 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 				//Close main valve ExProp
 				valves.ExProp.IncrementValve(0) // closes the valve
 			}
+			// if it's stop or exit then close valves and break loop
+			trig := <-readStatus
+			if (trig == "stop") || (trig == "exit") {
+				break
+			} else {
+				continue
+			}
 		}
 	case "Flow":
 		//Calculate trigger threshhold with flow trig sensitivity
 		FTrigger := UI.FlowTrigSense
 		//control loop; it loops unitll Exit bool is set to false
-		for !Exit {
+		for {
 			//check if trigger is true
 			if sensors.FIns.ReadFlow() >= FTrigger {
 				//Open main valve InProp controlled by pressure sensor PIns
@@ -198,6 +209,13 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 				}
 				//Close main valve MExp
 				valves.ExProp.IncrementValve(0) // closes the valve
+			}
+			// if it's stop or exit then close valves and break loop
+			trig := <-readStatus
+			if (trig == "stop") || (trig == "exit") {
+				break
+			} else {
+				continue
 			}
 		}
 	}

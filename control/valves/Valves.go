@@ -34,6 +34,10 @@ type PropValve struct {
 	Percent float64
 }
 
+type Valves interface {
+	CloseValve()
+}
+
 //Solenoids
 
 //MIns ... Inhalation valve
@@ -85,10 +89,24 @@ func (valve *SolenValve) SolenCmd(cmd string) {
 
 }
 
+func (valve *SolenValve) CloseValve() {
+	valve.SolenCmd("Close")
+}
+
 //IncrementValve adjusts the proportionality of the proportional valve
 func (valve *PropValve) IncrementValve(percent float64) {
 	valve.Percent = percent
 	dac.WriteDac(valve.DacID, valve.DacChan, valve.Percent/10)
 	fmt.Printf("Valve (%s) opening has been set to %v\n", valve.Name, valve.Percent)
 
+}
+
+func (valve *PropValve) CloseValve() {
+	valve.IncrementValve(0)
+}
+
+func CloseAllValves(v ...Valves) {
+	for _, s := range v {
+		s.CloseValve()
+	}
 }
