@@ -57,7 +57,7 @@ func ModeSelection(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync
 /*CheckAlarms ...*/
 func CheckAlarms(UI *params.UserInput) error {
 	errPIP := alarms.AirwayPressureAlarms(UI.UpperLimitPIP, UI.LowerLimitPIP)
-	errVT := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
+	errVT := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVT)
 	errMV := alarms.ExpiratoryMinuteVolumeAlarms(UI.UpperLimitMV, UI.LowerLimitMV)
 	errRR := alarms.RespiratoryRateAlarms(UI.UpperLimitRR, UI.LowerLimitRR)
 

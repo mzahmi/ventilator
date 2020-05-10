@@ -61,7 +61,7 @@ func CalTimeDelay() {
 	var tic time.Time
 	for start := time.Now(); time.Since(start) < (time.Millisecond * 30000); {
 		tic = time.Now()
-		_, _, _, _ = sensors.ReadAllSensors()
+		_, _ = sensors.ReadAllSensors()
 		td = time.Since(tic)
 		fmt.Println("Time delay:", td)
 		time.Sleep(td)

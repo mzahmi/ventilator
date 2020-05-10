@@ -66,7 +66,7 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 		//Open main valve MIns controlled by pressure sensor PIns
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
 			//check for tidal volume alarms
-			err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
+			err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVT)
 			if err != nil {
 				log.Println(err)
 				break
@@ -80,7 +80,7 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 		//Open main valve MExp controlled by pressure sensor PExp
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
 			//check for tidal volume alarms
-			err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
+			err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVT)
 			if err != nil {
 				log.Println(err)
 				break
@@ -125,7 +125,7 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 				//Open main valve InProp controlled by pressure sensor PIns and check tidal volume alarms
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
 					//check for tidal volume alarms
-					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
+					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVT)
 					if err != nil {
 						log.Println(err)
 						break
@@ -139,7 +139,7 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
 
 					//check for tidal volume alarms
-					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
+					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVT)
 					if err != nil {
 						log.Println(err)
 						break
@@ -168,7 +168,7 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 				//Open main valve InProp controlled by pressure sensor PIns
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
 					//check for tidal volume alarms
-					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
+					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVT)
 					if err != nil {
 						log.Println(err)
 						break
@@ -182,7 +182,7 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 				//Open main valve ExProp and check for PEEP value and tidal volume alarms
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
 					//check for tidal volume alarms
-					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVt)
+					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVT)
 					if err != nil {
 						log.Println(err)
 						break
