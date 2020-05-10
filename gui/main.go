@@ -11,6 +11,7 @@ import (
 	"github.com/mzahmi/ventilator/control/modeselect"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/params"
+	"github.com/mzahmi/ventilator/control/cli"
 )
 
 var UI = params.DefaultParams
@@ -71,7 +72,7 @@ func main() {
 		for {
 			select {
 			case <-start:
-				go modeselect.PressureControl(UI, s)
+				go modeselect.PressureControl(&UI, s)
 			case <-time.After(240 * time.Second):
 				fmt.Println("about to exit program")
 				return
@@ -81,6 +82,6 @@ func main() {
 
 	// Provides CLI interface
 	wg.Add(4)
-	go cli(&wg, ch)
+	go cli.Run(&wg, s)
 	wg.Wait()
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/fatih/structs"
 	"github.com/go-redis/redis"
 	"github.com/mzahmi/ventilator/control/sensors"
+	"github.com/mzahmi/ventilator/params"
 )
 
 func info() {
@@ -27,7 +28,7 @@ func info() {
 	fmt.Println("	list parameters: lsp")
 }
 
-func cli(wg *sync.WaitGroup, c chan UserInput) {
+func Run(wg *sync.WaitGroup,s chan sensors.SensorsReading) {
 	defer wg.Done()
 	client := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
@@ -36,7 +37,7 @@ func cli(wg *sync.WaitGroup, c chan UserInput) {
 	})
 	pong, err := client.Ping().Result()
 	fmt.Println(pong, err)
-	params.initParams()
+	params.InitParams()
 
 	// err = client.Set("IO:pressure", 100, 0).Err()
 	// // if there has been an error setting the value
@@ -51,7 +52,7 @@ func cli(wg *sync.WaitGroup, c chan UserInput) {
 	// }
 	// fmt.Println("IO:pressure = ", val)
 
-	parameters := structs.Names(&UserInput{})
+	parameters := structs.Names(&params.UserInput{})
 
 	fmt.Println("Type (i) for more info \n")
 	reader := bufio.NewReader(os.Stdin)
@@ -156,7 +157,7 @@ func cli(wg *sync.WaitGroup, c chan UserInput) {
 		fmt.Println("Unknown input")
 	}
 }
-
+/*
 func main() {
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -164,3 +165,4 @@ func main() {
 	go cli(&wg, ch)
 	wg.Wait()
 }
+*/

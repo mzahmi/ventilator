@@ -80,7 +80,7 @@ func fileExists(filename string) bool {
 	return !info.IsDir()
 }
 
-func initParams() {
+func InitParams() {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "",
