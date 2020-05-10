@@ -320,5 +320,4 @@ func FiO2Alarms(UpperLimit, LowerLimit float32) error {
 	} else {
 		return nil
 	}
-
 }

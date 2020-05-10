@@ -31,7 +31,7 @@ func info() {
 func Run(wg *sync.WaitGroup, s chan sensors.SensorsReading) {
 	defer wg.Done()
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     "dupi1.local:6379",
 		Password: "",
 		DB:       0,
 	})
