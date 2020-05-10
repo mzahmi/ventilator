@@ -36,12 +36,12 @@ The perceived disadvantage of this mode is that an operator cannot directly
 control tidal volume. The resultant tidal volume may be unstable when the patient’s
 breathing effort and/or respiratory mechanics change. Therefore, you should
 carefully set the upper and lower limits of the tidal volume alarm.*/
-func PressureAC(UI *params.UserInput) {
+func PressureAC(UI *params.UserInput, s chan sensors.SensorsReading) {
 	switch UI.BreathType {
 	case "Control":
-		PressureControl(UI)
+		PressureControl(UI, s)
 	case "Assist":
-		PressureAssist(UI)
+		PressureAssist(UI, s)
 	default:
 		fmt.Println("Enter valid breath type")
 	}
@@ -66,7 +66,7 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading) {
 				log.Println(err)
 				break
 			}
-			valves.InProp.IncrementValve(PressurePID.Update(float64(sensors.PIns.ReadPressure())))
+			valves.InProp.IncrementValve(PressurePID.Update(float64((<-s).PressureInput)))
 		}
 
 		//Close main valve InProp
@@ -99,7 +99,7 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading) {
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureAssist(UI *params.UserInput) {
+func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading) {
 	//initiate Pressure PID based on readings from PIns
 	PressurePID := NewPIDController(0.5, 0.5, 0.5)         // takes in P, I, and D values to be set trial and error
 	PressurePID.setpoint = float64(UI.InspiratoryPressure) // Sets PID setpoint to Inspiratory pressure

@@ -242,12 +242,21 @@ OxygenSupplyAlarm indicates oxygen supply pressure is less than the lower limit 
 */
 
 func OxygenSupplyAlarm(LowerO2Press float32) error {
-	if sensors.FIns.ReadFlow() >= LowerO2Press {
+	if sensors.PIns.ReadPressure() <= LowerO2Press {
 		msg := "Low O2 supply"
 		MediumAlert(msg)
 		return errors.New(msg)
 	} else {
 		return nil
 	}
+}
 
+func AirSupplyAlarm(LowerAirPress float32) error {
+	if sensors.PIns.ReadPressure() <= LowerAirPress {
+		msg := "Low Air supply"
+		MediumAlert(msg)
+		return errors.New(msg)
+	} else {
+		return nil
+	}
 }
