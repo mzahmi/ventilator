@@ -2,6 +2,7 @@ package modeselect
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/mzahmi/ventilator/control/alarms"
 	"github.com/mzahmi/ventilator/control/sensors"
@@ -33,12 +34,12 @@ func UpdateValues(UI *params.UserInput) {
 }
 
 // ModeSelection reads input from the GUI to select the required Mode from the user input struct
-func ModeSelection(UI *params.UserInput, s chan sensors.SensorsReading) {
+func ModeSelection(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup) {
 	UpdateValues(UI) // calculates missing values
 	switch UI.Mode {
 	case "Pressure Control":
 		fmt.Println("Pressure Control Mode selected")
-		PressureAC(UI, s)
+		PressureAC(UI, s, wg)
 	case "Pressure A/C":
 		fmt.Println("Pressure Assisted Control Mode selected")
 	case "PSV":

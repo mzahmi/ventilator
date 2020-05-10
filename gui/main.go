@@ -32,7 +32,8 @@ func main() {
 	s := make(chan sensors.SensorsReading)
 	//exit := make(chan bool)
 	start := make(chan bool)
-	client.Set("start", "false", 0).Err()
+
+	client.Set("start", "false", 0).Err() // clears previous entry of the start in redis
 
 	// Checks if GUI changed params and pushed to redis
 	go func() {
@@ -49,7 +50,7 @@ func main() {
 			check, _ := client.Get("start").Result()
 			if check == "true" {
 				start <- true
-				break
+				continue
 			}
 		}
 	}()
