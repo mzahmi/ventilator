@@ -28,7 +28,7 @@ func info() {
 	fmt.Println("	list parameters: lsp")
 }
 
-func Run(wg *sync.WaitGroup,s chan sensors.SensorsReading) {
+func Run(wg *sync.WaitGroup, s chan sensors.SensorsReading) {
 	defer wg.Done()
 	client := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
@@ -96,6 +96,7 @@ func Run(wg *sync.WaitGroup,s chan sensors.SensorsReading) {
 			writeto := words[1]
 			writevalue := words[2]
 			fmt.Println("Changing parameter " + writeto + " to " + writevalue)
+			//TODO: write them to redis
 			continue
 		}
 
@@ -121,19 +122,24 @@ func Run(wg *sync.WaitGroup,s chan sensors.SensorsReading) {
 		}
 
 		if words[0] == "r" {
-			//TODO: this should be read throught the channel to minimize potential conflicts
+			if len(words) < 2 {
+				fmt.Println("Incorrect number or arguments, press i for help")
+				continue
+			}
 			switch words[1] {
 			case "PIns":
-				val := sensors.PIns.ReadPressure()
+				val := (<-s).PressureInput
 				fmt.Println("PIns:", val)
 			case "PExp":
-				val := sensors.PExp.ReadPressure()
+				val := (<-s).PressureOutput
 				fmt.Println("PExp:", val)
 			case "FIns":
-				val := sensors.FIns.ReadFlow()
+				//val := sensors.FIns.ReadFlow()
+				val := 0
 				fmt.Println("FIns:", val)
 			case "FExp":
-				val := sensors.FExp.ReadFlow()
+				//val := sensors.FExp.ReadFlow()
+				val := 0
 				fmt.Println("FExp:", val)
 			default:
 				fmt.Println("Unknow sensors")
@@ -142,6 +148,11 @@ func Run(wg *sync.WaitGroup,s chan sensors.SensorsReading) {
 		}
 
 		if words[0] == "rp" {
+			if len(words) < 2 {
+				fmt.Println("Incorrect number or arguments, press i for help")
+				continue
+			}
+			//TODO: read them to redis
 			/*
 				switch words[1]; {
 				case "":
@@ -157,6 +168,7 @@ func Run(wg *sync.WaitGroup,s chan sensors.SensorsReading) {
 		fmt.Println("Unknown input")
 	}
 }
+
 /*
 func main() {
 	var wg sync.WaitGroup

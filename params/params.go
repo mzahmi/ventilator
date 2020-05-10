@@ -82,7 +82,7 @@ func fileExists(filename string) bool {
 
 func InitParams() {
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     "dupi1.local:6379",
 		Password: "",
 		DB:       0,
 	})

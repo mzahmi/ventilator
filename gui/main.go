@@ -35,6 +35,8 @@ func main() {
 
 	client.Set("start", "false", 0).Err() // clears previous entry of the start in redis
 
+	params.InitParams()
+
 	// Checks if GUI changed params and pushed to redis
 	go func() {
 		defer wg.Done()
@@ -46,7 +48,7 @@ func main() {
 			temp, _ = client.Get("BPM").Result()
 			temp1, _ = strconv.ParseFloat(temp, 32)
 			UI.Rate = float32(temp1)
-			fmt.Println(UI.Rate)
+			//fmt.Println(UI.Rate)
 			check, _ := client.Get("start").Result()
 			if check == "true" {
 				start <- true
