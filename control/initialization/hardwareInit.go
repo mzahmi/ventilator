@@ -1,4 +1,4 @@
-package init
+package initialization
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 
 //InitHardware ... this function should be called at the beginning of main.
 //It will initialize all the hardware and check for errors
-func hardwareInit() {
+func HardwareInit() {
 	fmt.Println("Beginning hardware initialization")
 
 	//I2C init

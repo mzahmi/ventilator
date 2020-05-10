@@ -43,6 +43,11 @@ type Flow struct {
 	Rate    float32
 }
 
+type SensorsReading struct {
+	PressureInput  float32
+	PressureOutput float32
+}
+
 //PIns ... Inhalaltion pressure sensor
 var PIns = Pressure{
 	Name:    Inhalation_Pressure_Sensor_Name,
@@ -99,10 +104,10 @@ func (FS *Flow) ReadFlow() float32 {
 
 // ReadAllSensors constantly reading input from the sensors and returns their readings
 // in this order: PIns, PExp, FIns, FExp readings
-func ReadAllSensors() (InputPress, OutputPress, InputFlow, OutputFlow float32) {
+func ReadAllSensors() (InputPress, OutputPress float32) {
 	InputPress = PIns.ReadPressure()
 	OutputPress = PExp.ReadPressure()
-	InputFlow = FIns.ReadFlow()
-	OutputFlow = FExp.ReadFlow()
-	return InputPress, OutputPress, InputFlow, OutputFlow
+	//InputFlow = FIns.ReadFlow()
+	//OutputFlow = FExp.ReadFlow()
+	return InputPress, OutputPress //, InputFlow, OutputFlow
 }

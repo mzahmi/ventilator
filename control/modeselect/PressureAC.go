@@ -8,6 +8,7 @@ import (
 	"github.com/mzahmi/ventilator/control/alarms"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
+	"github.com/mzahmi/ventilator/params"
 )
 
 /* PressureAC ... has a triggering window, which opens at late expiration.
@@ -35,7 +36,7 @@ The perceived disadvantage of this mode is that an operator cannot directly
 control tidal volume. The resultant tidal volume may be unstable when the patient’s
 breathing effort and/or respiratory mechanics change. Therefore, you should
 carefully set the upper and lower limits of the tidal volume alarm.*/
-func PressureAC(UI *UserInput) {
+func PressureAC(UI *params.UserInput) {
 	switch UI.BreathType {
 	case "Control":
 		PressureControl(UI)
@@ -50,7 +51,7 @@ func PressureAC(UI *UserInput) {
 // 	Triggering:	Time
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureControl(UI *UserInput) {
+func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading) {
 	//initiate Pressure PID based on readings from PIns
 	PressurePID := NewPIDController(0.5, 0.5, 0.5)         // takes in P, I, and D values to be set trial and error
 	PressurePID.setpoint = float64(UI.InspiratoryPressure) // Sets the PID setpoint to inspiratory pressure
@@ -98,7 +99,7 @@ func PressureControl(UI *UserInput) {
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureAssist(UI *UserInput) {
+func PressureAssist(UI *params.UserInput) {
 	//initiate Pressure PID based on readings from PIns
 	PressurePID := NewPIDController(0.5, 0.5, 0.5)         // takes in P, I, and D values to be set trial and error
 	PressurePID.setpoint = float64(UI.InspiratoryPressure) // Sets PID setpoint to Inspiratory pressure

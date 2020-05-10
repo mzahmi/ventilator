@@ -7,10 +7,11 @@ import (
 
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
+	"github.com/mzahmi/ventilator/params"
 )
 
 // VolumeAC one of the main 5 modes of the github.com/mzahmi/ventilatorilator
-func VolumeAC(UI *UserInput) {
+func VolumeAC(UI *params.UserInput) {
 	switch UI.BreathType {
 	case "Control":
 		VolumeControl(UI)
@@ -25,7 +26,7 @@ func VolumeAC(UI *UserInput) {
 // 	Triggering:	Time
 // 	Cycling: 	Time
 // 	Control: 	Volume
-func VolumeControl(UI *UserInput) {
+func VolumeControl(UI *params.UserInput) {
 
 	//initiate a PID controller based on the PeakFlow
 	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
@@ -56,7 +57,7 @@ func VolumeControl(UI *UserInput) {
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Time
 // 	Control: 	Volume
-func VolumeAssist(UI *UserInput) {
+func VolumeAssist(UI *params.UserInput) {
 
 	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 

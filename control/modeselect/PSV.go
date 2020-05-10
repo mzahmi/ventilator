@@ -5,13 +5,14 @@ import (
 
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
+	"github.com/mzahmi/ventilator/params"
 )
 
 // PSV one of the main 5 modes of the github.com/mzahmi/ventilatorilator. The Triggering type is chosen by the operator.
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Flow
 // 	Control: 	Pressure
-func PSV(UI *UserInput) {
+func PSV(UI *params.UserInput) {
 
 	PressurePID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 

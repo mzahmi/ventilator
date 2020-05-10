@@ -2,102 +2,85 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"strconv"
 	"sync"
 	"time"
 
+	"github.com/go-redis/redis"
+	"github.com/mzahmi/ventilator/control/initialization"
 	"github.com/mzahmi/ventilator/control/modeselect"
 	"github.com/mzahmi/ventilator/control/sensors"
-	"github.com/therecipe/qt/charts"
-	"github.com/therecipe/qt/core"
-	"github.com/therecipe/qt/qml"
-	"github.com/therecipe/qt/widgets"
+	"github.com/mzahmi/ventilator/params"
 )
 
+var UI = params.DefaultParams
+
 func main() {
-	core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true)
-
-	InitializeCharts()
-	app := widgets.NewQApplication(len(os.Args), os.Args)
-	engine := qml.NewQQmlApplicationEngine(nil)
-	var qmlBridge = NewQmlBridge(nil)
-
-	engine.RootContext().SetContextProperty("QmlBridge", qmlBridge)
-	engine.Load(core.NewQUrl3("qrc:/qml/MainQt.qml", 0))
-
-	qmlBridge.ConnectSendToGo(func(data string) string {
-		fmt.Println("go:", data)
-		return "hello from go"
-	})
-
 	var wg sync.WaitGroup
-
-	go func() {
-		for range time.NewTicker(time.Millisecond * 50).C {
-			pressurevalue := int(sensors.PIns.ReadPressure())
-			qmlBridge.SendToQml(pressurevalue)
-		}
-	}()
-
-	//read sensors check alarms and send data to gui
-	go func() {
-		for {
-			//Read sensors
-			pip := int(sensors.PIns.ReadPressure())
-			vt := int(sensors.FIns.ReadFlow())
-			rate := int(UI.Rate)
-			peep := int(sensors.PExp.ReadPressure())
-			fio2 := int(UI.FiO2)
-			mode := UI.Mode
-			//send values to GUI
-			qmlBridge.SendMonitor(pip, vt, rate, peep, fio2, mode)
-		}
-
-	}()
-
-	//Receive mode settings and run mode
-	go func() {
-		qmlBridge.ConnectSendPAC(func(ie int, pip int, bpm int, pmax int, peep int, fio2 int) {
-			RecieveModeSettings(ie, pip, bpm, pmax, peep, fio2)
-		})
-		modeselect.ModeSelection(&UI)
-	}()
-
-	// Enable the CLI
-	/*
-		wg.Add(1)
-		ch := make(chan UserInput)
-		go cli(&wg, ch)
-		wg.Wait()
-	*/
-	app.Exec()
-}
-
-func RecieveModeSettings(ie int, pip int, bpm int, pmax int, peep int, fio2 int) {
-	switch ie {
-	case 0:
-		UI.IR = 1
-		UI.ER = 2
-	case 1:
-		UI.IR = 1
-		UI.ER = 3
-	default:
-		fmt.Println("invalid IE ratio")
+	initialization.HardwareInit()
+	//establish connection with redis
+	client := redis.NewClient(&redis.Options{
+		Addr:     "dupi1.local:6379",
+		Password: "",
+		DB:       0,
+	})
+	_, err := client.Ping().Result()
+	if err != nil {
+		fmt.Println(err)
 	}
-	UI.UpperLimitPIP = float32(pip)
-	UI.Rate = float32(bpm)
-	UI.InspiratoryPressure = float32(pmax)
-	UI.PEEP = float32(peep)
-	UI.FiO2 = float32(fio2)
-}
+	s := make(chan sensors.SensorsReading)
+	//exit := make(chan bool)
+	start := make(chan bool)
+	client.Set("start", "false", 0).Err()
 
-func InitializeCharts() { _ = charts.QChart{} }
+	// Checks if GUI changed params and pushed to redis
+	go func() {
+		defer wg.Done()
+		for {
+			temp, _ := client.Get("IE").Result()
+			temp1, _ := strconv.ParseFloat(temp, 32)
+			UI.ER = float32(temp1)
+			UI.IR = 1
+			temp, _ = client.Get("BPM").Result()
+			temp1, _ = strconv.ParseFloat(temp, 32)
+			UI.Rate = float32(temp1)
+			fmt.Println(UI.Rate)
+			check, _ := client.Get("start").Result()
+			if check == "true" {
+				start <- true
+				break
+			}
+		}
+	}()
 
-type QmlBridge struct {
-	core.QObject
+	// Reads sensors and share
+	go func() {
+		defer wg.Done()
+		for {
+			Pin, Pout := sensors.ReadAllSensors()
+			s <- sensors.SensorsReading{
+				PressureInput:  Pin,
+				PressureOutput: Pout}
+			client.Set("pressure", Pin, 0).Err()
+		}
+	}()
 
-	_ func(data int)                                                   `signal:"sendToQml"`
-	_ func(pip int, vt int, rate int, peep int, fio2 int, mode string) `signal:"sendMonitor"`
-	_ func(data string) string                                         `slot:"sendToGo"`
-	_ func(ie int, pip int, bpm int, pmax int, peep int, fio2 int)     `slot:"sendPAC"`
+	// Runs the ventelation method control
+	go func() {
+		defer wg.Done()
+		for {
+			select {
+			case <-start:
+				go modeselect.PressureControl(UI, s)
+			case <-time.After(240 * time.Second):
+				fmt.Println("about to exit program")
+				return
+			}
+		}
+	}()
+
+	// Provides CLI interface
+	wg.Add(4)
+	go cli(&wg, ch)
+	wg.Wait()
 }
