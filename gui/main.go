@@ -28,13 +28,14 @@ func main() {
 	_, err := client.Ping().Result()
 	check(err)
 
+	//delcare channels to communicate between goroutines
 	s := make(chan sensors.SensorsReading)
 	readStatus := make(chan string)
 
 	//initialize the user input parameters
 	params.InitParams(client)
 
-	wg.Add(5) //TODO: determine how to properly assign the number of gorotinues
+	wg.Add(5) //TODO: determine how to properly assign the number of goroutinues
 
 	// Checks if GUI changed params and pushed to redis
 	go func() {
