@@ -1,4 +1,4 @@
-# github.com/mzahmi/ventilatorinator software [![Build Status](https://travis-ci.org/mzahmi/github.com/mzahmi/ventilatorilator.svg?branch=master)](https://travis-ci.org/mzahmi/github.com/mzahmi/ventilatorilator)
+OpenVentAid Ventilator [![Build Status](https://travis-ci.org/mzahmi/ventilator.svg?branch=master)](https://travis-ci.org/mzahmi/ventilator)
 
 ## Install
 
