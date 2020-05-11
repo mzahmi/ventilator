@@ -29,12 +29,12 @@ func ModeSelection(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync
 	case "Pressure A/C":
 		fmt.Println("Pressure Assisted Control Mode selected")
 		PressureAC(UI, s, wg, readStatus)
-	case "PSV":
+	case "Pressure Support (PSV)":
 		fmt.Println("Pressure Support Control Mode selected")
 		PSV(UI, s, wg, readStatus)
-	case "V-SMIV":
+	case "Volume SMIV":
 		fmt.Println("Volume SIMV Mode selected")
-	case "P-SIMV":
+	case "Pressure SIMV":
 		fmt.Println("Pressure SIMV Mode selected")
 	default:
 		fmt.Println("No github.com/mzahmi/ventilator Mode selected")

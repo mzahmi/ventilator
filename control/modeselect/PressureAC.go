@@ -40,9 +40,9 @@ carefully set the upper and lower limits of the tidal volume alarm.*/
 func PressureAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
 	defer wg.Done()
 	switch UI.BreathType {
-	case "Control":
+	case "Pressure Control":
 		PressureControl(UI, s, wg, readStatus)
-	case "Assist":
+	case "Pressure Assist":
 		PressureAssist(UI, s, wg, readStatus)
 	default:
 		fmt.Println("Enter valid breath type")
@@ -118,7 +118,7 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 
 	//Check trigger type
 	switch UI.PatientTriggerType {
-	case "Pressure":
+	case "Pressure Trigger ":
 		//Calculate trigger threshhold with PEEP and sensitivity
 		PTrigger := UI.PEEP + UI.PressureTrigSense
 
@@ -171,7 +171,7 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 				continue
 			}
 		}
-	case "Flow":
+	case "Flow Trigger ":
 		//Calculate trigger threshhold with flow trig sensitivity
 		FTrigger := UI.FlowTrigSense
 		//control loop; it loops unitll Exit bool is set to false

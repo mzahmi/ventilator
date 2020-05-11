@@ -14,9 +14,9 @@ import (
 // VolumeAC one of the main 5 modes of the github.com/mzahmi/ventilatorilator
 func VolumeAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
 	switch UI.BreathType {
-	case "Control":
+	case "Volume Control":
 		VolumeControl(UI, s, wg, readStatus)
-	case "Assist":
+	case "Volume Assist":
 		VolumeAssist(UI, s, wg, readStatus)
 	default:
 		fmt.Println("Enter valid breath type")
@@ -72,7 +72,7 @@ func VolumeAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.
 
 	//Check trigger type
 	switch UI.PatientTriggerType {
-	case "Pressure":
+	case "Pressure Trigger":
 		//Calculate trigger threshhold with PEEP and sensitivity
 		PTrigger := UI.PEEP + UI.PressureTrigSense
 		//Begin loop
@@ -103,7 +103,7 @@ func VolumeAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.
 				continue
 			}
 		}
-	case "Flow":
+	case "Flow Trigger":
 		//Calculate trigger threshhold with PEEP and sensitivity
 		FTrigger := UI.FlowTrigSense
 		//Begin loop

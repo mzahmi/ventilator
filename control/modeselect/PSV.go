@@ -20,7 +20,7 @@ func PSV(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup
 
 	//Check trigger type
 	switch UI.PatientTriggerType {
-	case "Pressure":
+	case "Pressure Trigger  ":
 		//Calculate trigger threshhold with PEEP and sensitivity
 		PTrigger := UI.PEEP + UI.PressureTrigSense
 
@@ -66,7 +66,7 @@ func PSV(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup
 				continue
 			}
 		}
-	case "Flow":
+	case "Flow Trigger  ":
 		//Calculate trigger threshhold with flow trig sensitivity
 		FTrigger := UI.FlowTrigSense
 		//Begin loop
