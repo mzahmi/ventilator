@@ -70,9 +70,11 @@ func main() {
 					// write to redis status = ventilating
 				} else if val == "stop" {
 					// stop function to stop ventilation
+					fmt.Println("Stopping system")
 				} else if val == "exit" {
 					// exit program
 					// exit <- true
+					fmt.Println("Exiting system")
 				}
 			}
 		}
