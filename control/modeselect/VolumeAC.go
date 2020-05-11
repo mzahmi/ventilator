@@ -3,6 +3,7 @@ package modeselect
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/mzahmi/ventilator/control/sensors"
@@ -11,12 +12,12 @@ import (
 )
 
 // VolumeAC one of the main 5 modes of the github.com/mzahmi/ventilatorilator
-func VolumeAC(UI *params.UserInput) {
+func VolumeAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
 	switch UI.BreathType {
 	case "Control":
-		VolumeControl(UI)
+		VolumeControl(UI, s, wg, readStatus)
 	case "Assist":
-		VolumeAssist(UI)
+		VolumeAssist(UI, s, wg, readStatus)
 	default:
 		fmt.Println("Enter valid breath type")
 	}
@@ -26,13 +27,13 @@ func VolumeAC(UI *params.UserInput) {
 // 	Triggering:	Time
 // 	Cycling: 	Time
 // 	Control: 	Volume
-func VolumeControl(UI *params.UserInput) {
+func VolumeControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
 
 	//initiate a PID controller based on the PeakFlow
 	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 
 	//control loop
-	for !Exit {
+	for {
 		FlowPID.setpoint = float64(UI.PeakFlow) // Sets the PID setpoint
 		//Open main valve MIns controlled by flow sensor PIns
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
@@ -49,6 +50,14 @@ func VolumeControl(UI *params.UserInput) {
 		}
 		//Close main valve MExp
 		valves.ExProp.IncrementValve(0) // closes the valve
+		// if it's stop or exit then close valves and break loop
+		trig := <-readStatus
+		if (trig == "stop") || (trig == "exit") {
+			valves.CloseAllValves(&valves.ExProp, &valves.InProp)
+			break
+		} else {
+			continue
+		}
 	}
 
 }
@@ -57,7 +66,7 @@ func VolumeControl(UI *params.UserInput) {
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Time
 // 	Control: 	Volume
-func VolumeAssist(UI *params.UserInput) {
+func VolumeAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
 
 	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 
@@ -67,7 +76,7 @@ func VolumeAssist(UI *params.UserInput) {
 		//Calculate trigger threshhold with PEEP and sensitivity
 		PTrigger := UI.PEEP + UI.PressureTrigSense
 		//Begin loop
-		for !Exit {
+		for {
 			//check if trigger is true
 			if sensors.PIns.ReadPressure() <= PTrigger {
 				FlowPID.setpoint = float64(UI.PeakFlow) // Sets PID setpoint to PeakFlow
@@ -85,12 +94,20 @@ func VolumeAssist(UI *params.UserInput) {
 				//Close main valve MExp
 				valves.ExProp.IncrementValve(0) // closes the valve
 			}
+			// if it's stop or exit then close valves and break loop
+			trig := <-readStatus
+			if (trig == "stop") || (trig == "exit") {
+				valves.CloseAllValves(&valves.ExProp, &valves.InProp)
+				break
+			} else {
+				continue
+			}
 		}
 	case "Flow":
 		//Calculate trigger threshhold with PEEP and sensitivity
 		FTrigger := UI.FlowTrigSense
 		//Begin loop
-		for !Exit {
+		for {
 			//check if trigger is true
 			if sensors.PIns.ReadPressure() >= FTrigger {
 				FlowPID.setpoint = float64(UI.PeakFlow) // Sets PID setpoint to PeakFlow
@@ -107,6 +124,14 @@ func VolumeAssist(UI *params.UserInput) {
 				}
 				//Close main valve MExp
 				valves.ExProp.IncrementValve(0) // closes the valve
+			}
+			// if it's stop or exit then close valves and break loop
+			trig := <-readStatus
+			if (trig == "stop") || (trig == "exit") {
+				valves.CloseAllValves(&valves.ExProp, &valves.InProp)
+				break
+			} else {
+				continue
 			}
 		}
 

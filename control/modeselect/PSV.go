@@ -1,6 +1,7 @@
 package modeselect
 
 import (
+	"sync"
 	"time"
 
 	"github.com/mzahmi/ventilator/control/sensors"
@@ -12,7 +13,8 @@ import (
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Flow
 // 	Control: 	Pressure
-func PSV(UI *params.UserInput) {
+func PSV(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
+	defer wg.Done()
 
 	PressurePID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 
@@ -24,7 +26,7 @@ func PSV(UI *params.UserInput) {
 
 		counter := 1
 		//Begin loop
-		for !Exit {
+		for {
 			FlowMonitor := []float32{sensors.FIns.ReadFlow()}
 			//check if trigger is true
 			if sensors.PIns.ReadPressure() <= PTrigger {
@@ -55,12 +57,20 @@ func PSV(UI *params.UserInput) {
 				//Close main valve MExp
 				valves.ExProp.IncrementValve(0) // closes the valve
 			}
+			// if it's stop or exit then close valves and break loop
+			trig := <-readStatus
+			if (trig == "stop") || (trig == "exit") {
+				valves.CloseAllValves(&valves.ExProp, &valves.InProp)
+				break
+			} else {
+				continue
+			}
 		}
 	case "Flow":
 		//Calculate trigger threshhold with flow trig sensitivity
 		FTrigger := UI.FlowTrigSense
 		//Begin loop
-		for !Exit {
+		for {
 			//check if trigger is true
 			if sensors.FIns.ReadFlow() >= FTrigger { //need to mkae sure of unit congithub.com/mzahmi/ventilatorion Lpm or mL
 				PressurePID.setpoint = float64(UI.InspiratoryPressure) // Sets PID setpoint to Inspiratory pressure
@@ -80,6 +90,14 @@ func PSV(UI *params.UserInput) {
 				}
 				//Close main valve MExp
 				valves.ExProp.IncrementValve(0) // closes the valve
+			}
+			// if it's stop or exit then close valves and break loop
+			trig := <-readStatus
+			if (trig == "stop") || (trig == "exit") {
+				valves.CloseAllValves(&valves.ExProp, &valves.InProp)
+				break
+			} else {
+				continue
 			}
 		}
 	}

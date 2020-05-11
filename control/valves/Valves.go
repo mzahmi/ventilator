@@ -89,6 +89,7 @@ func (valve *SolenValve) SolenCmd(cmd string) {
 
 }
 
+//CloseValve closes solenvalve
 func (valve *SolenValve) CloseValve() {
 	valve.SolenCmd("Close")
 }
@@ -101,10 +102,12 @@ func (valve *PropValve) IncrementValve(percent float64) {
 
 }
 
+// CloseVale closes propvalves
 func (valve *PropValve) CloseValve() {
 	valve.IncrementValve(0)
 }
 
+//CloseAllValves takes in either a SolenValve or a PropValve to close them
 func CloseAllValves(v ...Valves) {
 	for _, s := range v {
 		s.CloseValve()

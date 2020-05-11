@@ -97,6 +97,7 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 		// if it's stop or exit then close valves and break loop
 		trig := <-readStatus
 		if (trig == "stop") || (trig == "exit") {
+			valves.CloseAllValves(&valves.ExProp, &valves.InProp)
 			break
 		} else {
 			continue
@@ -164,6 +165,7 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 			// if it's stop or exit then close valves and break loop
 			trig := <-readStatus
 			if (trig == "stop") || (trig == "exit") {
+				valves.CloseAllValves(&valves.ExProp, &valves.InProp)
 				break
 			} else {
 				continue
@@ -213,6 +215,7 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 			// if it's stop or exit then close valves and break loop
 			trig := <-readStatus
 			if (trig == "stop") || (trig == "exit") {
+				valves.CloseAllValves(&valves.ExProp, &valves.InProp)
 				break
 			} else {
 				continue

@@ -72,6 +72,7 @@ var DefaultParams = UserInput{
 	LowerLimitRR:        0,
 }
 
+// fileExists checks in current directory for a file with the filename specified and returns a bool
 func fileExists(filename string) bool {
 	info, err := os.Stat(filename)
 	if os.IsNotExist(err) {
@@ -80,56 +81,55 @@ func fileExists(filename string) bool {
 	return !info.IsDir()
 }
 
+// ReadParams gets the parameters of the UserInput struct from a redis client
 func ReadParams(client *redis.Client) (DefaultParams UserInput) {
 	val, err := client.Get("PARAMS").Result()
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(val)
+	check(err)
+	//fmt.Println(val)
 	json.Unmarshal([]byte(val), &DefaultParams)
 	return DefaultParams
 }
 
+// WriteParams sets the parameters of the UserInput struct to a redis client
 func WriteParams(client *redis.Client, DefaultParams UserInput) error {
 	json, err := json.Marshal(DefaultParams)
-
+	check(err)
 	err = client.Set("PARAMS", json, 0).Err()
-	if err != nil {
-		fmt.Println(err)
-	}
+	check(err)
 	return err
 }
 
+//InitParams initiates the paramters defined by the user input populates
+// the redis client as well as saves the output into .json file
 func InitParams(client *redis.Client) {
 
 	if fileExists("params.json") {
 		//Load json file and put in redis
 		jsonFile, err := os.Open("params.json")
-		if err != nil {
-			fmt.Println(err)
-		}
+		check(err)
 		byteValue, _ := ioutil.ReadAll(jsonFile)
 		err = client.Set("PARAMS", byteValue, 0).Err()
-
-		if err != nil {
-			fmt.Println(err)
-		}
+		check(err)
 		defer jsonFile.Close()
 	} else {
 		json, err := json.Marshal(DefaultParams)
-
+		check(err)
 		err = client.Set("PARAMS", json, 0).Err()
-		if err != nil {
-			fmt.Println(err)
-		}
+		check(err)
 		_ = ioutil.WriteFile("params.json", json, 0644)
 	}
 	// Confirm params
 	val, err := client.Get("PARAMS").Result()
+	check(err)
+	//fmt.Println(val)
+	err = json.Unmarshal([]byte(val), &DefaultParams)
+	check(err)
+
+}
+
+// prints out the checked error err
+func check(err error) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(val)
-	json.Unmarshal([]byte(val), &DefaultParams)
-	//fmt.Println(DefaultParams.Mode)
 }

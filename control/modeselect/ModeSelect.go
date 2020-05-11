@@ -10,26 +10,12 @@ import (
 )
 
 // params.UserInput is a custome type struct that contains the global
-// variables input by the user or operator
-
-// Exit is a global var used as a switch for github.com/mzahmi/ventilatorilation on or off
-var Exit bool
 
 // UpdateValues populates a a struct which is recieved by the GUI
 func UpdateValues(UI *params.UserInput) {
 	BCT := 60 / UI.Rate
-	if UI.Ti != 0 {
-		UI.Te = BCT - UI.Ti
-		UI.PeakFlow = (60 * UI.TidalVolume) / (UI.Ti * 1000)
-	} else if UI.IR != 0 {
-		UI.Ti = UI.IR / (UI.IR + UI.ER)
-		UI.Te = BCT - UI.Ti
-		UI.PeakFlow = (60 * UI.TidalVolume) / (UI.Ti * 1000)
-	} else if UI.PeakFlow != 0 {
-		UI.Ti = (60 * UI.TidalVolume) / (UI.PeakFlow * 1000)
-		UI.Te = BCT - UI.Ti
-	}
-	UI.PEEP = 10 * UI.PEEP                     // conversion from cmH2O to mmH2O
+	UI.Ti = UI.IR / (UI.IR + UI.ER)
+	UI.Te = BCT - UI.Ti
 	UI.MinuteVolume = UI.TidalVolume * UI.Rate // calculation of minute volume MV = VT * BPM
 }
 
@@ -37,19 +23,21 @@ func UpdateValues(UI *params.UserInput) {
 func ModeSelection(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
 	UpdateValues(UI) // calculates missing values
 	switch UI.Mode {
-	case "Pressure Control":
+	case "Volume A/C":
 		fmt.Println("Pressure Control Mode selected")
-		PressureAC(UI, s, wg, readStatus)
+		VolumeAC(UI, s, wg, readStatus)
 	case "Pressure A/C":
 		fmt.Println("Pressure Assisted Control Mode selected")
+		PressureAC(UI, s, wg, readStatus)
 	case "PSV":
 		fmt.Println("Pressure Support Control Mode selected")
+		PSV(UI, s, wg, readStatus)
 	case "V-SMIV":
 		fmt.Println("Volume SIMV Mode selected")
 	case "P-SIMV":
 		fmt.Println("Pressure SIMV Mode selected")
 	default:
-		fmt.Println("No github.com/mzahmi/ventilatorilator Mode selected")
+		fmt.Println("No github.com/mzahmi/ventilator Mode selected")
 		return
 	}
 }
