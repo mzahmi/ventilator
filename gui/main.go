@@ -81,7 +81,7 @@ func main() {
 					go modeselect.ModeSelection(&UI, s, &wg, readStatus, logger)
 					client.Set("status", "ventilating", 0).Err()
 					readStatus <- "ventilating"
-					logger.Println("Ventilation status changed to ventilating")
+					logger.Printf("Ventilation status changed to %v", <-readStatus)
 					// write to redis status = ventilating
 				} else if val == "stop" {
 					// stop function to stop ventilation

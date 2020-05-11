@@ -98,7 +98,7 @@ func (valve *SolenValve) CloseValve() {
 func (valve *PropValve) IncrementValve(percent float64) {
 	valve.Percent = percent
 	dac.WriteDac(valve.DacID, valve.DacChan, valve.Percent/10)
-	fmt.Printf("Valve (%s) opening has been set to %v\n", valve.Name, valve.Percent)
+	//fmt.Printf("Valve (%s) opening has been set to %v\n", valve.Name, valve.Percent)
 
 }
 

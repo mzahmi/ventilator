@@ -22,3 +22,4 @@ src/gui/deploy
 src/gui/windows
 src/gui/docs/_*
 *.DS_Store
+gui/Events.log
