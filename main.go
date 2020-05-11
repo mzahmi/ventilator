@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/go-redis/redis"
 	"github.com/mzahmi/ventilator/control/cli"
@@ -59,14 +60,33 @@ func main() {
 	}()
 
 	// Reads sensors and populate the graph
+	//TODO: limit the reading frequency to a predefined value
+	rate := float64(1) // Hz rate
+	timePerLoopIteration := (1 / rate)
+
+	//TODO: fix the logic bleow
 	go func() {
 		defer wg.Done()
 		for {
-			Pin, Pout := sensors.ReadAllSensors()
-			s <- sensors.SensorsReading{
-				PressureInput:  Pin,
-				PressureOutput: Pout}
-			client.Set("pressure", Pin, 0).Err()
+			t1 := time.Now()
+			/*
+				Pin, Pout := sensors.ReadAllSensors()
+				s <- sensors.SensorsReading{
+					PressureInput:  Pin,
+					PressureOutput: Pout}
+				client.Set("pressure", Pin, 0).Err()
+			*/
+			time.Sleep(50000000)
+			t2 := time.Now()
+			loopTime := t2.Sub(t1).Seconds()
+			fmt.Println("Loop time:", loopTime)
+			if loopTime < timePerLoopIteration {
+				diff := (timePerLoopIteration - loopTime)
+				fmt.Println("Sleeping for:", time.Duration(diff*1000000))
+				time.Sleep(time.Duration(diff*1000000) * time.Microsecond)
+			}
+			t3 := time.Now()
+			fmt.Println("Tdiff=", t3.Sub(t1))
 		}
 	}()
 

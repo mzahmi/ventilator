@@ -50,6 +50,9 @@ func Run(wg *sync.WaitGroup, s chan sensors.SensorsReading, client *redis.Client
 		}
 
 		words := strings.Fields(input)
+		if len(words) == 0 {
+			continue
+		}
 
 		// show information
 		if words[0] == "i" {
