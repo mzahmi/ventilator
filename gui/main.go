@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"sync"
 
 	"github.com/go-redis/redis"
@@ -16,8 +18,17 @@ var UI = params.DefaultParams
 var wg sync.WaitGroup
 
 func main() {
+	f, err := os.OpenFile("Events.log",
+		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	check(err)
+	defer f.Close()
+
+	// declare new logger
+	logger := log.New(f, "Event", log.LstdFlags)
+
 	//initialize the hardware
 	initialization.HardwareInit()
+	logger.Println("Hardware Initialized")
 
 	//establish connection with redis client
 	client := redis.NewClient(&redis.Options{
@@ -25,7 +36,7 @@ func main() {
 		Password: "",
 		DB:       0,
 	})
-	_, err := client.Ping().Result()
+	_, err = client.Ping().Result()
 	check(err)
 
 	//delcare channels to communicate between goroutines
@@ -34,6 +45,7 @@ func main() {
 
 	//initialize the user input parameters
 	params.InitParams(client)
+	logger.Println("Parameters Initialized")
 
 	wg.Add(5) //TODO: determine how to properly assign the number of goroutinues
 
@@ -43,6 +55,7 @@ func main() {
 		for {
 			status, _ := client.Get("status").Result()
 			readStatus <- status
+			logger.Printf("Ventilation status changed to %s\n", status)
 		}
 	}()
 
@@ -67,14 +80,16 @@ func main() {
 					go modeselect.ModeSelection(&UI, s, &wg, readStatus)
 					client.Set("status", "ventilating", 0).Err()
 					readStatus <- "ventilating"
+					logger.Println("Ventilation status changed to ventilating")
 					// write to redis status = ventilating
 				} else if val == "stop" {
 					// stop function to stop ventilation
-					fmt.Println("Stopping system")
+					//fmt.Println("Stopping system")
+					logger.Println("Stopping system")
 				} else if val == "exit" {
 					// exit program
 					// exit <- true
-					fmt.Println("Exiting system")
+					logger.Println("Exiting system")
 				}
 			}
 		}

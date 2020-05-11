@@ -1,12 +1,10 @@
 package modeselect
 
 import (
-	"fmt"
 	"log"
 	"sync"
 	"time"
 
-	"github.com/mzahmi/ventilator/control/alarms"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
 	"github.com/mzahmi/ventilator/params"
@@ -37,15 +35,17 @@ The perceived disadvantage of this mode is that an operator cannot directly
 control tidal volume. The resultant tidal volume may be unstable when the patient’s
 breathing effort and/or respiratory mechanics change. Therefore, you should
 carefully set the upper and lower limits of the tidal volume alarm.*/
-func PressureAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
+func PressureAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
 	defer wg.Done()
 	switch UI.BreathType {
 	case "Pressure Control":
-		PressureControl(UI, s, wg, readStatus)
+		logger.Println("Pressure Control Breath Type")
+		PressureControl(UI, s, wg, readStatus, logger)
 	case "Pressure Assist":
-		PressureAssist(UI, s, wg, readStatus)
+		logger.Println("Pressure Assist Breath Type")
+		PressureAssist(UI, s, wg, readStatus, logger)
 	default:
-		fmt.Println("Enter valid breath type")
+		logger.Println("No supported breath type")
 	}
 }
 
@@ -53,7 +53,7 @@ func PressureAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.Wa
 // 	Triggering:	Time
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
+func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
 	defer wg.Done()
 	//initiate Pressure PID based on readings from PIns
 	PressurePID := NewPIDController(0.5, 0.5, 0.5)         // takes in P, I, and D values to be set trial and error
@@ -63,12 +63,7 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 	for {
 		//Open main valve MIns controlled by pressure sensor PIns
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
-			//check for tidal volume alarms
-			err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVT)
-			if err != nil {
-				log.Println(err)
-				break
-			}
+
 			valves.InProp.IncrementValve(PressurePID.Update(float64((<-s).PressureInput)))
 		}
 
@@ -77,12 +72,6 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 
 		//Open main valve MExp controlled by pressure sensor PExp
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
-			//check for tidal volume alarms
-			err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVT)
-			if err != nil {
-				log.Println(err)
-				break
-			}
 
 			//check for PEEP
 			if sensors.PExp.ReadPressure() <= UI.PEEP {
@@ -110,7 +99,7 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
+func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
 	defer wg.Done()
 	//initiate Pressure PID based on readings from PIns
 	PressurePID := NewPIDController(0.5, 0.5, 0.5)         // takes in P, I, and D values to be set trial and error
@@ -119,6 +108,7 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 	//Check trigger type
 	switch UI.PatientTriggerType {
 	case "Pressure Trigger ":
+		logger.Printf("Pressure Trigger is set at %v cmH2O\n", UI.PressureTrigSense)
 		//Calculate trigger threshhold with PEEP and sensitivity
 		PTrigger := UI.PEEP + UI.PressureTrigSense
 
@@ -129,12 +119,7 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 
 				//Open main valve InProp controlled by pressure sensor PIns and check tidal volume alarms
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
-					//check for tidal volume alarms
-					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVT)
-					if err != nil {
-						log.Println(err)
-						break
-					}
+
 					valves.InProp.IncrementValve(PressurePID.Update(float64(sensors.PIns.ReadPressure())))
 				}
 				//Close main valve InProp
@@ -142,13 +127,6 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 
 				//Open main valve ExProp and check for PEEP value and tidal volume alarms
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
-
-					//check for tidal volume alarms
-					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVT)
-					if err != nil {
-						log.Println(err)
-						break
-					}
 
 					//check for PEEP
 					if sensors.PExp.ReadPressure() <= UI.PEEP {
@@ -172,6 +150,7 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 			}
 		}
 	case "Flow Trigger ":
+		logger.Printf("Flow Trigger is set at %v cmH2O\n", UI.FlowTrigSense)
 		//Calculate trigger threshhold with flow trig sensitivity
 		FTrigger := UI.FlowTrigSense
 		//control loop; it loops unitll Exit bool is set to false
@@ -180,12 +159,7 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 			if sensors.FIns.ReadFlow() >= FTrigger {
 				//Open main valve InProp controlled by pressure sensor PIns
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
-					//check for tidal volume alarms
-					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVT)
-					if err != nil {
-						log.Println(err)
-						break
-					}
+
 					valves.InProp.IncrementValve(PressurePID.Update(float64(sensors.PIns.ReadPressure())))
 				}
 
@@ -194,12 +168,6 @@ func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *syn
 
 				//Open main valve ExProp and check for PEEP value and tidal volume alarms
 				for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
-					//check for tidal volume alarms
-					err := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVT)
-					if err != nil {
-						log.Println(err)
-						break
-					}
 
 					//Check for PEEP
 					if sensors.PExp.ReadPressure() <= UI.PEEP {

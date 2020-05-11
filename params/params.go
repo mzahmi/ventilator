@@ -50,7 +50,7 @@ var DefaultParams = UserInput{
 	Ti:                  0,
 	TiMax:               0,
 	Te:                  0,
-	IR:                  0,
+	IR:                  1,
 	ER:                  0,
 	PeakFlow:            0,
 	PEEP:                0,
