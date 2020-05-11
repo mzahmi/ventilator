@@ -32,7 +32,7 @@ func main() {
 
 	//establish connection with redis client
 	client := redis.NewClient(&redis.Options{
-		Addr:     "dupi1.local:6379",
+		Addr:     "raspberrypi.local:6379",
 		Password: "",
 		DB:       0,
 	})
@@ -55,7 +55,6 @@ func main() {
 		for {
 			status, _ := client.Get("status").Result()
 			readStatus <- status
-			logger.Printf("Ventilation status changed to %s\n", status)
 		}
 	}()
 
@@ -77,7 +76,9 @@ func main() {
 		for {
 			for val := range readStatus {
 				if val == "start" {
-					go modeselect.ModeSelection(&UI, s, &wg, readStatus)
+					logger.Printf("Ventilation status changed to %s\n", val)
+					UI = params.ReadParams(client)
+					go modeselect.ModeSelection(&UI, s, &wg, readStatus, logger)
 					client.Set("status", "ventilating", 0).Err()
 					readStatus <- "ventilating"
 					logger.Println("Ventilation status changed to ventilating")

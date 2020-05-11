@@ -118,13 +118,13 @@ func InitParams(client *redis.Client) {
 		check(err)
 		_ = ioutil.WriteFile("params.json", json, 0644)
 	}
-	// Confirm params
-	val, err := client.Get("PARAMS").Result()
-	check(err)
-	//fmt.Println(val)
-	err = json.Unmarshal([]byte(val), &DefaultParams)
-	check(err)
-
+	// // Confirm params
+	// val, err := client.Get("PARAMS").Result()
+	// check(err)
+	// //fmt.Println(val)
+	// err = json.Unmarshal([]byte(val), &DefaultParams)
+	// check(err)
+	DefaultParams = ReadParams(client)
 }
 
 // prints out the checked error err
