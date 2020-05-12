@@ -36,15 +36,12 @@ before_install:
 install: 
   # Create workspace
   - ls
-  - sudo apt install golang libpulse-mainloop-glib0
-  - export GO111MODULE=off; go get -v github.com/therecipe/qt/cmd/... 
-  #- $(go env GOPATH)/bin/qtsetup test
-  - $(go env GOPATH)/bin/qtsetup -test=false
-  - echo export PATH=$PATH:/home/$USER/go/bin/ >> ~/.bashrc
-  - go get github.com/tarm/serial
   - mkdir -p ~/workspace
   - cd ~/workspace
   - go get github.com/mzahmi/ventilator
+  - cd ~/workspace/src/github.com/mzahmi/ventilator
+  - git submodule init
+  - git submodule update
   - ls
 # Use this to prepare your build for testing e.g. copy database configurations, environment variables, etc.
 before_script: 
