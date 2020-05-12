@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/go-redis/redis"
@@ -12,6 +14,7 @@ import (
 	"github.com/mzahmi/ventilator/control/initialization"
 	"github.com/mzahmi/ventilator/control/modeselect"
 	"github.com/mzahmi/ventilator/control/sensors"
+	"github.com/mzahmi/ventilator/control/valves"
 	"github.com/mzahmi/ventilator/params"
 )
 
@@ -117,6 +120,7 @@ func main() {
 
 	// Provides CLI interface
 	go cli.Run(&wg, s, client, readStatus)
+	SetupCloseHandler()
 	wg.Wait()
 }
 
@@ -125,4 +129,18 @@ func check(err error) {
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+// SetupCloseHandler creates a 'listener' on a new goroutine which will notify the
+// program if it receives an interrupt from the OS. We then handle this by calling
+// our clean up procedure and exiting the program.
+func SetupCloseHandler() {
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		fmt.Println("\r- Ctrl+C pressed in Terminal")
+		valves.CloseAllValves(&valves.InProp, &valves.MExp, &valves.MV)
+		os.Exit(0)
+	}()
 }
