@@ -2,8 +2,7 @@
 package sensors
 
 import (
-	"fmt"
-	"miio/pkg/adc"
+	"github.com/mzahmi/ventilator/control/adc"
 )
 
 //Inhalation pressure sensor constants
@@ -42,6 +41,12 @@ type Flow struct {
 	AdcID   uint8
 	AdcChan uint
 	Rate    float32
+}
+
+//SensorReading is custom type struct to store current sensor readings
+type SensorsReading struct {
+	PressureInput  float32
+	PressureOutput float32
 }
 
 //PIns ... Inhalaltion pressure sensor
@@ -114,34 +119,34 @@ func (FS *Flow) ReadFlow() float32 {
 
 // // ReadAllSensors constantly reading input from the sensors and returns their readings
 // // in this order: PIns, PExp, FIns, FExp readings
-// func ReadAllSensors() (InputPress, OutputPress, InputFlow, OutputFlow float32) {
-// 	InputPress = PIns.ReadPressure()
-// 	OutputPress = PExp.ReadPressure()
-// 	InputFlow = FIns.ReadFlow()
-// 	OutputFlow = FExp.ReadFlow()
-// 	return InputPress, OutputPress, InputFlow, OutputFlow
-// }
-
-func (PS *Pressure) CalibratePressure() {
-
-	fmt.Println("Beginning Pressure Sensor Calibration")
-	fmt.Println("Enter number of increments")
-	increment := 0
-	fmt.Scan(&increment)
-	pressureCurve := make([]float32, increment)
-	voltageCurve := make([]float32, increment)
-	fmt.Println("Calibration loop starting. Set the pressure and record the values")
-	response := "default"
-	for ii := 0; ii <= increment; ii++ {
-		for {
-			fmt.Scan(&response)
-			if response == "set" {
-				voltageCurve[ii] = PS.ReadPressureRaw()
-				fmt.Println("Enter the pressure in bar")
-				fmt.Scan(&pressureCurve[ii])
-				break
-			}
-		}
-	}
-
+func ReadAllSensors() (InputPress, OutputPress float32) { //, InputFlow, OutputFlow float32) {
+	InputPress = PIns.ReadPressureBar()
+	OutputPress = PExp.ReadPressureBar()
+	//InputFlow = FIns.ReadFlow()
+	//OutputFlow = FExp.ReadFlow()
+	return InputPress, OutputPress //, InputFlow, OutputFlow
 }
+
+// func (PS *Pressure) CalibratePressure() {
+
+// 	fmt.Println("Beginning Pressure Sensor Calibration")
+// 	fmt.Println("Enter number of increments")
+// 	increment := 0
+// 	fmt.Scan(&increment)
+// 	pressureCurve := make([]float32, increment)
+// 	voltageCurve := make([]float32, increment)
+// 	fmt.Println("Calibration loop starting. Set the pressure and record the values")
+// 	response := "default"
+// 	for ii := 0; ii <= increment; ii++ {
+// 		for {
+// 			fmt.Scan(&response)
+// 			if response == "set" {
+// 				voltageCurve[ii] = PS.ReadPressureRaw()
+// 				fmt.Println("Enter the pressure in bar")
+// 				fmt.Scan(&pressureCurve[ii])
+// 				break
+// 			}
+// 		}
+// 	}
+
+// }

@@ -3,7 +3,7 @@ package valves
 import (
 	// "fmt"
 
-	"miio/pkg/ioexp"
+	"github.com/mzahmi/ventilator/control/ioexp"
 )
 
 //prop valve inhalation const
