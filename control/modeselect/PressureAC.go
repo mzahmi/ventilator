@@ -56,8 +56,8 @@ func PressureAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.Wa
 func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
 	defer wg.Done()
 	//initiate Pressure PID based on readings from PIns
-	PressurePID := NewPIDController(0.5, 0.5, 0.5)         // takes in P, I, and D values to be set trial and error
-	PressurePID.setpoint = float64(UI.InspiratoryPressure) // Sets the PID setpoint to inspiratory pressure
+	PressurePID := NewPIDController(0.5, 0.5, 0.5)             // takes in P, I, and D values to be set trial and error
+	PressurePID.setpoint = float64(UI.InspiratoryPressure / 4) // Sets the PID setpoint to inspiratory pressure
 
 	//control loop; it loops unitll Exit bool is set to false
 	for {
