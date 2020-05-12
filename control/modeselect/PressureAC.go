@@ -74,15 +74,15 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
 
 			//check for PEEP
-			if sensors.PExp.ReadPressure() <= UI.PEEP {
+			if ((<-s).PressureOutput) <= UI.PEEP {
 				break
 			}
 
 			// Open ExProp valve
-			valves.ExProp.IncrementValve(100)
+			valves.MExp.SolenCmd("open")
 		}
 		//Close main valve ExProp
-		valves.ExProp.IncrementValve(0)
+		valves.MExp.SolenCmd("close")
 		// if it's stop or exit then close valves and break loop
 		trig := <-readStatus
 		if (trig == "stop") || (trig == "exit") {

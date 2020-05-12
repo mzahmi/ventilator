@@ -4,6 +4,7 @@ import (
 	// "fmt"
 
 	"github.com/mzahmi/ventilator/control/ioexp"
+	"github.com/mzahmi/ventilator/pkg/dac"
 )
 
 //prop valve inhalation const
@@ -39,7 +40,17 @@ type PropValve struct {
 	Percent    float64
 }
 
+type AnyValve interface {
+	CloseValve()
+}
+
 //Solenoids
+//MV ... Main Valve
+var MV = SolenValve{
+	Name:    Valve_Inhalation_Name,
+	State:   false,
+	PinMask: ioexp.Solenoid0,
+}
 
 //MIns ... Inhalation valve
 var MIns = SolenValve{
@@ -65,6 +76,14 @@ var InProp = PropValve{
 	Percent:    0,
 }
 
+//InProp ... Inhalation proportional valve
+var ExProp = PropValve{
+	Name:       Valve_Inhalation_Name,
+	SetDacID:   Valve_Prop_Inhalation_Set_DAC_ID,
+	SetDacChan: Valve_Prop_Inhalation_Set_DAC_Chan,
+	Percent:    0,
+}
+
 //SolenCmd switchs on and off the solenoids
 func (valve *SolenValve) SolenCmd(cmd string) {
 
@@ -77,7 +96,24 @@ func (valve *SolenValve) SolenCmd(cmd string) {
 		valve.State = false
 		ioexp.WritePin(valve.PinMask, valve.State)
 		// fmt.Printf("Valve (%v) has closed\n", valve.Name)
-
 	}
+}
 
+func (valve *SolenValve) CloseValve() {
+	valve.SolenCmd("close")
+}
+
+//IncrementValve controls the opening of Prop valves
+func (valve *PropValve) IncrementValve(actuate float64) {
+	dac.WriteDac(valve.SetDacID, valve.SetDacChan, actuate)
+}
+
+func (valve *PropValve) CloseValve() {
+	valve.IncrementValve(0)
+}
+
+func CloseAllValves(v ...AnyValve) {
+	for _, s := range v {
+		s.CloseValve()
+	}
 }

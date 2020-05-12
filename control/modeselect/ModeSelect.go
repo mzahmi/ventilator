@@ -15,7 +15,7 @@ import (
 // UpdateValues populates a a struct which is recieved by the GUI
 func UpdateValues(UI *params.UserInput) {
 	BCT := 60 / UI.Rate
-	UI.Ti = UI.IR / (UI.IR + UI.ER)
+	UI.Ti = 1 / (1 + UI.ER)
 	UI.Te = BCT - UI.Ti
 	UI.MinuteVolume = UI.TidalVolume * UI.Rate // calculation of minute volume MV = VT * BPM
 }

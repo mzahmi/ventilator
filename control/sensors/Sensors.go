@@ -92,7 +92,7 @@ func (PS *Pressure) ReadPressureRaw() float32 {
 
 // ReadPressureBar ... reads data from attached sensors to
 // Memberane based on its address using pressure
-func (PS *Pressure) ReadPressureBar() float32 {
+func (PS *Pressure) ReadPressure() float32 {
 	PS.Bar = (PS.ReadPressureRaw()*1.37 + 0.11)
 	return PS.Bar
 }
@@ -120,8 +120,8 @@ func (FS *Flow) ReadFlow() float32 {
 // // ReadAllSensors constantly reading input from the sensors and returns their readings
 // // in this order: PIns, PExp, FIns, FExp readings
 func ReadAllSensors() (InputPress, OutputPress float32) { //, InputFlow, OutputFlow float32) {
-	InputPress = PIns.ReadPressureBar()
-	OutputPress = PExp.ReadPressureBar()
+	InputPress = PIns.ReadPressure()
+	OutputPress = PExp.ReadPressure()
 	//InputFlow = FIns.ReadFlow()
 	//OutputFlow = FExp.ReadFlow()
 	return InputPress, OutputPress //, InputFlow, OutputFlow
