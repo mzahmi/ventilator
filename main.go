@@ -32,7 +32,7 @@ func main() {
 
 	//establish connection with redis client
 	client := redis.NewClient(&redis.Options{
-		Addr:     "raspberrypi.local:6379",
+		Addr:     "dupi1.local:6379",
 		Password: "",
 		DB:       0,
 	})
