@@ -75,7 +75,7 @@ func main() {
 			s <- sensors.SensorsReading{
 				PressureInput:  Pin,
 				PressureOutput: Pout}
-			client.Set("pressure", Pin, 0).Err()
+			client.Set("pressure", Pin*1020, 0).Err()
 
 			loopTime := time.Since(t1)
 			//fmt.Println("Loop time:", loopTime)
