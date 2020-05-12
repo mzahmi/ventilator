@@ -19,8 +19,7 @@ var UI = params.DefaultParams
 var wg sync.WaitGroup
 
 func main() {
-	f, err := os.OpenFile("Events.log",
-		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile("Events.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	check(err)
 	defer f.Close()
 
@@ -43,12 +42,14 @@ func main() {
 	//delcare channels to communicate between goroutines
 	s := make(chan sensors.SensorsReading)
 	readStatus := make(chan string)
+	client.Set("status", "NA", 0).Err() // empty the previous record of status
 
 	//initialize the user input parameters
 	params.InitParams(client)
 	logger.Println("Parameters Initialized")
 
-	wg.Add(5) //TODO: determine how to properly assign the number of goroutinues
+	//TODO: determine how to properly assign the number of goroutinues
+	wg.Add(5)
 
 	// Checks if GUI changed params and pushed to redis
 	go func() {
@@ -60,11 +61,11 @@ func main() {
 	}()
 
 	// Reads sensors and populate the graph
-	//TODO: limit the reading frequency to a predefined value
-	rate := float64(1) // Hz rate
-	timePerLoopIteration := (1 / rate)
+	//limit the reading frequency to a predefined value
+	rate := float64(20)                                                 // Hz rate
+	timePerLoopIteration := time.Duration(1000/rate) * time.Millisecond //(1 / rate) ms
+	fmt.Println(timePerLoopIteration)
 
-	//TODO: fix the logic bleow
 	go func() {
 		defer wg.Done()
 		for {
@@ -76,14 +77,13 @@ func main() {
 					PressureOutput: Pout}
 				client.Set("pressure", Pin, 0).Err()
 			*/
-			time.Sleep(50000000)
-			t2 := time.Now()
-			loopTime := t2.Sub(t1).Seconds()
+			time.Sleep(40 * time.Millisecond)
+			loopTime := time.Since(t1)
 			fmt.Println("Loop time:", loopTime)
 			if loopTime < timePerLoopIteration {
 				diff := (timePerLoopIteration - loopTime)
-				fmt.Println("Sleeping for:", time.Duration(diff*1000000))
-				time.Sleep(time.Duration(diff*1000000) * time.Microsecond)
+				fmt.Println("Sleeping for:", diff)
+				time.Sleep(diff)
 			}
 			t3 := time.Now()
 			fmt.Println("Tdiff=", t3.Sub(t1))
