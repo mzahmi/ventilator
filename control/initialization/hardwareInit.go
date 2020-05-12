@@ -62,7 +62,7 @@ func initI2C() {
 	//testing LEDs
 	const blinkTime = 500
 	fmt.Println("Blinking LEDs")
-	for ii := 0; ii < 10; ii++ {
+	for ii := 0; ii < 2; ii++ {
 
 		fmt.Println("Yellow")
 		err := ioexp.WritePin(ioexp.YellowLed, true)
