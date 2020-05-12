@@ -15,7 +15,7 @@ import (
 // UpdateValues populates a a struct which is recieved by the GUI
 func UpdateValues(UI *params.UserInput) {
 	BCT := 60 / UI.Rate
-	UI.Ti = 1 / (1 + UI.ER)
+	UI.Ti = 1 / (1 + UI.ER) // UI.IR = 1 in this case until resolved
 	UI.Te = BCT - UI.Ti
 	UI.MinuteVolume = UI.TidalVolume * UI.Rate // calculation of minute volume MV = VT * BPM
 }
@@ -23,7 +23,7 @@ func UpdateValues(UI *params.UserInput) {
 // ModeSelection reads input from the GUI to select the required Mode from the user input struct
 func ModeSelection(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
 	UpdateValues(UI) // calculates missing values
-	fmt.Println(UI.Mode)
+	//fmt.Println(UI.Mode)
 	switch UI.Mode {
 	case "Volume A/C":
 		fmt.Println("Pressure Control Mode selected")

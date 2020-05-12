@@ -21,13 +21,13 @@ type UserInput struct {
 	IR                  float32 // inhalation ratio part IR:IE
 	ER                  float32 // exhalation ratio part IR:IE
 	PeakFlow            float32
-	PEEP                float32 // 5-20 mmH2O
+	PEEP                float32 // 5-20 cmH2O
 	FiO2                float32 // 21% - 100%
-	PressureTrigSense   float32 // -0.5 to 02 mmH2O
+	PressureTrigSense   float32 // -0.5 to -2.0 cmH2O
 	FlowTrigSense       float32 // 0.5 to 5 Lpm
 	FlowCyclePercent    float32 // for flow cycling ranges from 0 to 100%
 	PressureSupport     float32 // needs to be defined
-	InspiratoryPressure float32 // Also known as P_control
+	InspiratoryPressure float32 // Insp Pressure setting over PEEP
 	UpperLimitVT        float32 // upper limit of tidal volume
 	LowerLimitVT        float32 // lower limit of tidal volume
 	RiseTime            float32 // needs to be defined

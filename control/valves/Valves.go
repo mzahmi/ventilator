@@ -40,8 +40,9 @@ type PropValve struct {
 	Percent    float64
 }
 
+//AnyValve interfaces all types of valves involved in the system
 type AnyValve interface {
-	CloseValve()
+	Close()
 }
 
 //Solenoids
@@ -84,23 +85,16 @@ var ExProp = PropValve{
 	Percent:    0,
 }
 
-//SolenCmd switchs on and off the solenoids
-func (valve *SolenValve) SolenCmd(cmd string) {
-
-	switch cmd {
-	case "open":
-		valve.State = true
-		ioexp.WritePin(valve.PinMask, valve.State)
-		// fmt.Printf("Valve (%v) has opened\n", valve.Name)
-	case "close":
-		valve.State = false
-		ioexp.WritePin(valve.PinMask, valve.State)
-		// fmt.Printf("Valve (%v) has closed\n", valve.Name)
-	}
+//Open opens the solen valve
+func (valve *SolenValve) Open() {
+	valve.State = true
+	ioexp.WritePin(valve.PinMask, valve.State)
 }
 
-func (valve *SolenValve) CloseValve() {
-	valve.SolenCmd("close")
+//Close closes the solen valve
+func (valve *SolenValve) Close() {
+	valve.State = false
+	ioexp.WritePin(valve.PinMask, valve.State)
 }
 
 //IncrementValve controls the opening of Prop valves
@@ -108,12 +102,13 @@ func (valve *PropValve) IncrementValve(actuate float64) {
 	dac.WriteDac(valve.SetDacID, valve.SetDacChan, actuate)
 }
 
-func (valve *PropValve) CloseValve() {
+//Close closes prop valve
+func (valve *PropValve) Close() {
 	valve.IncrementValve(0)
 }
 
 func CloseAllValves(v ...AnyValve) {
 	for _, s := range v {
-		s.CloseValve()
+		s.Close()
 	}
 }

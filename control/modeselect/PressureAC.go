@@ -56,9 +56,9 @@ func PressureAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.Wa
 func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
 	defer wg.Done()
 	//initiate Pressure PID based on readings from PIns
-	PressurePID := NewPIDController(0.5, 0.5, 0.5)             // takes in P, I, and D values to be set trial and error
-	PressurePID.setpoint = float64(UI.InspiratoryPressure / 4) // Sets the PID setpoint to inspiratory pressure
-
+	PressurePID := NewPIDController(0.5, 0.5, 0.5)                         // takes in P, I, and D values to be set trial and error
+	PressurePID.setpoint = float64((UI.InspiratoryPressure + UI.PEEP) / 6) // Sets the PID setpoint to inspiratory pressure above PEEP
+	valves.MV.Open()
 	//control loop; it loops unitll Exit bool is set to false
 	for {
 		//Open main valve MIns controlled by pressure sensor PIns
@@ -74,25 +74,25 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
 
 			//check for PEEP
-			if ((<-s).PressureOutput) <= UI.PEEP {
+			if ((<-s).PressureOutput) <= (UI.PEEP / 2) {
 				break
 			}
 
 			// Open ExProp valve
-			valves.MExp.SolenCmd("open")
+			valves.MExp.Open()
 		}
 		//Close main valve ExProp
-		valves.MExp.SolenCmd("close")
+		valves.MExp.Close()
 		// if it's stop or exit then close valves and break loop
 		trig := <-readStatus
 		if (trig == "stop") || (trig == "exit") {
-			valves.CloseAllValves(&valves.ExProp, &valves.InProp)
-			logger.Println("All valves closed")
 			break
 		} else {
 			continue
 		}
 	}
+	valves.CloseAllValves(&valves.InProp, &valves.MExp, &valves.MV)
+	logger.Println("All valves closed")
 
 }
 
