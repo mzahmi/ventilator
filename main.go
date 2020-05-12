@@ -62,7 +62,7 @@ func main() {
 
 	// Reads sensors and populate the graph
 	//limit the reading frequency to a predefined value
-	rate := float64(20)                                                 // Hz rate
+	rate := float64(100)                                                // Hz rate
 	timePerLoopIteration := time.Duration(1000/rate) * time.Millisecond //(1 / rate) ms
 	fmt.Println(timePerLoopIteration)
 
@@ -70,19 +70,18 @@ func main() {
 		defer wg.Done()
 		for {
 			t1 := time.Now()
-			/*
-				Pin, Pout := sensors.ReadAllSensors()
-				s <- sensors.SensorsReading{
-					PressureInput:  Pin,
-					PressureOutput: Pout}
-				client.Set("pressure", Pin, 0).Err()
-			*/
-			time.Sleep(40 * time.Millisecond)
+
+			Pin, Pout := sensors.ReadAllSensors()
+			s <- sensors.SensorsReading{
+				PressureInput:  Pin,
+				PressureOutput: Pout}
+			client.Set("pressure", Pin, 0).Err()
+
 			loopTime := time.Since(t1)
-			fmt.Println("Loop time:", loopTime)
+			//fmt.Println("Loop time:", loopTime)
 			if loopTime < timePerLoopIteration {
 				diff := (timePerLoopIteration - loopTime)
-				fmt.Println("Sleeping for:", diff)
+				//fmt.Println("Sleeping for:", diff)
 				time.Sleep(diff)
 			}
 			t3 := time.Now()
