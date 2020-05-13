@@ -1,0 +1,4 @@
+{
+    "files": ["qml/BasicNumpad.qml","qml/MainQt.qmlc","qml/InputList.qmlc","qml/new-ui.qmlproject.user.106b6c8","qml/InputList.qml.bkp","qml/BasicChart1.qml","main.py","main.qml","qml/ViewMonitorPreset.qml","qml/ViewSettings.qml","qml/new-ui.qmlproject.user.efec06f","qml/MainGo.qml","generator.py","qml/ViewMonitor.qmlc","qml/BasicChart1.qmlc","qml/ViewMode.qml","qml/Menulist.qml","qml/new-ui.qmlproject","qml/ViewMonitor.qml","qml/componentCreation.js","qml/ViewMode.qmlc","qml/MainQt.qml","qml/ViewSettings.qmlc","qml/new-ui.qmlproject.user","view.qml","qml/ViewPatient.qml","qml/new-ui.qmlproject.user.9955527","qml/ViewMode_oldqml","qml/BaseSlider.qml","qml/BaseLargeButton.qml","qml/Menulist.qmlc","qml/InputList.qml","qml/BaseRadioGroup.qml","qml/MainGo.qmlc","test.py","qml/ViewMonitorPreset.qmlc","test_qml/main.qml","qml/config.jsc","qml/config.js","qml/ViewPatient.qmlc","qml/BaseButton.qml","qml/SideBar.qml"]
+}
+

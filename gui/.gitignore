@@ -1,0 +1,6 @@
+# build files
+.vscode
+__pycache__
+*.jsc
+log.log
+*.qmlc
