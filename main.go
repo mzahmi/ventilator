@@ -108,10 +108,12 @@ func main() {
 				} else if val == "stop" {
 					// stop function to stop ventilation
 					//fmt.Println("Stopping system")
+					readStatus <- "Stoped"
 					logger.Println("Stopping system")
 				} else if val == "exit" {
 					// exit program
 					// exit <- true
+					readStatus <- "Exited"
 					logger.Println("Exiting system")
 				}
 			}

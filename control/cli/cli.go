@@ -27,6 +27,8 @@ func info() {
 	fmt.Println("	list sensors: lss")
 	fmt.Println("	list actuators: lsa")
 	fmt.Println("	list parameters: lsp")
+	fmt.Println("	start ventilation: vstart")
+	fmt.Println("	stop ventilation: vstop")
 }
 
 func Run(wg *sync.WaitGroup, s chan sensors.SensorsReading, client *redis.Client, readStatus chan string) {
@@ -237,13 +239,7 @@ func Run(wg *sync.WaitGroup, s chan sensors.SensorsReading, client *redis.Client
 				fmt.Println("Incorrect number or arguments, press i for help")
 				continue
 			}
-			//TODO: read them to redis
-			/*
-				switch words[1]; {
-				case "":
 
-				}
-			*/
 			parameters := params.ReadParams(client)
 			switch words[1] {
 			case "Mode":
@@ -305,24 +301,20 @@ func Run(wg *sync.WaitGroup, s chan sensors.SensorsReading, client *redis.Client
 				fmt.Println("UpperLimitRR:", parameters.UpperLimitRR)
 			case "LowerLimitRR":
 				fmt.Println("LowerLimitRR:", parameters.LowerLimitRR)
+			case "status":
+				val, _ := client.Get("status").Result()
+				fmt.Println("LowerLimitRR:", val)
+			default:
+				fmt.Println("Invalid parameter")
 
 			}
 			continue
 		}
 
 		if words[0] == "q" {
-			break
+			os.Exit(0)
+			//break
 		}
 		fmt.Println("Unknown input")
 	}
 }
-
-/*
-func main() {
-	var wg sync.WaitGroup
-	wg.Add(1)
-	ch := make(chan UserInput)
-	go cli(&wg, ch)
-	wg.Wait()
-}
-*/
