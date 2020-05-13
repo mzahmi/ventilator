@@ -70,9 +70,9 @@ class AlarmManager(QtCore.QObject):
             if config.useredis:
                 self._status = config.r.get("alarm_status")
                 self._title = config.r.get("alarm_title")
-                self._info = config.r.get("alarm_info")
+                self._info = config.r.get("alarm_text")
                 print("emitting alarm ", self._info)
-                self.alarmStatus.emit(config.r.get("alarm_info"))
+                self.alarmStatus.emit(config.r.get("alarm_status"))
                 time.sleep(self._delay)
 
 # -------------------------------------------------
