@@ -38,6 +38,15 @@ Item {
             font.pixelSize: 16
         }
 
+        MouseArea{
+            id: mousearea
+            width: 70
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.top: parent.top
+            onClicked: BtnScript.createComponent(root.title)
+        }
+
         Rectangle {
             id: rectangle1
             x: 174
@@ -48,22 +57,18 @@ Item {
             radius: 5
             anchors.right: parent.right
             anchors.rightMargin: 10
-            MouseArea{
-                id: mousearea
-                anchors.fill: parent
-                onClicked: BtnScript.createComponent(root.title)
 
-                Text {
-                    id: element2
-                    color: "#ffffff"
-                    text: qsTr("Select")
-                    anchors.leftMargin: 0
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignHCenter
-                    anchors.fill: parent
-                    font.pixelSize: 12
-                }
+            Text {
+            id: element2
+            color: "#ffffff"
+            text: qsTr("Select")
+            anchors.leftMargin: 0
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            anchors.fill: parent
+            font.pixelSize: 12
             }
+
         }
 
         Text {
@@ -86,6 +91,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:1.75}D{i:3;anchors_width:20}
+    D{i:0;formeditorZoom:1.75}
 }
 ##^##*/
