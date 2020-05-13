@@ -9,6 +9,7 @@ import (
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
 	"github.com/mzahmi/ventilator/control/dac"
+	"github.com/mzahmi/ventilator/control/ioexp"
 	"github.com/mzahmi/ventilator/params"
 )
 
@@ -68,6 +69,11 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 
 			valves.MIns.Open()
 
+			valves.MExp.Close()
+
+			//prop valve digital in
+			ioexp.WritePin(ioexp.Solenoid2, true)
+
 			// feedbackIn := float64(sensors.PIns.ReadPressureBar())
 
 			dac.WriteDac(1, 1, 0.5)
@@ -79,6 +85,7 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 			// valves.InProp.IncrementValve(PressurePID.Update(float64((<-s).PressureInput)))
 		}
 		valves.MIns.Close()
+		ioexp.WritePin(ioexp.Solenoid1, false)
 		dac.WriteDac(1, 1, 0)
 
 		//Close main valve InProp
@@ -91,7 +98,6 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 			// if ((<-s).PressureOutput) <= (UI.PEEP / 1020) {
 			// 	break
 			// }
-
 			// Open ExProp valve
 			valves.MExp.Open()
 		}
