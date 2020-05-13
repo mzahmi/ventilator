@@ -7,11 +7,9 @@ import config
 from PySide2 import QtCore, QtQml, QtWidgets
 
 r = config.r
-<<<<<<< HEAD
 if config.useredis:
     r = config.r
-=======
->>>>>>> 3c4a7886aacfeff69825bc8c9c2100abd32f901f
+
 
 
 class ChartManager(QtCore.QObject):

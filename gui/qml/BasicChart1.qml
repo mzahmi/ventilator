@@ -39,7 +39,7 @@ Item {
                 axisY: ValueAxis {
                     id: axisY
                     min: -5
-                    max: 115
+                    max: 250
                 }
                 axisX: ValueAxis {
                     id: axisXs

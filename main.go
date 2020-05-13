@@ -67,7 +67,7 @@ func main() {
 
 	// Reads sensors and populate the graph
 	//limit the reading frequency to a predefined value
-	rate := float64(100)                                                // Hz rate
+	rate := float64(200)                                                // Hz rate
 	timePerLoopIteration := time.Duration(1000/rate) * time.Millisecond //(1 / rate) ms
 	fmt.Println(timePerLoopIteration)
 
@@ -77,30 +77,35 @@ func main() {
 			t1 := time.Now()
 
 			Pin, Pout := sensors.ReadAllSensors()
+			//loopTime := time.Since(t1)
 			s <- sensors.SensorsReading{
 				PressureInput:  Pin,
 				PressureOutput: Pout}
+			//fmt.Println("Loop time:", loopTime)
+			//t2:= time.Now()
 			//fmt.Println("done reading all sensors")
+			if (Pin * 1020) > 150{
+				fmt.Println(Pin)
+			}
 			client.Set("pressure", (Pin)*1020, 0).Err()
 			//fmt.Println("done sending to chart")
 			//alarms.AirwayPressureAlarms(s,&wg,30,5)
-
 			loopTime := time.Since(t1)
-			//fmt.Println("Loop time:", loopTime)
 			if loopTime < timePerLoopIteration {
 				diff := (timePerLoopIteration - loopTime)
 				//fmt.Println("Sleeping for:", diff)
 				time.Sleep(diff)
 			}
-			// t3 := time.Now()
+			
+			//t3 := time.Now()
 			//fmt.Println("Tdiff=", t3.Sub(t1))
 		}
 	}()
 
 	go func(){
-		defer wg.Done()
+		//defer wg.Done()
 		for {
-			if (((<-s).PressureInput)*1020) >= 200 {
+			if (((<-s).PressureInput)*1020) >= 350 {
 				//msg := "Airway Pressure high"
 				client.Set("alarm_status", "critical", 0).Err()
 				client.Set("alarm_title","Airway Pressure high", 0).Err()

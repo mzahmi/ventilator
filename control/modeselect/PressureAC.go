@@ -4,10 +4,11 @@ import (
 	"log"
 	"sync"
 	"time"
-	"fmt"
+	// "fmt"
 
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
+	"github.com/mzahmi/ventilator/control/dac"
 	"github.com/mzahmi/ventilator/params"
 )
 
@@ -66,11 +67,19 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
 
 			valves.MIns.Open()
-			fmt.Println((<-s).PressureInput)
+
+			// feedbackIn := float64(sensors.PIns.ReadPressureBar())
+
+			dac.WriteDac(1, 1, 0.5)
+			// fmt.Println(feedbackIn)
+			//fmt.Println((<-s).PressureInput)
+			v:= (<-s).PressureInput
+			v = v + 1
 			//fmt.Println((<-s).PressureOutput)
 			// valves.InProp.IncrementValve(PressurePID.Update(float64((<-s).PressureInput)))
 		}
 		valves.MIns.Close()
+		dac.WriteDac(1, 1, 0)
 
 		//Close main valve InProp
 		// valves.InProp.IncrementValve(0)
