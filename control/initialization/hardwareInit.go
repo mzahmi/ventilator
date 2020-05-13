@@ -41,7 +41,7 @@ func initI2C() {
 		fmt.Println(err)
 		return
 	}
-	time.Sleep(2000 * time.Millisecond)
+	time.Sleep(500 * time.Millisecond)
 	err = rpigpio.BeepOff()
 	if err != nil {
 		fmt.Println(err)

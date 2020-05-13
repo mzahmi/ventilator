@@ -6,8 +6,9 @@ import time
 import config
 from PySide2 import QtCore, QtQml, QtWidgets
 
+r = config.r
 if config.useredis:
-    r = config.redis
+    r = config.r
 
 
 class ChartManager(QtCore.QObject):

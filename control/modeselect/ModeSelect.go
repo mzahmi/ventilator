@@ -5,7 +5,7 @@ import (
 	"log"
 	"sync"
 
-	"github.com/mzahmi/ventilator/control/alarms"
+	// "github.com/mzahmi/ventilator/control/alarms"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/params"
 )
@@ -15,7 +15,7 @@ import (
 // UpdateValues populates a a struct which is recieved by the GUI
 func UpdateValues(UI *params.UserInput) {
 	BCT := 60 / UI.Rate
-	UI.Ti = 1 / (1 + UI.ER) // UI.IR = 1 in this case until resolved
+	UI.Ti = BCT / (1 + UI.ER) // UI.IR = 1 in this case until resolved
 	UI.Te = BCT - UI.Ti
 	UI.MinuteVolume = UI.TidalVolume * UI.Rate // calculation of minute volume MV = VT * BPM
 }
@@ -44,23 +44,23 @@ func ModeSelection(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync
 	}
 }
 
-/*CheckAlarms ...*/
-func CheckAlarms(UI *params.UserInput) error {
-	errPIP := alarms.AirwayPressureAlarms(UI.UpperLimitPIP, UI.LowerLimitPIP)
-	errVT := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVT)
-	errMV := alarms.ExpiratoryMinuteVolumeAlarms(UI.UpperLimitMV, UI.LowerLimitMV)
-	errRR := alarms.RespiratoryRateAlarms(UI.UpperLimitRR, UI.LowerLimitRR)
+// /*CheckAlarms ...*/
+// func CheckAlarms(UI *params.UserInput, s chan sensors.SensorsReading) error {
+// 	errPIP := alarms.AirwayPressureAlarms(s,UI.UpperLimitPIP, UI.LowerLimitPIP)
+// 	errVT := alarms.TidalVolumeAlarms(UI.UpperLimitVT, UI.LowerLimitVT)
+// 	errMV := alarms.ExpiratoryMinuteVolumeAlarms(UI.UpperLimitMV, UI.LowerLimitMV)
+// 	errRR := alarms.RespiratoryRateAlarms(UI.UpperLimitRR, UI.LowerLimitRR)
 
-	if errPIP != nil {
-		return errPIP
-	} else if errVT != nil {
-		return errVT
-	} else if errMV != nil {
-		return errMV
-	} else if errRR != nil {
-		return errRR
-	} else {
-		return nil
-	}
+// 	if errPIP != nil {
+// 		return errPIP
+// 	} else if errVT != nil {
+// 		return errVT
+// 	} else if errMV != nil {
+// 		return errMV
+// 	} else if errRR != nil {
+// 		return errRR
+// 	} else {
+// 		return nil
+// 	}
 
-}
+// }
