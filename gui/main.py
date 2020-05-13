@@ -21,13 +21,13 @@ parser.add_argument('-r', '--redis', action='store_true',
                     help="run GUI and send information to redis")
 parser.add_argument('-f', '--fullscreen', action='store_true',
                     help="run GUI in full screen, dont have a way to kill it using touch yet")
-args = parser.parse_args()
+config.args = parser.parse_args()
 
-if args.redis:
+if config.args.redis:
     r = config.r
     config.useredis = True
 
-if args.fullscreen:
+if config.args.fullscreen:
     config.fullscreen = True
 
 
@@ -49,7 +49,7 @@ def main():
     ctx.setContextProperty("ModeSelect", modeSelect)
     ctx.setContextProperty("Patient", patient)
     ctx.setContextProperty("dp", dp)
-    if args.fullscreen:
+    if config.args.fullscreen:
         logging.debug("Runnin in full screen")
         ctx.setContextProperty("fs", True)
 

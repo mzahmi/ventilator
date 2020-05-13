@@ -11,3 +11,5 @@ r = redis.StrictRedis(
     decode_responses=True)
 
 fullscreen = False
+
+args = None
