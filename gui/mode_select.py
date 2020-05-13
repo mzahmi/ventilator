@@ -14,7 +14,7 @@ else:
 
 if useredis:
     r = redis.StrictRedis(
-        host='raspberrypi.local',
+        host='localhost',
         port=6379,
         password='',
         decode_responses=True)

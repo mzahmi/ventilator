@@ -19,7 +19,7 @@ args = parser.parse_args()
 
 if args.redis:
     r = redis.StrictRedis(
-        host='raspberrypi.local',
+        host='localhost',
         port=6379,
         password='',
         decode_responses=True)
@@ -38,7 +38,7 @@ class Manager(QtCore.QObject):
         super(Manager, self).__init__(parent)
         self._currX = 0
         self._currY = 0
-        self._delay = 0.5
+        self._delay = 0.2
         self._multiplier = 1.0
         self._power = 1.0
         self._xIncrement = 1.0
@@ -118,8 +118,10 @@ class Manager(QtCore.QObject):
         # increments and returns x and y
 
         self._currX += self._xIncrement
-        self._currY = self._currY+3
-        # self._currY = float(r.get("pressure"))
+        if not args.redis:
+            self._currY = self._currY+3
+        else:
+            self._currY = float(r.get("pressure"))
 
         return self._currX,self._currY
 
