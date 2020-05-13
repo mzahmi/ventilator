@@ -25,6 +25,8 @@ parser.add_argument('-f', '--fullscreen', action='store_true',
                     help="run GUI in full screen, dont have a way to kill it using touch yet")
 config.args = parser.parse_args()
 
+r = config.r
+
 if config.args.redis:
     r = config.r
     config.useredis = True

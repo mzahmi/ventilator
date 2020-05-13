@@ -2,13 +2,14 @@
 package sensors
 
 import (
+	// "fmt"
 	"github.com/mzahmi/ventilator/control/adc"
 )
 
 //Inhalation pressure sensor constants
 const Inhalation_Pressure_Sensor_Name = "Inhalation Pressure Sensor"
-const Inhalation_Pressure_Sensor_ADC_ID = 2
-const Inhalation_Pressure_Sensor_ADC_Chan = 1
+const Inhalation_Pressure_Sensor_ADC_ID = 1
+const Inhalation_Pressure_Sensor_ADC_Chan = 0
 
 //Inhalation flow sensor constants
 const Inhalation_Flow_Sensor_Name = "Inhalation Flow Sensor"
@@ -17,8 +18,8 @@ const Inhalation_Flow_Sensor_ADC_Chan = 0
 
 //Exhalaltion pressure sensor constants
 const Exhalation_Pressure_Sensor_Name = "Exhalation Pressure Sensor"
-const Exhalation_Pressure_Sensor_ADC_ID = 1
-const Exhalation_Pressure_Sensor_ADC_Chan = 2
+const Exhalation_Pressure_Sensor_ADC_ID = 2
+const Exhalation_Pressure_Sensor_ADC_Chan = 1
 
 //Exhalaltion flow sensor constants
 const Exhalation_Flow_Sensor_Name = "Exhalation Flow Sensor"
@@ -120,8 +121,11 @@ func (FS *Flow) ReadFlow() float32 {
 // // ReadAllSensors constantly reading input from the sensors and returns their readings
 // // in this order: PIns, PExp, FIns, FExp readings
 func ReadAllSensors() (InputPress, OutputPress float32) { //, InputFlow, OutputFlow float32) {
-	InputPress = PIns.ReadPressure()
-	OutputPress = PExp.ReadPressure()
+	// fmt.Println("read PIns")
+	InputPress = PIns.ReadPressureRaw()
+	// fmt.Println("read PExp")
+	OutputPress = PExp.ReadPressureRaw()
+	// fmt.Println("done Reading")
 	//InputFlow = FIns.ReadFlow()
 	//OutputFlow = FExp.ReadFlow()
 	return InputPress, OutputPress //, InputFlow, OutputFlow
