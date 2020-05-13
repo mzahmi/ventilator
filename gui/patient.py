@@ -24,7 +24,7 @@ class Patient(QtCore.QObject):
             self._height = patient_info["height"]
             self._weight = patient_info["weight"]
 
-    @QtCore.Property(str)
+    @QtCore.Property(str, constant=True)
     def name(self):
         return self._name
 
@@ -32,7 +32,7 @@ class Patient(QtCore.QObject):
     def setName(self, val):
         self._name = val
 
-    @QtCore.Property(int)
+    @QtCore.Property(int, constant=True)
     def age(self):
         return self._age
 
@@ -40,7 +40,7 @@ class Patient(QtCore.QObject):
     def setAge(self, val):
         self._age = val
 
-    @QtCore.Property(str)
+    @QtCore.Property(str, constant=True)
     def gender(self):
         return self._gender
 
@@ -48,7 +48,7 @@ class Patient(QtCore.QObject):
     def setGender(self, val):
         self._gender = val
 
-    @QtCore.Property(int)
+    @QtCore.Property(int, constant=True)
     def height(self):
         return self._height
 
@@ -56,7 +56,7 @@ class Patient(QtCore.QObject):
     def setHeight(self, val):
         self._height = val
 
-    @QtCore.Property(int)
+    @QtCore.Property(int, constant=True)
     def weight(self):
         return self._weight
 
