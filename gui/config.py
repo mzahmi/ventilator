@@ -5,7 +5,7 @@ logging.basicConfig(filename='log.log', format='%(levelname)s:%(asctime)s - %(me
                     datefmt='%H:%M:%S', level=logging.NOTSET)
 useredis = False
 r = redis.StrictRedis(
-    host='localhost',
+    host='dupi1.local',
     port=6379,
     password='',
     decode_responses=True)

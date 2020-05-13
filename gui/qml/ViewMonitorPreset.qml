@@ -8,34 +8,41 @@ import QtGraphicalEffects 1.0
 Item {
     id: root
     height: 300
-    width: moderow.width+moderow.spacing
+    width: moderow.width + moderow.spacing
     signal clicked()
     signal activated(string mode)
     signal stop()
-    Component.onCompleted:{
+    // var presetList = [preset1, preset2, preset3, preset4, preset5]
+    Component.onCompleted: {
         ModeSelect.modeSelected.connect(root.activated)
         ModeSelect.stopVent.connect(root.stop)
     }
-    onActivated:{
-        if (ModeSelect.mode==="Pressure A/C"){
+    onActivated: {
+        if (ModeSelect.mode === "Pressure A/C") {
             activateButton(preset1)
+            // preset2.visible = false
+            // preset3.visible = false
+            // preset4.visible = false
+            // preset5.visible = false
         }
     }
-    onStop:{
+    onStop: {
         deactivateButton(preset1)
     }
-    function activateButton(buttonID){
+
+    function activateButton(buttonID) {
         buttonID.active = true
+        buttonID.x = 200
     }
 
-    function deactivateButton(buttonID){
+    function deactivateButton(buttonID) {
         buttonID.active = false
     }
-    
+
 
     Flickable {
         id: flickable
-        contentWidth: moderow.width+moderow.spacing
+        contentWidth: moderow.width + moderow.spacing
         anchors.fill: parent
 
         RowLayout {
@@ -47,10 +54,10 @@ Item {
 
             Rectangle {
                 id: preset1
-                property string title:"Pressure A/C"
+                property string title: "Pressure A/C"
                 property bool active: false
-                property string breath:"-"
-                property string trigger:"-"
+                property string breath: "-"
+                property string trigger: "-"
                 color: "#ffffff"
                 Layout.preferredHeight: 120
                 Layout.preferredWidth: 194
@@ -63,18 +70,18 @@ Item {
                         x: 0
                         y: 124
                         height: 32
-                        color: preset1.active?"red":"#5677fc"
-                        text: preset1.active?"Stop":"Start"
+                        color: preset1.active ? "red" : "#5677fc"
+                        text: preset1.active ? "Stop" : "Start"
                         textColor: "#ffffff"
                         anchors.bottom: parent.bottom
                         anchors.left: parent.left
                         anchors.right: parent.right
                         rippleColor: "#deffffff"
                         onClicked: {
-                            
-                            if (raisedbutton1.text === "Stop"){
+
+                            if (raisedbutton1.text === "Stop") {
                                 ModeSelect.stopVentilation()
-                            } else{
+                            } else {
                                 root.clicked()
                             }
                         }
@@ -107,7 +114,7 @@ Item {
 
                         Text {
                             color: "#555555"
-                            text: preset1.active?ModeSelect.breath:"-"
+                            text: preset1.active ? ModeSelect.breath : "-"
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                             font.pixelSize: 14
                         }
@@ -124,7 +131,7 @@ Item {
 
                         Text {
                             color: "#555555"
-                            text: preset1.active?ModeSelect.trigger:"-"
+                            text: preset1.active ? ModeSelect.trigger : "-"
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                             font.pixelSize: 14
                         }
@@ -189,7 +196,7 @@ Item {
 
                         Text {
                             color: "#555555"
-                            text: preset2.active?ModeSelect.breath:"-"
+                            text: preset2.active ? ModeSelect.breath : "-"
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                             font.pixelSize: 14
                         }
@@ -208,7 +215,7 @@ Item {
                         Text {
                             id: t2v
                             color: "#555555"
-                            text: preset2.active?ModeSelect.trigger:"-"
+                            text: preset2.active ? ModeSelect.trigger : "-"
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                             font.pixelSize: 14
                         }
@@ -270,7 +277,7 @@ Item {
 
                         Text {
                             color: "#555555"
-                            text: preset3.active?ModeSelect.breath:"-"
+                            text: preset3.active ? ModeSelect.breath : "-"
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                             font.pixelSize: 14
                         }
@@ -287,7 +294,7 @@ Item {
 
                         Text {
                             color: "#555555"
-                            text: preset3.active?ModeSelect.trigger:"-"
+                            text: preset3.active ? ModeSelect.trigger : "-"
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                             font.pixelSize: 14
                         }
@@ -348,7 +355,7 @@ Item {
 
                         Text {
                             color: "#555555"
-                            text: preset4.active?ModeSelect.breath:"-"
+                            text: preset4.active ? ModeSelect.breath : "-"
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                             font.pixelSize: 14
                         }
@@ -365,7 +372,7 @@ Item {
 
                         Text {
                             color: "#555555"
-                            text: preset4.active?ModeSelect.trigger:"-"
+                            text: preset4.active ? ModeSelect.trigger : "-"
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                             font.pixelSize: 14
                         }
@@ -426,7 +433,7 @@ Item {
 
                         Text {
                             color: "#555555"
-                            text: preset5.active?ModeSelect.breath:"-"
+                            text: preset5.active ? ModeSelect.breath : "-"
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                             font.pixelSize: 14
                         }
@@ -443,7 +450,7 @@ Item {
 
                         Text {
                             color: "#555555"
-                            text: preset5.active?ModeSelect.trigger:"-"
+                            text: preset5.active ? ModeSelect.trigger : "-"
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                             font.pixelSize: 14
                         }

@@ -6,6 +6,8 @@ import sys
 import test
 import time
 
+from alarm_manager import AlarmManager
+
 from PySide2 import QtCore, QtQml, QtWidgets
 
 # from chart_manager import ChartManager as cm
@@ -38,18 +40,21 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
 
     chartManager = ChartManager()
+    alarmManager = AlarmManager()
     patient = Patient()
     modeSelect = ms.ModeSelect()
     dp = 0
 
     app.aboutToQuit.connect(chartManager.stop)
     chartManager.start()
+    alarmManager.start()
     engine = QtQml.QQmlApplicationEngine()
 
     ctx = engine.rootContext()
     ctx.setContextProperty("ChartManager", chartManager)
     ctx.setContextProperty("ModeSelect", modeSelect)
     ctx.setContextProperty("Patient", patient)
+    ctx.setContextProperty("AlarmManager", alarmManager)
     ctx.setContextProperty("dp", dp)
     if config.args.fullscreen:
         logging.debug("Runnin in full screen")

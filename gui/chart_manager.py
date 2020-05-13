@@ -7,8 +7,11 @@ import config
 from PySide2 import QtCore, QtQml, QtWidgets
 
 r = config.r
+<<<<<<< HEAD
 if config.useredis:
     r = config.r
+=======
+>>>>>>> 3c4a7886aacfeff69825bc8c9c2100abd32f901f
 
 
 class ChartManager(QtCore.QObject):
@@ -23,8 +26,6 @@ class ChartManager(QtCore.QObject):
         self._currX = 0
         self._currY = 0
         self._delay = 0.2
-        self._multiplier = 1.0
-        self._power = 1.0
         self._xIncrement = 1.0
         self._starter = False
         self._goOn = False
@@ -48,32 +49,6 @@ class ChartManager(QtCore.QObject):
         else:
             self.stop()
         self._starter = val
-
-    @QtCore.Property(float)
-    def multiplier(self):
-        return self._multiplier
-
-    # 'multiplier' can be set from qml
-    # being set when slider 'multiplierSlider' is changed
-    @multiplier.setter
-    def setMultiplier(self, val):
-        if self._multiplier == val:
-            return
-        print(val)
-        self._multiplier = val
-
-    # makes 'power'
-    @QtCore.Property(int)
-    def power(self):
-        return self._power
-
-    # sets power
-    @power.setter
-    def setPower(self, val):
-        if self._power == val:
-            return
-        print(val)
-        self._power = val
 
     @QtCore.Property(float)
     def delay(self):

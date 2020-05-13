@@ -2,8 +2,10 @@ import QtQuick 2.0
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
 import "./material/qml/material"
-import "./config.js" as Config
-import "./componentBCreation.js" as MyScript
+import "./config.js"
+as Config
+import "./componentBCreation.js"
+as MyScript
 import "."
 
 Item {
@@ -15,7 +17,7 @@ Item {
     onPresetClicked: {
         view.push(selectbreathe)
     }
-    Component.onCompleted:{
+    Component.onCompleted: {
         // MyScript.createButtonComponent(MyScript.toArray(ModeSelect.buttonList))
         ModeSelect.stopVent.connect(name.stop)
     }
@@ -24,31 +26,31 @@ Item {
     // reset view
     onStop: {
         // hide button page
-        flickableItems.visible=false
+        flickableItems.visible = false
         // make page non interactive and move to top
         flickablePage.contentY = 0
-        flickablePage.interactive=false
+        flickablePage.interactive = false
         // hide breath row
-        rowBreath.visible=false
+        rowBreath.visible = false
         // hide trigger
-        rowTrigger.visible=false
+        rowTrigger.visible = false
         // show modes
-        rowButtons.visible=true
+        rowButtons.visible = true
         // remove all trigger buttons
-        for(var i = rowTrigger.children.length; i > 0 ; i--) {
+        for (var i = rowTrigger.children.length; i > 0; i--) {
             console.log("destroying trigger")
-            rowTrigger.children[i-1].height=0
+            rowTrigger.children[i - 1].height = 0
         }
         // remove all breath buttons
-        for(var j = rowBreath.children.length; j > 0 ; j--) {
+        for (var j = rowBreath.children.length; j > 0; j--) {
             console.log("destroying breath")
-            rowBreath.children[j-1].height=0
+            rowBreath.children[j - 1].height = 0
         }
 
         ModeSelect.status = "stop"
     }
 
-    Flickable{
+    Flickable {
         id: flickablePage
         interactive: false
         contentHeight: 500
@@ -63,31 +65,32 @@ Item {
             font.pointSize: 32
         }
 
-        Button{
+        Button {
             text: "back"
             onClicked: MyScript.backButton()
-            
+            visible: !rowButtons.visible
+
         }
 
-//        Column {
-//            id: rowButtons
-//            y: 180
-//            spacing: 10
-//            anchors.rightMargin: 20
-//            anchors.leftMargin: 20+this.spacing
-//            anchors.right: parent.right
-//            anchors.left: parent.left
-//        }
+        //        Column {
+        //            id: rowButtons
+        //            y: 180
+        //            spacing: 10
+        //            anchors.rightMargin: 20
+        //            anchors.leftMargin: 20+this.spacing
+        //            anchors.right: parent.right
+        //            anchors.left: parent.left
+        //        }
 
-        Item{
+        Item {
             id: rowButtons
             anchors.fill: parent
 
-            BaseLargeButton{
+            BaseLargeButton {
                 id: volumeac
                 x: 76
                 y: 166
-                title:"Volume A/C"
+                title: "Volume A/C"
                 info: "Volume A/C"
             }
 
@@ -150,7 +153,7 @@ Item {
             y: 213
             spacing: 15
             anchors.rightMargin: 20
-            anchors.leftMargin: 20+this.spacing
+            anchors.leftMargin: 20 + this.spacing
             anchors.right: parent.right
             anchors.left: parent.left
         }
@@ -160,13 +163,13 @@ Item {
             y: 213
             spacing: 15
             anchors.rightMargin: 20
-            anchors.leftMargin: 20+this.spacing
+            anchors.leftMargin: 20 + this.spacing
             anchors.right: parent.right
             anchors.left: parent.left
         }
 
-        Item{
-            visible:false
+        Item {
+            visible: false
             id: flickableItems
         }
 
