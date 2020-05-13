@@ -8,7 +8,7 @@ Item {
     id: mainItem
     signal reemitted(point p)
     // connects to reemitted
-    Component.onCompleted: Manager.dataReady.connect(mainItem.reemitted)
+    Component.onCompleted: ChartManager.dataReady.connect(mainItem.reemitted)
     onReemitted: {
         series1.addpoint(p.y)
     }

@@ -82,9 +82,12 @@ Item {
 
                     Text {
                         id: element3
-                        x: 45
                         y: 8
                         text: qsTr("Pressure A/C")
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
                         font.pixelSize: 18
                     }
 
@@ -160,9 +163,12 @@ Item {
 
                     Text {
                         id: element1
-                        x: 45
                         y: 8
                         text: qsTr("VOLUME A/C")
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        anchors.left: parent.left
+                        anchors.right: parent.right
 
                         font.pixelSize: 18
                     }
@@ -455,8 +461,9 @@ Item {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:2}D{i:21;anchors_width:193;anchors_x:"-69"}D{i:20;anchors_x:70}
-D{i:26;anchors_x:45}D{i:27;anchors_width:193;anchors_x:"-69"}D{i:32;anchors_x:70}
-D{i:33;anchors_height:200;anchors_width:193;anchors_x:"-69";anchors_y:170}D{i:2;anchors_x:8}
+    D{i:0;formeditorZoom:1.75}D{i:6;anchors_x:45}D{i:16;anchors_x:45}D{i:21;anchors_width:193;anchors_x:"-69"}
+D{i:20;anchors_x:70}D{i:26;anchors_x:45}D{i:27;anchors_width:193;anchors_x:"-69"}
+D{i:32;anchors_x:70}D{i:33;anchors_height:200;anchors_width:193;anchors_x:"-69";anchors_y:170}
+D{i:2;anchors_x:8}
 }
 ##^##*/

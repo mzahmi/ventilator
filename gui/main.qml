@@ -21,7 +21,7 @@ ApplicationWindow {
 
     signal reemitted(point p)
     // connects to reemitted
-    Component.onCompleted: Manager.dataReady.connect(mainWindow.reemitted)
+    Component.onCompleted: ChartManager.dataReady.connect(mainWindow.reemitted)
     onReemitted: {
         testXAxis.max = Math.max(testXAxis.max, p.x)
         testXAxis.min = Math.min(testXAxis.min, p.x)
@@ -134,7 +134,7 @@ ApplicationWindow {
                         Layout.rightMargin: 10
                         editable: true
                         onValueChanged: function(){
-                            Manager.power = value;
+                            ChartManager.power = value;
                         }
                     }
 
@@ -158,7 +158,7 @@ ApplicationWindow {
                         Layout.rightMargin: 10
                         Layout.fillWidth: true
                         onValueChanged: function(){
-                            Manager.multiplier = value;
+                            ChartManager.multiplier = value;
                         }
                     }
 
@@ -190,7 +190,7 @@ ApplicationWindow {
                         Layout.rightMargin: 10
                         Layout.fillWidth: true
                         onValueChanged: function(){
-                            Manager.delay = value;
+                            ChartManager.delay = value;
                         }
                     }
 
@@ -215,7 +215,7 @@ ApplicationWindow {
                         Layout.rightMargin: 10
                         Layout.fillWidth: true
                         onValueChanged: function(){
-                            Manager.xIncrement = value;
+                            ChartManager.xIncrement = value;
                         }
                     }
 
@@ -240,11 +240,11 @@ ApplicationWindow {
                             console.log(text);
                             if(text=="START"){
                                 clearLine();
-                                Manager.starter = true;
+                                ChartManager.starter = true;
                                 text = "STOP";
                             }
                             else{
-                                Manager.starter = false;
+                                ChartManager.starter = false;
                                 text = "START";
                             }
                         }

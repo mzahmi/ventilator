@@ -1,11 +1,12 @@
 from PySide2 import QtCore, QtWidgets, QtQml
 import json
 import redis 
+import config
 from main import logging
 import time
 
-from main import args
-if args.redis:
+
+if config.useredis:
     logging.info("using redis")
     useredis = True
 else:
@@ -13,11 +14,7 @@ else:
     useredis=False
 
 if useredis:
-    r = redis.StrictRedis(
-        host='localhost',
-        port=6379,
-        password='',
-        decode_responses=True)
+    r=config.r
 
 mode_breath = {
     "Volume A/C": ["Volume Control", "Volume Assist"],
@@ -91,9 +88,9 @@ class ModeSelect(QtCore.QObject):
     def setMode(self, mode):
         self._currMode=mode
         if mode=="":
-            logging.debug("resetting mode")
+            logging.debug("mode reset")
         else:
-            logging.debug(f'chosen ventilation mode is {mode}')
+            logging.debug(f'mode set: {mode}')
 
     @QtCore.Property(str)
     def breath(self):
@@ -101,12 +98,11 @@ class ModeSelect(QtCore.QObject):
 
     @breath.setter
     def setBreath(self, breath):
-        print("breath is ", breath)
         self._currBreath=breath
         if breath=="":
-            logging.debug("removing breath from class")
+            logging.debug("breath reset")
         else:
-            logging.debug(f'chosen breath type is {breath}')
+            logging.debug(f'breath type set: {breath}')
 
     @QtCore.Property(str)
     def trigger(self):
@@ -116,9 +112,9 @@ class ModeSelect(QtCore.QObject):
     def setTrigger(self, trigger):
         self._currTrigger=trigger
         if trigger=="":
-            logging.debug("removing trigger from class")
+            logging.debug("trigger reset")
         else:
-            logging.debug(f'trigger type is {trigger}')
+            logging.debug(f'trigger type set: {trigger}')
 
     @QtCore.Property(str)
     def status(self):
@@ -126,18 +122,8 @@ class ModeSelect(QtCore.QObject):
 
     @status.setter
     def setStatus(self, status):
-        print(status)
+        logging.debug("status set: {}".format(status))
         self._status=status
-
-
-    @QtCore.Property(str)
-    def modeList(self):
-        modes_str = ""
-        for key in mode_breath:
-            modes_str=key+","+modes_str
-
-        #print(modes_str)
-        return modes_str
 
     @QtCore.Slot()
     def stopVentilation(self):
@@ -152,7 +138,7 @@ class ModeSelect(QtCore.QObject):
 
     @QtCore.Slot()
     def startVentilation(self):
-        self._status="start"
+        self.status="start"
         logging.warning("Starting Ventilation")
         if useredis:
             r.mset({"status":self._status})        
@@ -184,7 +170,7 @@ class ModeSelect(QtCore.QObject):
             r.mset({"PARAMS":paramsdump})
             logging.info("Sending value to redis")
 
-        logging.debug(f'Setting {mystring} to {myint}')
+        logging.debug(f'Input {mystring} set: {myint}')
         self.modeSelected.emit(self._currMode)
 
     def start(self):
