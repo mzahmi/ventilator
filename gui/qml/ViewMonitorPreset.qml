@@ -97,14 +97,12 @@ Item {
                         spacing: 5
 
                         Text {
-                            id: b1
                             color: "#555555"
                             text: qsTr("Breath:")
                             font.pixelSize: 14
                         }
 
                         Text {
-                            id: b1v
                             color: "#555555"
                             text: preset1.active?ModeSelect.breath:"-"
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
@@ -116,14 +114,12 @@ Item {
                         y: 62
                         anchors.rightMargin: 20
                         Text {
-                            id: t1
                             color: "#555555"
                             text: qsTr("Trigger:")
                             font.pixelSize: 14
                         }
 
                         Text {
-                            id: t1v
                             color: "#555555"
                             text: preset1.active?ModeSelect.trigger:"-"
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
@@ -180,14 +176,12 @@ Item {
                         spacing: 5
 
                         Text {
-                            id: b2
                             color: "#555555"
                             text: qsTr("Breath:")
                             font.pixelSize: 14
                         }
 
                         Text {
-                            id: b2v
                             color: "#555555"
                             text: preset2.active?ModeSelect.breath:"-"
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
@@ -222,6 +216,7 @@ Item {
 
             Rectangle {
                 id: preset3
+                property bool active: false
                 color: "#ffffff"
                 Layout.preferredHeight: 120
                 Layout.preferredWidth: 194
@@ -230,7 +225,6 @@ Item {
                     anchors.fill: parent
                     raised: false
                     RaisedButton {
-                        id: raisedbutton2
                         x: 0
                         y: 124
                         height: 32
@@ -244,53 +238,86 @@ Item {
                     }
 
                     Text {
-                        id: title3
-                        y: 7
+                        y: 8
                         text: qsTr("PSV")
-                        anchors.left: parent.left
-                        anchors.right: parent.right
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
+                        anchors.left: parent.left
+                        anchors.right: parent.right
 
                         font.pixelSize: 18
                     }
 
-                    Text {
-                        id: element6
-                        x: 63
-                        y: 42
-                        color: "#555555"
-                        text: qsTr("50 / 32")
-                        font.pixelSize: 18
+                    RowLayout {
+                        y: 40
+                        anchors.rightMargin: 20
+                        anchors.leftMargin: 20
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        spacing: 5
+
+                        Text {
+                            color: "#555555"
+                            text: qsTr("Breath:")
+                            font.pixelSize: 14
+                        }
+
+                        Text {
+                            color: "#555555"
+                            text: preset3.active?ModeSelect.breath:"-"
+                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                            font.pixelSize: 14
+                        }
+                    }
+
+                    RowLayout {
+                        y: 62
+                        anchors.rightMargin: 20
+                        Text {
+                            color: "#555555"
+                            text: qsTr("Trigger:")
+                            font.pixelSize: 14
+                        }
+
+                        Text {
+                            color: "#555555"
+                            text: preset3.active?ModeSelect.trigger:"-"
+                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                            font.pixelSize: 14
+                        }
+                        anchors.right: parent.right
+                        spacing: 5
+                        anchors.left: parent.left
+                        anchors.leftMargin: 20
                     }
                 }
             }
 
             Rectangle {
                 id: preset4
+                property bool active: false
                 color: "#ffffff"
+                Layout.preferredHeight: 120
                 Layout.preferredWidth: 194
                 Card {
-                    id: card3
                     anchors.fill: parent
+                    raised: false
                     RaisedButton {
-                        id: raisedbutton3
                         x: 0
                         y: 124
                         height: 32
                         color: "#b3b3b3"
                         text: "In development"
-                        anchors.left: parent.left
                         textColor: "#ffffff"
-                        rippleColor: "#deffffff"
-                        anchors.right: parent.right
                         anchors.bottom: parent.bottom
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        rippleColor: "#deffffff"
                     }
 
                     Text {
-                        id: element7
-                        y: 7
-                        text: qsTr("P-SIMV")
+                        y: 8
+                        text: qsTr("Volume SIMV")
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
                         anchors.left: parent.left
@@ -299,64 +326,129 @@ Item {
                         font.pixelSize: 18
                     }
 
-                    Text {
-                        id: element8
-                        x: 63
-                        y: 42
-                        color: "#555555"
-                        text: qsTr("50 / 32")
-                        font.pixelSize: 18
+                    RowLayout {
+                        y: 40
+                        anchors.rightMargin: 20
+                        anchors.leftMargin: 20
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        spacing: 5
+
+                        Text {
+                            color: "#555555"
+                            text: qsTr("Breath:")
+                            font.pixelSize: 14
+                        }
+
+                        Text {
+                            color: "#555555"
+                            text: preset4.active?ModeSelect.breath:"-"
+                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                            font.pixelSize: 14
+                        }
                     }
-                    raised: false
+
+                    RowLayout {
+                        y: 62
+                        anchors.rightMargin: 20
+                        Text {
+                            color: "#555555"
+                            text: qsTr("Trigger:")
+                            font.pixelSize: 14
+                        }
+
+                        Text {
+                            color: "#555555"
+                            text: preset4.active?ModeSelect.trigger:"-"
+                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                            font.pixelSize: 14
+                        }
+                        anchors.right: parent.right
+                        spacing: 5
+                        anchors.left: parent.left
+                        anchors.leftMargin: 20
+                    }
                 }
-                Layout.preferredHeight: 120
             }
 
             Rectangle {
                 id: preset5
+                property bool active: false
                 color: "#ffffff"
+                Layout.preferredHeight: 120
                 Layout.preferredWidth: 194
                 Card {
-                    id: card4
                     anchors.fill: parent
+                    raised: false
                     RaisedButton {
-                        id: raisedbutton4
                         x: 0
                         y: 124
                         height: 32
                         color: "#b3b3b3"
                         text: "In development"
-                        anchors.left: parent.left
                         textColor: "#ffffff"
-                        rippleColor: "#deffffff"
-                        anchors.right: parent.right
                         anchors.bottom: parent.bottom
-                    }
-
-                    Text {
-                        id: element9
-                        y: 7
-                        text: qsTr("V-SIMV")
                         anchors.left: parent.left
                         anchors.right: parent.right
-                        horizontalAlignment: Text.AlignHCenter
-
-                        verticalAlignment: Text.AlignVCenter
-                        font.pixelSize: 18
+                        rippleColor: "#deffffff"
                     }
 
                     Text {
-                        id: element10
-                        x: 63
-                        y: 42
-                        color: "#555555"
-                        text: qsTr("50 / 32")
+                        y: 8
+                        text: qsTr("Volume SIMV")
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+
                         font.pixelSize: 18
                     }
-                    raised: false
+
+                    RowLayout {
+                        y: 40
+                        anchors.rightMargin: 20
+                        anchors.leftMargin: 20
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        spacing: 5
+
+                        Text {
+                            color: "#555555"
+                            text: qsTr("Breath:")
+                            font.pixelSize: 14
+                        }
+
+                        Text {
+                            color: "#555555"
+                            text: preset5.active?ModeSelect.breath:"-"
+                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                            font.pixelSize: 14
+                        }
+                    }
+
+                    RowLayout {
+                        y: 62
+                        anchors.rightMargin: 20
+                        Text {
+                            color: "#555555"
+                            text: qsTr("Trigger:")
+                            font.pixelSize: 14
+                        }
+
+                        Text {
+                            color: "#555555"
+                            text: preset5.active?ModeSelect.trigger:"-"
+                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                            font.pixelSize: 14
+                        }
+                        anchors.right: parent.right
+                        spacing: 5
+                        anchors.left: parent.left
+                        anchors.leftMargin: 20
+                    }
                 }
-                Layout.preferredHeight: 120
             }
+
         }
     }
 }
@@ -364,7 +456,7 @@ Item {
 /*##^##
 Designer {
     D{i:0;formeditorZoom:2}D{i:21;anchors_width:193;anchors_x:"-69"}D{i:20;anchors_x:70}
-D{i:26;anchors_x:70}D{i:27;anchors_width:193;anchors_x:"-69"}D{i:32;anchors_x:70}
+D{i:26;anchors_x:45}D{i:27;anchors_width:193;anchors_x:"-69"}D{i:32;anchors_x:70}
 D{i:33;anchors_height:200;anchors_width:193;anchors_x:"-69";anchors_y:170}D{i:2;anchors_x:8}
 }
 ##^##*/

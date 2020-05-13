@@ -7,7 +7,7 @@ Item {
     width: rectangle.width
     height: rectangle.height
     property string title:"Volume A/C"
-    property string info:"Volume A/C"
+    property string info:"In Development"
 
     
     Rectangle {

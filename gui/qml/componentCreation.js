@@ -144,7 +144,6 @@ function addToView(componentList){
 
 
 function getComponents(inputList) {
-    console.log("pls work")
 
     componentNumber=1;
     var wantedComponents = inputList
