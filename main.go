@@ -16,6 +16,8 @@ import (
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
 	"github.com/mzahmi/ventilator/params"
+	"github.com/mzahmi/ventilator/control/rpigpio"
+	// "github.com/mzahmi/ventilator/control/alarms"
 )
 
 var UI = params.DefaultParams
@@ -65,31 +67,78 @@ func main() {
 
 	// Reads sensors and populate the graph
 	//limit the reading frequency to a predefined value
-	rate := float64(100)                                                // Hz rate
-	timePerLoopIteration := time.Duration(1000/rate) * time.Millisecond //(1 / rate) ms
-	fmt.Println(timePerLoopIteration)
+	// rate := float64(200)                                                // Hz rate
+	// timePerLoopIteration := time.Duration(1000/rate) * time.Millisecond //(1 / rate) ms
+	// fmt.Println(timePerLoopIteration)
 
 	go func() {
 		defer wg.Done()
 		for {
-			t1 := time.Now()
+			// t1 := time.Now()
 
 			Pin, Pout := sensors.ReadAllSensors()
+			//loopTime := time.Since(t1)
 			s <- sensors.SensorsReading{
 				PressureInput:  Pin,
 				PressureOutput: Pout}
-			client.Set("pressure", Pin*1020, 0).Err()
-
-			loopTime := time.Since(t1)
 			//fmt.Println("Loop time:", loopTime)
-			if loopTime < timePerLoopIteration {
-				diff := (timePerLoopIteration - loopTime)
-				//fmt.Println("Sleeping for:", diff)
-				time.Sleep(diff)
+			//t2:= time.Now()
+			//fmt.Println("done reading all sensors")
+			if (Pin * 1020) > 150{
+				fmt.Println(Pin)
 			}
-			t3 := time.Now()
-			fmt.Println("Tdiff=", t3.Sub(t1))
+			client.Set("pressure", (Pin)*1020, 0).Err()
+			fmt.Println("done sending to chart")
+			//alarms.AirwayPressureAlarms(s,&wg,30,5)
+			// loopTime := time.Since(t1)
+			// if loopTime < timePerLoopIteration {
+			// 	diff := (timePerLoopIteration - loopTime)
+			// 	//fmt.Println("Sleeping for:", diff)
+			// 	time.Sleep(diff)
+			// }
+			
+			//t3 := time.Now()
+			//fmt.Println("Tdiff=", t3.Sub(t1))
 		}
+	}()
+
+	go func(){
+		// defer wg.Done()
+		for {
+			if (((<-s).PressureInput)*1020) >= 200 {
+				//msg := "Airway Pressure high"
+				client.Set("alarm_status", "critical", 0).Err()
+				client.Set("alarm_title","Airway Pressure high", 0).Err()
+				client.Set("alarm_text", "Airway Pressure exceeded limits check for obstruction", 0).Err()
+				tm := 200 * time.Millisecond
+				ts := 3000 * time.Millisecond
+				
+				err := rpigpio.BeepOn()
+				check(err)
+				time.Sleep(tm)
+				err = rpigpio.BeepOff()
+				check(err)
+				time.Sleep(tm)
+				err = rpigpio.BeepOn()
+				check(err)
+				time.Sleep(tm)
+				err = rpigpio.BeepOff()
+				check(err)
+				time.Sleep(tm)
+				err = rpigpio.BeepOn()
+				check(err)
+				time.Sleep(tm)
+				err = rpigpio.BeepOff()
+				check(err)
+				time.Sleep(tm)
+				time.Sleep(ts)
+				
+			} else{
+				client.Set("alarm_status", "none", 0).Err()
+			}
+			// time.Sleep(10*time.Millisecond)
+		}
+		
 	}()
 
 	// Runs the ventelation method control
@@ -108,12 +157,12 @@ func main() {
 				} else if val == "stop" {
 					// stop function to stop ventilation
 					//fmt.Println("Stopping system")
-					readStatus <- "Stoped"
+					//readStatus <- "Stoped"
 					logger.Println("Stopping system")
 				} else if val == "exit" {
 					// exit program
 					// exit <- true
-					readStatus <- "Exited"
+					//readStatus <- "Exited"
 					logger.Println("Exiting system")
 				}
 			}
