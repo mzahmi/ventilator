@@ -6,17 +6,10 @@ import time
 import config
 from PySide2 import QtCore, QtQml, QtWidgets
 
-r = config.r
-if config.useredis:
-    r = config.r
-
-
 
 class ChartManager(QtCore.QObject):
     # create a signal
     dataReady = QtCore.Signal(QtCore.QPointF, name='dataReady')
-
-    # initial values
 
     def __init__(self, parent=None, r=None):
         # if 'parent' is given then it will inherit it
@@ -77,7 +70,7 @@ class ChartManager(QtCore.QObject):
         if not config.useredis:
             self._currY = random.randint(1, 40)
         else:
-            self._currY = float(r.get("pressure"))
+            self._currY = float(config.r.get("pressure"))
 
         return self._currX, self._currY
 

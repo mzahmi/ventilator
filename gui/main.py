@@ -25,10 +25,7 @@ parser.add_argument('-f', '--fullscreen', action='store_true',
                     help="run GUI in full screen, dont have a way to kill it using touch yet")
 config.args = parser.parse_args()
 
-r = config.r
-
 if config.args.redis:
-    r = config.r
     config.useredis = True
 
 if config.args.fullscreen:
@@ -55,7 +52,7 @@ def main():
     ctx.setContextProperty("ModeSelect", modeSelect)
     ctx.setContextProperty("Patient", patient)
     ctx.setContextProperty("AlarmManager", alarmManager)
-    ctx.setContextProperty("dp", dp) 
+    ctx.setContextProperty("dp", dp)
     ctx.setContextProperty("fs", False)
     if config.args.fullscreen:
         logging.debug("Runnin in full screen")

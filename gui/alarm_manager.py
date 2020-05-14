@@ -11,8 +11,6 @@ class AlarmManager(QtCore.QObject):
     # create a signal
     alarmStatus = QtCore.Signal(str, name='alarmStatus')
 
-    # initial values
-
     def __init__(self, parent=None, r=None):
         # if 'parent' is given then it will inherit it
         super(AlarmManager, self).__init__(parent)

@@ -139,21 +139,23 @@ Item {
             }
 
             RowLayout {
-
-                Text {
-                    id: info
-                    color: "#ffffff"
-                    text: qsTr("Info")
-                    font.pixelSize: 12
-                }
-
-                Text {
-                    id: info1
-                    color: "#ffffff"
-                    text: qsTr("Text")
-                    font.pixelSize: 12
-                }
+                id: row
+                Layout.fillWidth: true
             }
+        }
+
+        Text {
+            id: info1
+            y: 74
+            height: 126
+            color: "#ffffff"
+            text: qsTr("Text")
+            wrapMode: Text.WordWrap
+            anchors.leftMargin: 15
+            anchors.left: parent.left
+            anchors.rightMargin: 0
+            font.pixelSize: 12
+            anchors.right: parent.right
         }
     }
 
