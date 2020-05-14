@@ -120,16 +120,19 @@ Item {
 
         Text {
             id: element17
-            x: 13
-            y: 438
+            x: 16
+            y: 455
             color: "#ffffff"
             text: "\uf015"
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 8
             font.pixelSize: 12
             font.family: webFont.name
 
             MouseArea {
                 id: fullscreentoggle
-                x: -10
+                x: -12
+                y: -6
                 width: 38
                 height: 26
                 onClicked: {
@@ -140,8 +143,8 @@ Item {
 
         Text {
             id: element18
-            x: 68
-            y: 438
+            x: 71
+            y: 455
             color: "#ffffff"
             text: "\uf06a"
             font.pixelSize: 12
@@ -149,8 +152,8 @@ Item {
 
         Text {
             id: element19
-            x: 122
-            y: 438
+            x: 125
+            y: 455
             color: "#ffffff"
             text: "\uf043"
             font.pixelSize: 12
@@ -421,6 +424,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:1.25}D{i:14;anchors_x:2}D{i:23;anchors_x:2}D{i:32;anchors_x:2}
+    D{i:0;formeditorZoom:1.75}D{i:14;anchors_x:2}D{i:23;anchors_x:2}D{i:32;anchors_x:2}
 }
 ##^##*/
