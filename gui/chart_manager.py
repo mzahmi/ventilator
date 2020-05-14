@@ -16,7 +16,7 @@ class ChartManager(QtCore.QObject):
         super(ChartManager, self).__init__(parent)
         self._currX = 0
         self._currY = 0
-        self._delay = 0.2
+        self._delay = 0.01
         self._xIncrement = 1.0
         self._starter = False
         self._goOn = False
