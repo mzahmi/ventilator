@@ -303,7 +303,7 @@ func Run(wg *sync.WaitGroup, s chan sensors.SensorsReading, client *redis.Client
 				fmt.Println("LowerLimitRR:", parameters.LowerLimitRR)
 			case "status":
 				val, _ := client.Get("status").Result()
-				fmt.Println("LowerLimitRR:", val)
+				fmt.Println("status:", val)
 			default:
 				fmt.Println("Invalid parameter")
 

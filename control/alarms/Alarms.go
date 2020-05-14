@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"time"
+	"sync"
 
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/pkg/rpigpio"
@@ -61,12 +62,13 @@ Lower Limit:
 
 	air way pressure is PEEP + (pressure insp or pressure support)
 */
-func AirwayPressureAlarms(UpperLimit, LowerLimit float32) error {
-	if sensors.PIns.ReadPressure() >= UpperLimit {
+func AirwayPressureAlarms(s chan sensors.SensorsReading,wg *sync.WaitGroup, UpperLimit, LowerLimit float32) error {
+	defer wg.Done()
+	if (<-s).PressureInput >= UpperLimit {
 		msg := "Airway Pressure high"
 		HighAlert(msg)
 		return errors.New(msg)
-	} else if sensors.PIns.ReadPressure() <= LowerLimit {
+	} else if (<-s).PressureInput <= LowerLimit {
 		msg := "Airway Pressure low"
 		LowAlert(msg)
 		return errors.New(msg)

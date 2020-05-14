@@ -4,9 +4,12 @@ import (
 	"log"
 	"sync"
 	"time"
+	// "fmt"
 
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
+	"github.com/mzahmi/ventilator/control/dac"
+	"github.com/mzahmi/ventilator/control/ioexp"
 	"github.com/mzahmi/ventilator/params"
 )
 
@@ -56,28 +59,45 @@ func PressureAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.Wa
 func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
 	defer wg.Done()
 	//initiate Pressure PID based on readings from PIns
-	PressurePID := NewPIDController(0.5, 0.5, 0.5)                            // takes in P, I, and D values to be set trial and error
-	PressurePID.setpoint = float64((UI.InspiratoryPressure + UI.PEEP) / 1020) // Sets the PID setpoint to inspiratory pressure above PEEP
-	valves.MV.Open()
+	// PressurePID := NewPIDController(0.5, 0.5, 0.5)                            // takes in P, I, and D values to be set trial and error
+	// PressurePID.setpoint = float64((UI.InspiratoryPressure + UI.PEEP) / 1020) // Sets the PID setpoint to inspiratory pressure above PEEP
+	//valves.MV.Open()
 	//control loop; it loops unitll Exit bool is set to false
 	for {
 		//Open main valve MIns controlled by pressure sensor PIns
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
 
-			valves.InProp.IncrementValve(PressurePID.Update(float64((<-s).PressureInput)))
+			valves.MIns.Open()
+
+			valves.MExp.Close()
+
+			//prop valve digital in
+			ioexp.WritePin(ioexp.Solenoid2, true)
+
+			// feedbackIn := float64(sensors.PIns.ReadPressureBar())
+
+			dac.WriteDac(1, 1, 0.5)
+			// fmt.Println(feedbackIn)
+			//fmt.Println((<-s).PressureInput)
+			v:= (<-s).PressureInput
+			v = v + 1
+			//fmt.Println((<-s).PressureOutput)
+			// valves.InProp.IncrementValve(PressurePID.Update(float64((<-s).PressureInput)))
 		}
+		valves.MIns.Close()
+		ioexp.WritePin(ioexp.Solenoid1, false)
+		dac.WriteDac(1, 1, 0)
 
 		//Close main valve InProp
-		valves.InProp.IncrementValve(0)
+		// valves.InProp.IncrementValve(0)
 
 		//Open main valve MExp controlled by pressure sensor PExp
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
 
 			//check for PEEP
-			if ((<-s).PressureOutput) <= (UI.PEEP / 1020) {
-				break
-			}
-
+			// if ((<-s).PressureOutput) <= (UI.PEEP / 1020) {
+			// 	break
+			// }
 			// Open ExProp valve
 			valves.MExp.Open()
 		}
@@ -86,12 +106,14 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 		// if it's stop or exit then close valves and break loop
 		trig := <-readStatus
 		if (trig == "stop") || (trig == "exit") {
+			// valves.CloseAllValves(&valves.MIns, &valves.MExp)
+			// logger.Println("All valves closed")
 			break
 		} else {
 			continue
 		}
 	}
-	valves.CloseAllValves(&valves.InProp, &valves.MExp, &valves.MV)
+	valves.CloseAllValves(&valves.MIns, &valves.MExp)
 	logger.Println("All valves closed")
 
 }
