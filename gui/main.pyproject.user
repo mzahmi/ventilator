@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.12.0, 2020-05-10T16:49:31. -->
+<!-- Written by QtCreator 4.12.0, 2020-05-14T08:23:00. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -153,12 +153,12 @@
     </valuelist>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">main</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/rashed/dff/new-ui/main.py</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/rashed/dff/new-ui/main.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">main2</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/rashed/dff/gui/main.py</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/rashed/dff/gui/main.py</value>
     <value type="bool" key="PythonEditor.RunConfiguation.Buffered">false</value>
     <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">{afa720fa-fe45-4935-8578-1bb9ad380518}</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/rashed/dff/new-ui/main.py</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/rashed/dff/gui/main.py</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
@@ -167,7 +167,7 @@
     <value type="bool" key="RunConfiguration.UseMultiProcess">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory">/home/rashed/dff/new-ui</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory">/home/rashed/dff/gui</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory.default"></value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.1">
@@ -230,12 +230,12 @@
     </valuelist>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">config</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/rashed/dff/new-ui/qml/config.jsc</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/rashed/dff/new-ui/qml/config.jsc</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">test2</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/rashed/dff/gui/test.py</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/rashed/dff/gui/test.py</value>
     <value type="bool" key="PythonEditor.RunConfiguation.Buffered">false</value>
     <value type="QString" key="PythonEditor.RunConfiguation.Interpreter"></value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/rashed/dff/new-ui/qml/config.jsc</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/rashed/dff/gui/test.py</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
@@ -307,12 +307,12 @@
     </valuelist>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">test</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/rashed/dff/new-ui/test.py</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/rashed/dff/new-ui/test.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">DFF-LOGO-W</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./home/rashed/dff/gui/qml/assets/DFF-LOGO-W.png</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/rashed/dff/gui/qml/assets/DFF-LOGO-W.png</value>
     <value type="bool" key="PythonEditor.RunConfiguation.Buffered">false</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">{afa720fa-fe45-4935-8578-1bb9ad380518}</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/rashed/dff/new-ui/test.py</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Interpreter"></value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">/home/rashed/dff/gui/qml/assets/DFF-LOGO-W.png</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
@@ -322,7 +322,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/rashed/dff/new-ui</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default"></value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">3</value>
   </valuemap>

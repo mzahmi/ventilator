@@ -6,8 +6,6 @@ import time
 import config
 from PySide2 import QtCore, QtQml, QtWidgets
 
-r = config.r
-
 
 class AlarmManager(QtCore.QObject):
     # create a signal
