@@ -1,7 +1,8 @@
 import QtQuick 2.0
 import QtCharts 2.2
 import QtQuick.Controls 2.0
-import "./config.js" as Config
+import "./config.js"
+as Config
 
 Item {
 
@@ -17,8 +18,8 @@ Item {
         id: chartsarea
         color: "#ffffff"
         anchors.fill: parent
-        property var xvalues : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        property var yvalues : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        property var xvalues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        property var yvalues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         property int i: 0
         property int j: 0
         property bool seriesswitch: false
@@ -39,7 +40,9 @@ Item {
                 axisY: ValueAxis {
                     id: axisY
                     min: -5
-                    max: 250
+                    max: 50
+                    minorTickCount: 1
+                    tickCount: 3
                 }
                 axisX: ValueAxis {
                     id: axisXs
@@ -47,20 +50,20 @@ Item {
                     max: 40
                 }
 
-                function populateSeries(myseries){
+                function populateSeries(myseries) {
                     var i;
-                    for (i = 0; i < chartsarea.xvalues.length; i++){
+                    for (i = 0; i < chartsarea.xvalues.length; i++) {
                         myseries.append(chartsarea.xvalues[count], chartsarea.yvalues[count])
                     }
                 }
 
-                function addpoint(y){
+                function addpoint(y) {
                     series1.remove(0)
                     series1.append(chartsarea.i, y)
                     chartsarea.i++
-                    if (chartsarea.i >40){
-                        axisXs.min=axisXs.min+1
-                        axisXs.max=axisXs.max+1
+                    if (chartsarea.i > 40) {
+                        axisXs.min = axisXs.min + 1
+                        axisXs.max = axisXs.max + 1
                     }
                 }
 
@@ -75,17 +78,17 @@ Item {
                 // }
             }
         }
-//        Button {
-//            id: button
-//            x: 61
-//            y: 30
-//            text: qsTr("Button")
-//            property int counter: 5
-//            onClicked: {
-//                series.addpoint(counter,counter)
-//                counter++
-//            }
-//        }
+        //        Button {
+        //            id: button
+        //            x: 61
+        //            y: 30
+        //            text: qsTr("Button")
+        //            property int counter: 5
+        //            onClicked: {
+        //                series.addpoint(counter,counter)
+        //                counter++
+        //            }
+        //        }
     }
 
 }
