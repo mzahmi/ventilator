@@ -88,7 +88,7 @@ func main() {
 				fmt.Println(Pin)
 			}
 			client.Set("pressure", (Pin)*1020, 0).Err()
-			fmt.Println("done sending to chart")
+			//fmt.Println("done sending to chart")
 			//alarms.AirwayPressureAlarms(s,&wg,30,5)
 			// loopTime := time.Since(t1)
 			// if loopTime < timePerLoopIteration {
