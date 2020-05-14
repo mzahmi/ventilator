@@ -54,6 +54,16 @@ Item {
 
                     }
                 }
+
+                Image {
+                    id: image
+                    x: 484
+                    y: 0
+                    width: 166
+                    height: 46
+                    source: "assets/DFF-LOGO-B.png"
+                    fillMode: Image.PreserveAspectFit
+                }
             }
 
             Item {
@@ -164,6 +174,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:1;anchors_width:150}D{i:12;anchors_height:400;anchors_width:200}
+    D{i:1;anchors_width:150}D{i:13;anchors_height:400;anchors_width:200}
 }
 ##^##*/

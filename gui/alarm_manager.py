@@ -6,8 +6,6 @@ import time
 import config
 from PySide2 import QtCore, QtQml, QtWidgets
 
-r = config.r
-
 
 class AlarmManager(QtCore.QObject):
     # create a signal
@@ -26,29 +24,26 @@ class AlarmManager(QtCore.QObject):
         self._goOn = False
         self._threader = None
 
-    @QtCore.Property(bool)
+    @QtCore.Property(str)
     def status(self):
         return self._status
 
-    # set the 'starter' property
     @status.setter
     def setStatus(self, val):
         self._status = val
 
-    @QtCore.Property(bool)
+    @QtCore.Property(str)
     def title(self):
         return self._title
 
-    # set the 'starter' property
     @title.setter
     def setTitle(self, val):
         self._title = val
 
-    @QtCore.Property(bool)
+    @QtCore.Property(str)
     def info(self):
         return self._info
 
-    # set the 'starter' property
     @info.setter
     def setinfo(self, val):
         self._info = val
