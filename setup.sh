@@ -12,8 +12,10 @@ python3 -m pip install pyyaml redis
 mkdir -p go/src/github.com/mzahmi
 cd go/src/github.com/mzahmi 
 git clone https://github.com/mzahmi/ventilator.git
+cd ventilator
+go get
 cd
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
-sudo usermod -aG docker $USER
 sudo docker run --name some-redis -p 6379:6379 -d redis
+sudo usermod -aG docker $USER
