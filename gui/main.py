@@ -26,7 +26,6 @@ parser.add_argument('-f', '--fullscreen', action='store_true',
 config.args = parser.parse_args()
 
 if config.args.redis:
-    r = config.r
     config.useredis = True
 
 if config.args.fullscreen:
