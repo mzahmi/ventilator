@@ -54,16 +54,6 @@ Item {
 
                     }
                 }
-
-                Image {
-                    id: image
-                    x: 484
-                    y: 0
-                    width: 166
-                    height: 46
-                    source: "assets/DFF-LOGO-B.png"
-                    fillMode: Image.PreserveAspectFit
-                }
             }
 
             Item {
@@ -87,6 +77,16 @@ Item {
                 }
 
             }
+        }
+
+        Image {
+            id: image
+            x: 484
+            y: 0
+            width: 166
+            height: 46
+            source: "assets/DFL-LOGO-B.png"
+            fillMode: Image.PreserveAspectFit
         }
     }
 
