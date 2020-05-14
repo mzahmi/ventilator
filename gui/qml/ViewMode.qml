@@ -91,7 +91,7 @@ Item {
                 x: 76
                 y: 166
                 title: "Volume A/C"
-                info: "Volume A/C"
+                info: "Intended for patients who are passive or partially active"
             }
 
             BaseLargeButton {
@@ -99,7 +99,7 @@ Item {
                 x: 325
                 y: 166
                 title: "Volume SIMV"
-                info: "Volume SIMV"
+                info: "Volume control breaths at the set SIMV rate. Pressure/Flow trigger to assisted breath"
             }
 
             BaseLargeButton {
@@ -107,14 +107,14 @@ Item {
                 x: 76
                 y: 284
                 title: "Pressure A/C"
-                info: "Pressure A/C"
+                info: "Suitable for passive, partially active and active patients with weak respiratory drive"
             }
 
             BaseLargeButton {
                 id: volumeac3
                 x: 325
                 y: 284
-                info: "Pressure SIMV"
+                info: "Pressure control breaths at the set SIMV rate. Pressure/Flow trigger to assisted breath"
                 title: "Pressure SIMV"
             }
 
@@ -122,7 +122,7 @@ Item {
                 id: volumeac4
                 x: 76
                 y: 364
-                info: "Pressure Support (PSV)"
+                info: "Pressure Support ventilation mode is indicated for active patients only"
                 title: "Pressure Support"
             }
 

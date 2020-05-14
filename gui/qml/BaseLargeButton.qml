@@ -33,14 +33,14 @@ Item {
             anchors.topMargin: 10
             horizontalAlignment: Text.AlignLeft
             anchors.left: parent.left
-            anchors.leftMargin: 20
+            anchors.leftMargin: 15
             anchors.right: parent.right
             font.pixelSize: 16
         }
 
         MouseArea{
             id: mousearea
-            width: 70
+            anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.top: parent.top
@@ -51,6 +51,7 @@ Item {
             id: rectangle1
             x: 174
             y: 27
+            visible: false
             width: 49
             height: 20
             color: "#3247ef"
@@ -76,11 +77,13 @@ Item {
             height: 17
             color: "#535353"
             text: root.info
-            anchors.right: rectangle1.left
-            anchors.leftMargin: 20
+            anchors.rightMargin: 5
+            wrapMode: Text.WordWrap
+            anchors.right: parent.right
+            anchors.leftMargin: 15
             anchors.topMargin: 34
             anchors.top: parent.top
-            font.pixelSize: 12
+            font.pixelSize: 10
             horizontalAlignment: Text.AlignLeft
             anchors.left: parent.left
         }
@@ -91,6 +94,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:1.75}
+    D{i:0;formeditorZoom:1.75}D{i:3;anchors_width:70}
 }
 ##^##*/

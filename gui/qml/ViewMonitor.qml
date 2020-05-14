@@ -28,6 +28,7 @@ Item {
             anchors.rightMargin: 0
 
             BasicChart1{
+                anchors.topMargin: 10
                 anchors.fill: parent
 
             }
