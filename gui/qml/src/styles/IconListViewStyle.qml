@@ -34,7 +34,7 @@ Item{
                 visible: (itemRoot.item.leftIcon !== undefined && itemRoot.item.leftIcon !== "")
                 font.family: webFont.name
                 font.pixelSize: StyleHelper.item_icon_font_size
-                text: (itemRoot.item.leftIcon !== undefined ) ? itemRoot.item.leftIcon : ""
+                text: (itemRoot.item.leftIcon !== undefined ) ? "  "+itemRoot.item.leftIcon : ""
                 verticalAlignment: Text.AlignVCenter
                 color: itemRoot.itemStyle.text
                 Layout.preferredWidth: 32

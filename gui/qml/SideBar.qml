@@ -118,44 +118,6 @@ Item {
             }
         }
 
-        Text {
-            id: element17
-            x: 13
-            y: 438
-            color: "#ffffff"
-            text: "\uf015"
-            font.pixelSize: 12
-            font.family: webFont.name
-
-            MouseArea {
-                id: fullscreentoggle
-                x: -10
-                width: 38
-                height: 26
-                onClicked: {
-                   var fs=false
-                }
-            }
-        }
-
-        Text {
-            id: element18
-            x: 68
-            y: 438
-            color: "#ffffff"
-            text: "\uf06a"
-            font.pixelSize: 12
-        }
-
-        Text {
-            id: element19
-            x: 122
-            y: 438
-            color: "#ffffff"
-            text: "\uf043"
-            font.pixelSize: 12
-        }
-
         Row {
             id: monitorrow
             property int pip:25
@@ -415,12 +377,44 @@ Item {
                 }
             }
         }
+
+        RowLayout {
+            y: 438
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
+            anchors.leftMargin: 15
+            anchors.right: parent.right
+            anchors.left: parent.left
+
+            Text {
+                id: element17
+                color: "#ffffff"
+                text: "\uf015"
+                font.pixelSize: 12
+                font.family: webFont.name
+            }
+
+            Text {
+                id: element18
+                color: "#ffffff"
+                text: "\uf06a"
+                font.pixelSize: 12
+            }
+
+            Text {
+                id: element19
+                color: "#ffffff"
+                text: "\uf043"
+                font.pixelSize: 12
+            }
+        }
     }
 
 }
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:1.25}D{i:14;anchors_x:2}D{i:23;anchors_x:2}D{i:32;anchors_x:2}
+    D{i:0;formeditorZoom:1.25}D{i:10;anchors_x:2}D{i:19;anchors_x:2}D{i:28;anchors_x:2}
+D{i:37;anchors_x:13}
 }
 ##^##*/
