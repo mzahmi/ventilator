@@ -72,67 +72,75 @@ Item {
 
         Item {
             id: rowButtons
-            anchors.fill: parent
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.left: parent.horizontalCenter
 
-            BaseLargeButton {
-                id: volumeac
-                x: 76
-                y: 166
-                title: "Volume A/C"
-                info: "Intended for patients who are passive or partially active"
-            }
-
-            BaseLargeButton {
-                id: volumeac1
-                x: 325
-                y: 166
-                title: "Volume SIMV"
-                info: "Volume control breaths at the set SIMV rate. Pressure/Flow trigger to assisted breath"
-            }
-
-            BaseLargeButton {
-                id: volumeac2
-                x: 76
-                y: 284
-                title: "Pressure A/C"
-                info: "Suitable for passive, partially active and active patients with weak respiratory drive"
-            }
-
-            BaseLargeButton {
-                id: volumeac3
-                x: 325
-                y: 284
-                info: "Pressure control breaths at the set SIMV rate. Pressure/Flow trigger to assisted breath"
-                title: "Pressure SIMV"
-            }
-
-            BaseLargeButton {
-                id: volumeac4
-                x: 76
-                y: 364
-                info: "Pressure Support ventilation mode is indicated for active patients only"
-                title: "Pressure Support"
+            Text {
+                id: element1
+                x: -237
+                y: -112
+                color: "#a8a8a8"
+                text: qsTr("Volume")
+                font.pixelSize: 18
+                font.bold: true
             }
 
             Text {
                 id: element
-                x: 76
-                y: 255
+                x: -237
+                y: 9
                 color: "#a8a8a8"
                 text: qsTr("Pressure")
                 font.bold: true
                 font.pixelSize: 18
             }
 
-            Text {
-                id: element1
-                x: 76
-                y: 134
-                color: "#a8a8a8"
-                text: qsTr("Volume")
-                font.pixelSize: 18
-                font.bold: true
+            BaseLargeButton {
+                id: volumeac4
+                x: -237
+                y: 118
+                info: "Pressure Support ventilation mode is indicated for active patients only"
+                title: "Pressure Support"
             }
+
+            BaseLargeButton {
+                id: volumeac3
+                x: 12
+                y: 38
+                info: "Pressure control breaths at the set SIMV rate. Pressure/Flow trigger to assisted breath"
+                title: "Pressure SIMV"
+            }
+
+            BaseLargeButton {
+                id: volumeac2
+                x: -237
+                y: 38
+                title: "Pressure A/C"
+                info: "Suitable for passive, partially active and active patients with weak respiratory drive"
+            }
+
+            BaseLargeButton {
+                id: volumeac1
+                x: 12
+                y: -80
+                title: "Volume SIMV"
+                info: "Volume control breaths at the set SIMV rate. Pressure/Flow trigger to assisted breath"
+            }
+
+            BaseLargeButton {
+                id: volumeac
+                x: -237
+                y: -80
+                title: "Volume A/C"
+                info: "Intended for patients who are passive or partially active"
+            }
+
+
+
+
+
+
 
         }
 
@@ -170,9 +178,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:5;anchors_height:200;anchors_width:200}D{i:6;anchors_height:300;anchors_width:300;anchors_x:88;anchors_y:128}
-D{i:8;anchors_height:300;anchors_width:300;anchors_x:88;anchors_y:128}D{i:9;anchors_height:300;anchors_width:300;anchors_x:88;anchors_y:128}
-D{i:10;anchors_height:300;anchors_width:300;anchors_x:88;anchors_y:128}D{i:11;anchors_height:300;anchors_width:300;anchors_x:88;anchors_y:128}
-D{i:1;anchors_height:300;anchors_width:300;anchors_x:88;anchors_y:128}
+    D{i:1;anchors_height:300;anchors_width:300;anchors_x:88;anchors_y:128}
 }
 ##^##*/

@@ -17,7 +17,7 @@ class ChartManager(QtCore.QObject):
         super(ChartManager, self).__init__(parent)
         self._currX = 0
         self._currY = 0
-        self._delay = 0.05
+        self._delay = 0.1
         self._xIncrement = 1
         self._goOn = False
         self._threader = None
@@ -51,7 +51,7 @@ class ChartManager(QtCore.QObject):
         self._currX += self._xIncrement
         if not config.useredis:
             self.test = self.test+self._delay
-            self._currY = math.sin(self.test*30)*10+25
+            self._currY = math.sin(self.test*2)*10+25
         else:
             self._currY = float(config.r.get("pressure"))
 
