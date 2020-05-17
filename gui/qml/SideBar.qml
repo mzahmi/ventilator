@@ -47,8 +47,10 @@ Item {
         anchors.top: parent.top
 
         Column {
-            id: column
-            anchors.fill: parent
+            id: menulistcolumn
+            anchors.right: parent.right
+            anchors.left: parent.left
+            anchors.top: parent.top
 
             Item {
                 id: menuitem
@@ -121,265 +123,40 @@ Item {
             }
         }
 
-        Row {
-            id: monitorrow
-            property int pip: 25
-            property int vt: 10
-            property int rate: 15
-            property int peep: 4
-            property int fio2: 25
-            property string mode: "PAC"
 
-            y: 170
-            spacing: 0
-            anchors.left: parent.left
+        SwipeView {
+            id: view
+            anchors.bottom: iconrow.top
+            anchors.top: menulistcolumn.bottom
             anchors.right: parent.right
+            anchors.left: parent.left
 
+            currentIndex: 0
 
-
-            Column {
-                id: column1
-                width: Config.sidebar_width / 2
-                Layout.fillHeight: false
-                Layout.fillWidth: false
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-
-                Text {
-                    id: piptext
-                    color: "#ffffff"
-                    text: monitorrow.pip
+            Item {
+                id: firstPage
+                LiveData {
+                    id: liveData
+                    anchors.bottom: iconrow.top
                     anchors.left: parent.left
                     anchors.leftMargin: 0
                     anchors.right: parent.right
-                    Layout.fillWidth: true
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignHCenter
-                    font.pixelSize: Config.sidebar_livetext_size1
-                }
-
-                Text {
-                    id: element2
-                    color: "#ffffff"
-                    text: qsTr("PIP")
-                    anchors.left: parent.left
-                    anchors.leftMargin: 0
-                    anchors.right: parent.right
-                    Layout.fillWidth: true
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignHCenter
-                    styleColor: "#ffffff"
-                    font.pixelSize: Config.sidebar_livetext_size2
-                }
-
-                Text {
-                    id: element3
-                    color: "#f9f9f9"
-                    text: qsTr("cmH2O")
-                    anchors.right: parent.right
-                    anchors.left: parent.left
-                    anchors.leftMargin: 0
-                    Layout.fillWidth: true
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignHCenter
-                    font.pixelSize: Config.sidebar_livetext_size3
+                    anchors.top: menulistcolumn.bottom
                 }
             }
-
-            Column {
-                id: column2
-                width: Config.sidebar_width / 2
-                Layout.fillWidth: false
-                Text {
-                    id: element4
-                    color: "#ffffff"
-                    text: monitorrow.vt
+            Item {
+                id: secondPage
+                LiveSetData{
+                    id: liveSetData
+                    anchors.bottom: iconrow.top
                     anchors.left: parent.left
                     anchors.leftMargin: 0
                     anchors.right: parent.right
-                    font.pixelSize: Config.sidebar_livetext_size1
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.fillWidth: true
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                Text {
-                    id: element5
-                    color: "#ffffff"
-                    text: qsTr("Vt")
-                    anchors.left: parent.left
-                    anchors.leftMargin: 0
-                    anchors.right: parent.right
-                    font.pixelSize: Config.sidebar_livetext_size2
-                    styleColor: "#ffffff"
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.fillWidth: true
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                Text {
-                    id: element7
-                    color: "#f9f9f9"
-                    text: qsTr("ml")
-                    anchors.left: parent.left
-                    anchors.leftMargin: 0
-                    anchors.right: parent.right
-                    font.pixelSize: Config.sidebar_livetext_size3
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.fillWidth: true
-                    verticalAlignment: Text.AlignVCenter
+                    anchors.top: menulistcolumn.bottom
                 }
             }
         }
 
-        RowLayout {
-            y: 257
-            spacing: 0
-            anchors.left: parent.left
-            anchors.right: parent.right
-            ColumnLayout {
-                id: column3
-                Text {
-                    id: element8
-                    color: "#ffffff"
-                    text: monitorrow.rate
-                    font.pixelSize: Config.sidebar_livetext_size1
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.fillWidth: true
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                Text {
-                    id: element9
-                    color: "#ffffff"
-                    text: qsTr("Rate")
-                    font.pixelSize: Config.sidebar_livetext_size2
-                    styleColor: "#ffffff"
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.fillWidth: true
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                Text {
-                    id: element10
-                    color: "#f9f9f9"
-                    text: qsTr("BPM")
-                    font.pixelSize: Config.sidebar_livetext_size3
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.fillWidth: true
-                    verticalAlignment: Text.AlignVCenter
-                }
-            }
-
-            ColumnLayout {
-                id: column4
-                width: Config.sidebar_height / 2
-                Text {
-                    id: element11
-                    color: "#ffffff"
-                    text: monitorrow.peep
-                    font.pixelSize: Config.sidebar_livetext_size1
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                Text {
-                    id: element12
-                    color: "#ffffff"
-                    text: qsTr("PEEP")
-                    font.pixelSize: Config.sidebar_livetext_size2
-                    styleColor: "#ffffff"
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                Text {
-                    id: element13
-                    color: "#f9f9f9"
-                    text: qsTr("cmH2O")
-                    font.pixelSize: Config.sidebar_livetext_size3
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-            }
-        }
-
-        RowLayout {
-            y: 345
-            spacing: 0
-            anchors.left: parent.left
-            anchors.right: parent.right
-            ColumnLayout {
-                width: Config.sidebar_height / 2
-                id: column5
-                Text {
-                    id: element14
-                    color: "#ffffff"
-                    text: monitorrow.fio2
-                    font.pixelSize: Config.sidebar_livetext_size1
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                Text {
-                    id: element15
-                    color: "#ffffff"
-                    text: qsTr("FIO2")
-                    font.pixelSize: Config.sidebar_livetext_size2
-                    styleColor: "#ffffff"
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                Text {
-                    id: element16
-                    color: "#f9f9f9"
-                    text: qsTr("%")
-                    font.pixelSize: Config.sidebar_livetext_size3
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-            }
-
-            ColumnLayout {
-                width: Config.sidebar_height / 2
-                id: column6
-                Text {
-                    id: element20
-                    color: "#ffffff"
-                    text: monitorrow.mode
-                    font.pixelSize: Config.sidebar_livetext_size1
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.fillWidth: true
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                Text {
-                    id: element21
-                    color: "#ffffff"
-                    text: qsTr("Mode")
-                    font.pixelSize: Config.sidebar_livetext_size2
-                    styleColor: "#ffffff"
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.fillWidth: true
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                Text {
-                    id: element22
-                    color: "#f9f9f9"
-                    font.pixelSize: Config.sidebar_livetext_size3
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.fillWidth: true
-                    verticalAlignment: Text.AlignVCenter
-                }
-            }
-        }
 
         RowLayout {
             id: iconrow
@@ -418,7 +195,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:1.25}D{i:10;anchors_x:2}D{i:19;anchors_x:2}D{i:28;anchors_x:2}
-D{i:37;anchors_x:13}
+    D{i:0;formeditorZoom:1.25}
 }
 ##^##*/
