@@ -21,7 +21,7 @@ func UpdateValues(UI *params.UserInput) {
 }
 
 // ModeSelection reads input from the GUI to select the required Mode from the user input struct
-func ModeSelection(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
+func ModeSelection(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
 	UpdateValues(UI) // calculates missing values
 	//fmt.Println(UI.Mode)
 	switch UI.Mode {

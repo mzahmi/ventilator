@@ -14,7 +14,7 @@ const Inhalation_Pressure_Sensor_ADC_Chan = 0
 //Inhalation flow sensor constants
 const Inhalation_Flow_Sensor_Name = "Inhalation Flow Sensor"
 const Inhalation_Flow_Sensor_ADC_ID = 1
-const Inhalation_Flow_Sensor_ADC_Chan = 0
+const Inhalation_Flow_Sensor_ADC_Chan = 1
 
 //Exhalaltion pressure sensor constants
 const Exhalation_Pressure_Sensor_Name = "Exhalation Pressure Sensor"
