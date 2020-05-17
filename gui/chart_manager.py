@@ -1,6 +1,7 @@
 
 import random
 import time
+import math
 # from main import args
 
 import config
@@ -17,29 +18,10 @@ class ChartManager(QtCore.QObject):
         self._currX = 0
         self._currY = 0
         self._delay = 0.05
-        self._xIncrement = 1.0
-        self._starter = False
+        self._xIncrement = 1
         self._goOn = False
         self._threader = None
-
-    # property 'starter' can be seen in qml
-    # connected to the button start
-    @QtCore.Property(bool)
-    def starter(self):
-        return self._starter
-
-    # set the 'starter' property
-    @starter.setter
-    def setStarter(self, val):
-        # val is returned from qml
-        if self._multiplier == val:
-            return
-        print(val)
-        if val:
-            self.start()
-        else:
-            self.stop()
-        self._starter = val
+        self.test = 0
 
     @QtCore.Property(float)
     def delay(self):
@@ -52,7 +34,7 @@ class ChartManager(QtCore.QObject):
         print(val)
         self._delay = val
 
-    @QtCore.Property(float)
+    @QtCore.Property(float, constant=True)
     def xIncrement(self):
         return self._xIncrement
 
@@ -68,7 +50,8 @@ class ChartManager(QtCore.QObject):
 
         self._currX += self._xIncrement
         if not config.useredis:
-            self._currY = random.randint(1, 40)
+            self.test = self.test+self._delay
+            self._currY = math.sin(self.test*30)*10+25
         else:
             self._currY = float(config.r.get("pressure"))
 

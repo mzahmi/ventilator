@@ -8,47 +8,49 @@ Item {
 
     id: root
 
-    property bool starttwo:false
-    property int limit:50
-    property int minY:0
-    property int maxY:50
-    property int xval:0
-    property int xval2:-1
+    property bool starttwo: false
+    property double limit: 10.0
+    property int minY: 0
+    property int maxY: 50
+    property double xval: 0
+    property double xval2: 0
     signal reemitted(point p)
 
     Component.onCompleted: ChartManager.dataReady.connect(root.reemitted)
     onReemitted: {
         root.addpoint(p.y, xval, series1)
-        xval++
-        if (xval==limit){starttwo=true}
+        xval += 0.1
+        if (xval > limit) {
+            starttwo = true
+        }
         // start second chart
-        if(starttwo){
+        if (starttwo) {
             root.addpoint2(p.y, xval2, series2)
-            xval2++
+            xval2 += 0.1
         }
     }
 
-    function addpoint(y,x, myseries) {
-        if (x>limit){
-            if(myseries.count!==0){
+    function addpoint(y, x, myseries) {
+        if (x > limit) {
+            if (myseries.count !== 0) {
                 myseries.remove(0)
-            }else{
-                xval=0
+            } else {
+                xval = 0
             }
-        }else{
-        myseries.append(x, y)
+        } else {
+            myseries.append(x, y)
         }
     }
 
-    function addpoint2(y,x, myseries) {
-        if (x>limit){
-            if(myseries.count!==0){
+    function addpoint2(y, x, myseries) {
+        if (x > limit) {
+            if (myseries.count !== 0) {
                 myseries.remove(0)
-            }else{
-                xval2=0
+            } else {
+                xval2 = 0
             }
-        }else{
-        myseries.append(x, y)
+        } else {
+            myseries.append(x, y)
         }
     }
 
@@ -64,33 +66,10 @@ Item {
             legend.visible: false
 
             SplineSeries {
-                id: series2
-                color: "blue"
-                name: "LineSeries"
-
-                axisY: ValueAxis {
-                    id: axisY2
-                    min: root.minY
-                    max: root.maxY
-                    minorTickCount: 1
-                    tickCount: 3
-                    visible:false
-                }
-                axisX: ValueAxis {
-                    id: axisXs2
-                    min: 0
-                    max: root.limit
-                    tickCount: 2
-                    visible:false
-                }
-
-            }
-
-
-            SplineSeries {
                 id: series1
-                color: "blue"
+                color: "#5677fc"
                 name: "LineSeries"
+                width: 1.5
 
                 axisY: ValueAxis {
                     id: axisY
@@ -104,6 +83,30 @@ Item {
                     min: 0
                     max: root.limit
                     tickCount: 2
+                }
+
+            }
+
+            SplineSeries {
+                id: series2
+                color: "#5677fc"
+                name: "LineSeries"
+                width: 1.5
+
+                axisY: ValueAxis {
+                    id: axisY2
+                    min: root.minY
+                    max: root.maxY
+                    minorTickCount: 1
+                    tickCount: 3
+                    visible: false
+                }
+                axisX: ValueAxis {
+                    id: axisXs2
+                    min: 0
+                    max: root.limit
+                    tickCount: 2
+                    visible: false
                 }
 
             }

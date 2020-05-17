@@ -1,15 +1,24 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
-import "./componentBCreation.js" as BtnScript
+import "./componentBCreation.js"
+as BtnScript
 
 Item {
     id: root
     width: rectangle.width
     height: rectangle.height
-    property string title:"Volume A/C"
-    property string info:"In Development"
+    property bool active: false
+    property string title: "Volume A/C"
+    property string info: "In Development"
+    Component.onCompleted: {
+        if (BtnScript.activeButtons.includes(title)) {
+            active = true
+        } else {
+            active = false
+            info = "In Development"
+        }
+    }
 
-    
     Rectangle {
         id: rectangle
         x: 0
@@ -19,10 +28,6 @@ Item {
         color: "#ffffff"
         radius: 10
         border.color: "#8e8e8e"
-
-
-
-
 
         Text {
             color: "#000000"
@@ -38,13 +43,17 @@ Item {
             font.pixelSize: 16
         }
 
-        MouseArea{
+        MouseArea {
             id: mousearea
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.top: parent.top
-            onClicked: BtnScript.createComponent(root.title)
+            onClicked: {
+                if (root.active) {
+                    BtnScript.createComponent(root.title)
+                }
+            }
         }
 
         Rectangle {
@@ -60,14 +69,14 @@ Item {
             anchors.rightMargin: 10
 
             Text {
-            id: element2
-            color: "#ffffff"
-            text: qsTr("Select")
-            anchors.leftMargin: 0
-            verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignHCenter
-            anchors.fill: parent
-            font.pixelSize: 12
+                id: element2
+                color: "#ffffff"
+                text: qsTr("Select")
+                anchors.leftMargin: 0
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                anchors.fill: parent
+                font.pixelSize: 12
             }
 
         }

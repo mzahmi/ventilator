@@ -38,12 +38,10 @@ Item {
         rowButtons.visible = true
         // remove all trigger buttons
         for (var i = rowTrigger.children.length; i > 0; i--) {
-            console.log("destroying trigger")
             rowTrigger.children[i - 1].height = 0
         }
         // remove all breath buttons
         for (var j = rowBreath.children.length; j > 0; j--) {
-            console.log("destroying breath")
             rowBreath.children[j - 1].height = 0
         }
 
@@ -71,16 +69,6 @@ Item {
             visible: !rowButtons.visible
 
         }
-
-        //        Column {
-        //            id: rowButtons
-        //            y: 180
-        //            spacing: 10
-        //            anchors.rightMargin: 20
-        //            anchors.leftMargin: 20+this.spacing
-        //            anchors.right: parent.right
-        //            anchors.left: parent.left
-        //        }
 
         Item {
             id: rowButtons
