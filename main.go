@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"runtime"
 	"sync"
 	"syscall"
 	"time"
@@ -22,6 +23,7 @@ import (
 
 var UI = params.DefaultParams
 var wg sync.WaitGroup
+var mux sync.Mutex
 
 func main() {
 	f, err := os.OpenFile("Events.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -64,8 +66,12 @@ func main() {
 	go func() {
 		defer wg.Done()
 		for {
+			mux.Lock()
 			status, _ := client.Get("status").Result()
 			readStatus <- status
+			mux.Unlock()
+			runtime.Gosched()
+			time.Sleep(200 * time.Millisecond)
 		}
 	}()
 
@@ -82,6 +88,7 @@ func main() {
 
 			Pin, Pout := sensors.ReadAllSensors()
 			//loopTime := time.Since(t1)
+			mux.Lock()
 			s = sensors.SensorsReading{
 				PressureInput:  Pin,
 				PressureOutput: Pout}
@@ -99,6 +106,8 @@ func main() {
 				//fmt.Println("Sleeping for:", diff)
 				time.Sleep(diff)
 			}
+			mux.Unlock()
+			runtime.Gosched()
 
 			//t3 := time.Now()
 			//fmt.Println("Tdiff=", t3.Sub(t1))
@@ -108,6 +117,7 @@ func main() {
 	go func() {
 		defer wg.Done()
 		for {
+			mux.Lock()
 			if (s.PressureInput * 1020) >= 200 {
 				//msg := "Airway Pressure high"
 				client.Set("alarm_status", "critical", 0).Err()
@@ -139,7 +149,9 @@ func main() {
 			} else {
 				client.Set("alarm_status", "none", 0).Err()
 			}
-			// time.Sleep(10*time.Millisecond)
+			mux.Unlock()
+			runtime.Gosched()
+			time.Sleep(200 * time.Millisecond)
 		}
 
 	}()
@@ -152,7 +164,7 @@ func main() {
 				if val == "start" {
 					logger.Printf("Ventilation status changed to %s\n", val)
 					UI = params.ReadParams(client)
-					modeselect.ModeSelection(&UI, s, &wg, readStatus, logger)
+					modeselect.ModeSelection(&UI, &s, &wg, readStatus, logger)
 					client.Set("status", "ventilating", 0).Err()
 					readStatus <- "ventilating"
 					logger.Printf("Ventilation status changed to %v", <-readStatus)
@@ -173,7 +185,7 @@ func main() {
 	}()
 
 	// Provides CLI interface
-	go cli.Run(&wg, s, client, readStatus)
+	go cli.Run(&wg, &s, client, readStatus)
 	SetupCloseHandler()
 	wg.Wait()
 }
