@@ -1,15 +1,24 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
-import "./componentBCreation.js" as BtnScript
+import "./componentBCreation.js"
+as BtnScript
 
 Item {
     id: root
     width: rectangle.width
     height: rectangle.height
-    property string title:"Volume A/C"
-    property string info:"In Development"
+    property bool active: false
+    property string title: "Volume A/C"
+    property string info: "In Development"
+    Component.onCompleted: {
+        if (BtnScript.activeButtons.includes(title)) {
+            active = true
+        } else {
+            active = false
+            info = "In Development"
+        }
+    }
 
-    
     Rectangle {
         id: rectangle
         x: 0
@@ -20,10 +29,6 @@ Item {
         radius: 10
         border.color: "#8e8e8e"
 
-
-
-
-
         Text {
             color: "#000000"
             text: root.title
@@ -33,24 +38,29 @@ Item {
             anchors.topMargin: 10
             horizontalAlignment: Text.AlignLeft
             anchors.left: parent.left
-            anchors.leftMargin: 20
+            anchors.leftMargin: 15
             anchors.right: parent.right
             font.pixelSize: 16
         }
 
-        MouseArea{
+        MouseArea {
             id: mousearea
-            width: 70
+            anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.top: parent.top
-            onClicked: BtnScript.createComponent(root.title)
+            onClicked: {
+                if (root.active) {
+                    BtnScript.createComponent(root.title)
+                }
+            }
         }
 
         Rectangle {
             id: rectangle1
             x: 174
             y: 27
+            visible: false
             width: 49
             height: 20
             color: "#3247ef"
@@ -59,14 +69,14 @@ Item {
             anchors.rightMargin: 10
 
             Text {
-            id: element2
-            color: "#ffffff"
-            text: qsTr("Select")
-            anchors.leftMargin: 0
-            verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignHCenter
-            anchors.fill: parent
-            font.pixelSize: 12
+                id: element2
+                color: "#ffffff"
+                text: qsTr("Select")
+                anchors.leftMargin: 0
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                anchors.fill: parent
+                font.pixelSize: 12
             }
 
         }
@@ -76,11 +86,13 @@ Item {
             height: 17
             color: "#535353"
             text: root.info
-            anchors.right: rectangle1.left
-            anchors.leftMargin: 20
+            anchors.rightMargin: 5
+            wrapMode: Text.WordWrap
+            anchors.right: parent.right
+            anchors.leftMargin: 15
             anchors.topMargin: 34
             anchors.top: parent.top
-            font.pixelSize: 12
+            font.pixelSize: 10
             horizontalAlignment: Text.AlignLeft
             anchors.left: parent.left
         }
@@ -91,6 +103,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:1.75}
+    D{i:0;formeditorZoom:1.75}D{i:3;anchors_width:70}
 }
 ##^##*/

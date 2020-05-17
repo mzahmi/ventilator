@@ -1,7 +1,9 @@
 import QtQuick 2.0
-import "./src/variables/fontawesome.js" as FontAwesome
+import "./src/variables/fontawesome.js"
+as FontAwesome
 import "./src/lists"
-import "./config.js" as Config
+import "./config.js"
+as Config
 import QtQuick.Layouts 1.0
 import "."
 
@@ -10,32 +12,32 @@ Item {
     width: Config.sidebar_height
     property int currentView: 0
     // patient information when first started
-    Component.onCompleted:{
+    Component.onCompleted: {
         currentView = 2
-        menulist.model.get(0).class_name="dark"
-        menulist.model.get(1).class_name="dark"
-        menulist.model.get(2).class_name="light"
-        menulist.model.get(3).class_name="dark"
+        menulist.model.get(0).class_name = "dark"
+        menulist.model.get(1).class_name = "dark"
+        menulist.model.get(2).class_name = "light"
+        menulist.model.get(3).class_name = "dark"
         ModeSelect.modeSelected.connect(sidebar.openMonitor)
     }
     signal openTab()
     onOpenTab: {
         currentView = 1
-        menulist.model.get(0).class_name="dark"
-        menulist.model.get(1).class_name="light"
-        menulist.model.get(2).class_name="dark"
-        menulist.model.get(3).class_name="dark"
+        menulist.model.get(0).class_name = "dark"
+        menulist.model.get(1).class_name = "light"
+        menulist.model.get(2).class_name = "dark"
+        menulist.model.get(3).class_name = "dark"
     }
     signal openMonitor()
     onOpenMonitor: {
         currentView = 0
-        menulist.model.get(0).class_name="light"
-        menulist.model.get(1).class_name="dark"
-        menulist.model.get(2).class_name="dark"
-        menulist.model.get(3).class_name="dark"
+        menulist.model.get(0).class_name = "light"
+        menulist.model.get(1).class_name = "dark"
+        menulist.model.get(2).class_name = "dark"
+        menulist.model.get(3).class_name = "dark"
     }
 
-    Rectangle{
+    Rectangle {
         id: sidebarrectangle
         width: Config.sidebar_width
         color: Config.bg_color
@@ -55,7 +57,7 @@ Item {
                 anchors.right: parent.right
                 anchors.rightMargin: 0
 
-                IconListView{
+                IconListView {
                     id: menulist
                     anchors.rightMargin: 1
                     anchors.fill: parent
@@ -63,51 +65,51 @@ Item {
                     onItemClicked: {
                         if (menulist.model.get(index).text === "Monitor") {
                             currentView = 0
-                            menulist.model.get(0).class_name="light"
-                            menulist.model.get(1).class_name="dark"
-                            menulist.model.get(2).class_name="dark"
-                            menulist.model.get(3).class_name="dark"
+                            menulist.model.get(0).class_name = "light"
+                            menulist.model.get(1).class_name = "dark"
+                            menulist.model.get(2).class_name = "dark"
+                            menulist.model.get(3).class_name = "dark"
                         } else if (menulist.model.get(index).text === "Set Mode") {
                             currentView = 1
-                            menulist.model.get(0).class_name="dark"
-                            menulist.model.get(1).class_name="light"
-                            menulist.model.get(2).class_name="dark"
-                            menulist.model.get(3).class_name="dark"
-                        } else if(menulist.model.get(index).text === "Patient"){
+                            menulist.model.get(0).class_name = "dark"
+                            menulist.model.get(1).class_name = "light"
+                            menulist.model.get(2).class_name = "dark"
+                            menulist.model.get(3).class_name = "dark"
+                        } else if (menulist.model.get(index).text === "Patient") {
                             currentView = 2
-                            menulist.model.get(0).class_name="dark"
-                            menulist.model.get(1).class_name="dark"
-                            menulist.model.get(2).class_name="light"
-                            menulist.model.get(3).class_name="dark"
+                            menulist.model.get(0).class_name = "dark"
+                            menulist.model.get(1).class_name = "dark"
+                            menulist.model.get(2).class_name = "light"
+                            menulist.model.get(3).class_name = "dark"
                         } else {
                             currentView = 3
-                            menulist.model.get(0).class_name="dark"
-                            menulist.model.get(1).class_name="dark"
-                            menulist.model.get(2).class_name="dark"
-                            menulist.model.get(3).class_name="light"
+                            menulist.model.get(0).class_name = "dark"
+                            menulist.model.get(1).class_name = "dark"
+                            menulist.model.get(2).class_name = "dark"
+                            menulist.model.get(3).class_name = "light"
                         }
                     }
-                    model: ListModel{
+                    model: ListModel {
 
-                        ListElement{
+                        ListElement {
                             text: "Monitor"
                             leftIcon: "\uf06e"
                             class_name: "light"
                         }
 
-                        ListElement{
+                        ListElement {
                             text: "Set Mode"
                             divider: "Divider 1"
                             leftIcon: "\uf067"
                             class_name: "dark"
                         }
-                        ListElement{
+                        ListElement {
                             text: "Patient"
                             divider: "Divider 1"
                             leftIcon: "\uf007"
                             class_name: "dark"
                         }
-                        ListElement{
+                        ListElement {
                             text: "Settings"
                             divider: "Divider 1"
                             leftIcon: "\uf044"
@@ -118,47 +120,9 @@ Item {
             }
         }
 
-        Text {
-            id: element17
-            x: 13
-            y: 438
-            color: "#ffffff"
-            text: "\uf015"
-            font.pixelSize: 12
-            font.family: webFont.name
-
-            MouseArea {
-                id: fullscreentoggle
-                x: -10
-                width: 38
-                height: 26
-                onClicked: {
-                   var fs=false
-                }
-            }
-        }
-
-        Text {
-            id: element18
-            x: 68
-            y: 438
-            color: "#ffffff"
-            text: "\uf06a"
-            font.pixelSize: 12
-        }
-
-        Text {
-            id: element19
-            x: 122
-            y: 438
-            color: "#ffffff"
-            text: "\uf043"
-            font.pixelSize: 12
-        }
-
         Row {
             id: monitorrow
-            property int pip:25
+            property int pip: 25
             property int vt: 10
             property int rate: 15
             property int peep: 4
@@ -174,7 +138,7 @@ Item {
 
             Column {
                 id: column1
-                width:Config.sidebar_width/2
+                width: Config.sidebar_width / 2
                 Layout.fillHeight: false
                 Layout.fillWidth: false
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
@@ -222,7 +186,7 @@ Item {
 
             Column {
                 id: column2
-                width: Config.sidebar_width/2
+                width: Config.sidebar_width / 2
                 Layout.fillWidth: false
                 Text {
                     id: element4
@@ -307,7 +271,7 @@ Item {
 
             ColumnLayout {
                 id: column4
-                width: Config.sidebar_height/2
+                width: Config.sidebar_height / 2
                 Text {
                     id: element11
                     color: "#ffffff"
@@ -347,7 +311,7 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             ColumnLayout {
-                width: Config.sidebar_height/2
+                width: Config.sidebar_height / 2
                 id: column5
                 Text {
                     id: element14
@@ -382,7 +346,7 @@ Item {
             }
 
             ColumnLayout {
-                width: Config.sidebar_height/2
+                width: Config.sidebar_height / 2
                 id: column6
                 Text {
                     id: element20
@@ -415,12 +379,44 @@ Item {
                 }
             }
         }
+
+        RowLayout {
+            y: 438
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
+            anchors.leftMargin: 15
+            anchors.right: parent.right
+            anchors.left: parent.left
+
+            Text {
+                id: element17
+                color: "#ffffff"
+                text: "\uf015"
+                font.pixelSize: 12
+                font.family: webFont.name
+            }
+
+            Text {
+                id: element18
+                color: "#ffffff"
+                text: "\uf06a"
+                font.pixelSize: 12
+            }
+
+            Text {
+                id: element19
+                color: "#ffffff"
+                text: "\uf043"
+                font.pixelSize: 12
+            }
+        }
     }
 
 }
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:1.25}D{i:14;anchors_x:2}D{i:23;anchors_x:2}D{i:32;anchors_x:2}
+    D{i:0;formeditorZoom:1.25}D{i:10;anchors_x:2}D{i:19;anchors_x:2}D{i:28;anchors_x:2}
+D{i:37;anchors_x:13}
 }
 ##^##*/

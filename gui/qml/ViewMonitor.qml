@@ -8,17 +8,13 @@ import "./material/qml/material"
 Item {
     id: root
     signal presetClicked()
+    anchors.fill: parent
 
-    Rectangle {
-        id: bg
-        width: 800
-        height: 480
-        color: "#ffffff"
-        anchors.fill: parent
+
 
         Rectangle {
             id: chartsarea
-            height: 295
+            height: parent.height*2/3
             color: "#ffffff"
             anchors.top: parent.top
             anchors.topMargin: 0
@@ -29,6 +25,7 @@ Item {
 
             BasicChart1{
                 anchors.fill: parent
+                anchors.topMargin: 10
 
             }
         }
@@ -48,7 +45,7 @@ Item {
 
             }
         }
-    }
+
 }
 
 
@@ -56,6 +53,7 @@ Item {
 /*##^##
 Designer {
     D{i:0;anchors_height:200;anchors_width:200;anchors_x:18;anchors_y:46;autoSize:true;height:480;width:640}
-D{i:2;anchors_height:300;anchors_width:300;anchors_x:162;anchors_y:29}D{i:1;anchors_height:200;anchors_width:200}
+D{i:3;anchors_height:500}D{i:2;anchors_height:295;anchors_width:300;anchors_x:162;anchors_y:29}
+D{i:1;anchors_height:200;anchors_width:200}
 }
 ##^##*/

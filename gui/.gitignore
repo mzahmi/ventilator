@@ -5,3 +5,6 @@ __pycache__
 log.log
 *.qmlc
 *.pyc
+env
+.vs
+#main.pyproject.user.*

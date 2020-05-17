@@ -48,6 +48,8 @@ Item {
         RowLayout {
             id: moderow
             y: 10
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
             anchors.leftMargin: 10
             anchors.left: parent.left
             spacing: 15
@@ -468,7 +470,7 @@ Item {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:1.75}D{i:6;anchors_x:45}D{i:16;anchors_x:45}D{i:21;anchors_width:193;anchors_x:"-69"}
+    D{i:0;formeditorZoom:0.8999999761581421}D{i:6;anchors_x:45}D{i:16;anchors_x:45}D{i:21;anchors_width:193;anchors_x:"-69"}
 D{i:20;anchors_x:70}D{i:26;anchors_x:45}D{i:27;anchors_width:193;anchors_x:"-69"}
 D{i:32;anchors_x:70}D{i:33;anchors_height:200;anchors_width:193;anchors_x:"-69";anchors_y:170}
 D{i:2;anchors_x:8}

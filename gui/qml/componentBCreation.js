@@ -5,7 +5,7 @@ var inputList;
 var sprite;
 var inputListHeight;
 
-var activeButtons = ["Pressure A/C"]
+var activeButtons = ["Pressure A/C", "Pressure Control", "Time"]
 
 
 function createBreathButtons(buttonList) {
@@ -36,22 +36,22 @@ function toArray(string) {
 }
 
 function createComponent(chosenButton) {
-    if (ModeSelect.mode===""){
+    if (ModeSelect.mode === "") {
         // first click
         ModeSelect.mode = chosenButton
-        heading.text="Select Breathe Type"
+        heading.text = "Select Breathe Type"
         // show breath buttons
-        rowBreath.visible=true
-    } else if(ModeSelect.breath===""){
-        heading.text="Select Trigger Type"
+        rowBreath.visible = true
+    } else if (ModeSelect.breath === "") {
+        heading.text = "Select Trigger Type"
         ModeSelect.breath = chosenButton
         // show trigger buttons
-        rowTrigger.visible=true
-    } else if (ModeSelect.trigger===""){
-        heading.text="Select Input"
+        rowTrigger.visible = true
+    } else if (ModeSelect.trigger === "") {
+        heading.text = "Select Input"
         ModeSelect.trigger = chosenButton
         // show input page
-        flickableItems.visible=true
+        flickableItems.visible = true
     }
 
     // list is updated depending if mode, breath and trigger are populated
@@ -60,27 +60,25 @@ function createComponent(chosenButton) {
     //     rowButtons.children[i-1].visible=false
     // }
 
-    if (ModeSelect.trigger!=="") {
+    if (ModeSelect.trigger !== "") {
         // hide trigger buttons
-        rowTrigger.visible=false
+        rowTrigger.visible = false
         // make root page scrollable
-        flickablePage.interactive=true
+        flickablePage.interactive = true
         // make sliders using list
         createInputs(list)
         // dynamicall resize page
         flickablePage.contentHeight = flickableItems.children[0].contentHeight
-    }else if(ModeSelect.breath!==""){
+    } else if (ModeSelect.breath !== "") {
         // make trigger row
-        console.log("making trigger")
         createTriggerButtons(list)
         // remove breath buttons
-        rowBreath.visible=false
-    }else if(ModeSelect.mode!==""){
+        rowBreath.visible = false
+    } else if (ModeSelect.mode !== "") {
         // make breath row
-        console.log("making breath")
         createBreathButtons(list)
         // remove mode row
-        rowButtons.visible=false
+        rowButtons.visible = false
     }
 }
 
@@ -88,57 +86,55 @@ function createComponent(chosenButton) {
 // delete and clean depending on 
 // the current view
 function backButton() {
-    if (ModeSelect.trigger!==""){
+    if (ModeSelect.trigger !== "") {
         // set trigger to empty
-        ModeSelect.trigger=""
+        ModeSelect.trigger = ""
         // hide input page
-        flickableItems.visible=false
+        flickableItems.visible = false
         // make page non interactive
-        flickablePage.interactive=false
+        flickablePage.interactive = false
         // change heading
-        heading.text="Select Trigger Type"
+        heading.text = "Select Trigger Type"
         // show trigger
-        rowTrigger.visible=true
-    
-    // from trigger to breath
-    } else if (ModeSelect.breath!==""){
+        rowTrigger.visible = true
+
+        // from trigger to breath
+    } else if (ModeSelect.breath !== "") {
         // set breath to empty
-        ModeSelect.breath=""
+        ModeSelect.breath = ""
         // hide trigger buttons
-        rowTrigger.visible=false
+        rowTrigger.visible = false
         // hide previous buttons
-        for(var i = rowTrigger.children.length; i > 0 ; i--) {
-            console.log("destroying trigger")
-            rowTrigger.children[i-1].height=0
+        for (var i = rowTrigger.children.length; i > 0; i--) {
+            rowTrigger.children[i - 1].height = 0
         }
         // change heading
-        heading.text="Select Breath Type"
+        heading.text = "Select Breath Type"
         // show trigger
-        rowBreath.visible=true
-    
-    // from breath to mode
-    }else if (ModeSelect.mode!==""){
+        rowBreath.visible = true
+
+        // from breath to mode
+    } else if (ModeSelect.mode !== "") {
         // set mode to empty
-        ModeSelect.mode=""
+        ModeSelect.mode = ""
         // hide breath buttons
-        rowBreath.visible=false
+        rowBreath.visible = false
         // hide previous buttons
-        for(var i = rowBreath.children.length; i > 0 ; i--) {
-            console.log("destroying breath")
-            rowBreath.children[i-1].height=0
+        for (var i = rowBreath.children.length; i > 0; i--) {
+            rowBreath.children[i - 1].height = 0
         }
         // change heading
-        heading.text="Select Mode"
+        heading.text = "Select Mode"
         // show trigger
-        rowButtons.visible=true
-    
+        rowButtons.visible = true
+
     }
 }
 
 function finishCreation() {
     if (inputPage.status == Component.Ready) {
         sprite = inputPage.createObject(flickableItems, {
-            inputList:inputList
+            inputList: inputList
         });
         if (sprite == null) {
             // Error Handling
@@ -154,10 +150,10 @@ function createInputs(newInputList) {
     inputList = newInputList
 
     inputPage = Qt.createComponent("InputList.qml");
-    if (inputPage.status == Component.Ready){
+    if (inputPage.status == Component.Ready) {
         finishCreation();
     }
-    else{
-    inputPage.statusChanged.connect(finishCreation);
+    else {
+        inputPage.statusChanged.connect(finishCreation);
     }
 }
