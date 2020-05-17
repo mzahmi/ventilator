@@ -7,16 +7,16 @@ Item {
     id: root
     width: rectangle.width
     height: rectangle.height
-    property bool active: false
+    // property bool active: false
     property string title: "Volume A/C"
     property string info: "In Development"
     Component.onCompleted: {
-        if (BtnScript.activeButtons.includes(title)) {
-            active = true
-        } else {
-            active = false
-            info = "In Development"
-        }
+        // if (BtnScript.activeButtons.includes(title)) {
+        //     active = true
+        // } else {
+        //     active = false
+        //     info = "In Development"
+        // }
     }
 
     Rectangle {
@@ -50,9 +50,9 @@ Item {
             anchors.bottom: parent.bottom
             anchors.top: parent.top
             onClicked: {
-                if (root.active) {
-                    BtnScript.createComponent(root.title)
-                }
+                // if (root.active) {
+                BtnScript.createComponent(root.title)
+                // }
             }
         }
 

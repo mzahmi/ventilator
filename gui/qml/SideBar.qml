@@ -6,6 +6,7 @@ import "./config.js"
 as Config
 import QtQuick.Layouts 1.0
 import "."
+import QtQuick.Controls 2.1
 
 Item {
     id: sidebar
@@ -381,6 +382,7 @@ Item {
         }
 
         RowLayout {
+            id: iconrow
             y: 438
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
