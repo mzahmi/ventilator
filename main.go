@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"runtime"
 	"sync"
 	"syscall"
 	"time"
@@ -13,15 +14,16 @@ import (
 	"github.com/mzahmi/ventilator/control/cli"
 	"github.com/mzahmi/ventilator/control/initialization"
 	"github.com/mzahmi/ventilator/control/modeselect"
+	"github.com/mzahmi/ventilator/control/rpigpio"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
 	"github.com/mzahmi/ventilator/params"
-	"github.com/mzahmi/ventilator/control/rpigpio"
 	// "github.com/mzahmi/ventilator/control/alarms"
 )
 
 var UI = params.DefaultParams
 var wg sync.WaitGroup
+var mux sync.Mutex
 
 func main() {
 	f, err := os.OpenFile("Events.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -45,7 +47,11 @@ func main() {
 	check(err)
 
 	//delcare channels to communicate between goroutines
-	s := make(chan sensors.SensorsReading)
+	// s := make(chan sensors.SensorsReading)
+	s := sensors.SensorsReading{
+		PressureInput:  0,
+		PressureOutput: 0,
+	}
 	readStatus := make(chan string)
 	client.Set("status", "NA", 0).Err() // empty the previous record of status
 
@@ -60,59 +66,66 @@ func main() {
 	go func() {
 		defer wg.Done()
 		for {
+			mux.Lock()
 			status, _ := client.Get("status").Result()
 			readStatus <- status
+			mux.Unlock()
+			runtime.Gosched()
+			time.Sleep(200 * time.Millisecond)
 		}
 	}()
 
 	// Reads sensors and populate the graph
-	//limit the reading frequency to a predefined value
-	// rate := float64(200)                                                // Hz rate
-	// timePerLoopIteration := time.Duration(1000/rate) * time.Millisecond //(1 / rate) ms
+	// limit the reading frequency to a predefined value
+	rate := float64(200)                                                // Hz rate
+	timePerLoopIteration := time.Duration(1000/rate) * time.Millisecond //(1 / rate) ms
 	// fmt.Println(timePerLoopIteration)
 
 	go func() {
 		defer wg.Done()
 		for {
-			// t1 := time.Now()
+			t1 := time.Now()
 
 			Pin, Pout := sensors.ReadAllSensors()
 			//loopTime := time.Since(t1)
-			s <- sensors.SensorsReading{
+			mux.Lock()
+			s = sensors.SensorsReading{
 				PressureInput:  Pin,
 				PressureOutput: Pout}
-			//fmt.Println("Loop time:", loopTime)
-			//t2:= time.Now()
+
 			//fmt.Println("done reading all sensors")
-			if (Pin * 1020) > 150{
-				fmt.Println(Pin)
-			}
-			client.Set("pressure", (Pin)*1020, 0).Err()
-			fmt.Println("done sending to chart")
-			//alarms.AirwayPressureAlarms(s,&wg,30,5)
-			// loopTime := time.Since(t1)
-			// if loopTime < timePerLoopIteration {
-			// 	diff := (timePerLoopIteration - loopTime)
-			// 	//fmt.Println("Sleeping for:", diff)
-			// 	time.Sleep(diff)
+			// if (Pin * 1020) > 150 {
+			// 	fmt.Println(Pin)
 			// }
-			
+			client.Set("pressure", (Pin)*1020, 0).Err()
+			//fmt.Println("done sending to chart")
+			//alarms.AirwayPressureAlarms(s,&wg,30,5)
+			loopTime := time.Since(t1)
+			if loopTime < timePerLoopIteration {
+				diff := (timePerLoopIteration - loopTime)
+				//fmt.Println("Sleeping for:", diff)
+				time.Sleep(diff)
+			}
+			mux.Unlock()
+			runtime.Gosched()
+
 			//t3 := time.Now()
 			//fmt.Println("Tdiff=", t3.Sub(t1))
 		}
 	}()
 
-	go func(){
-		// defer wg.Done()
+	go func() {
+		defer wg.Done()
 		for {
-			if (((<-s).PressureInput)*1020) >= 200 {
+			mux.Lock()
+			if (s.PressureInput * 1020) >= 200 {
 				//msg := "Airway Pressure high"
 				client.Set("alarm_status", "critical", 0).Err()
-				client.Set("alarm_title","Airway Pressure high", 0).Err()
+				client.Set("alarm_title", "Airway Pressure high", 0).Err()
 				client.Set("alarm_text", "Airway Pressure exceeded limits check for obstruction", 0).Err()
 				tm := 200 * time.Millisecond
 				ts := 3000 * time.Millisecond
-				
+
 				err := rpigpio.BeepOn()
 				check(err)
 				time.Sleep(tm)
@@ -132,13 +145,15 @@ func main() {
 				check(err)
 				time.Sleep(tm)
 				time.Sleep(ts)
-				
-			} else{
+
+			} else {
 				client.Set("alarm_status", "none", 0).Err()
 			}
-			// time.Sleep(10*time.Millisecond)
+			mux.Unlock()
+			runtime.Gosched()
+			time.Sleep(200 * time.Millisecond)
 		}
-		
+
 	}()
 
 	// Runs the ventelation method control
@@ -149,7 +164,7 @@ func main() {
 				if val == "start" {
 					logger.Printf("Ventilation status changed to %s\n", val)
 					UI = params.ReadParams(client)
-					go modeselect.ModeSelection(&UI, s, &wg, readStatus, logger)
+					modeselect.ModeSelection(&UI, &s, &wg, readStatus, logger)
 					client.Set("status", "ventilating", 0).Err()
 					readStatus <- "ventilating"
 					logger.Printf("Ventilation status changed to %v", <-readStatus)
@@ -170,7 +185,7 @@ func main() {
 	}()
 
 	// Provides CLI interface
-	go cli.Run(&wg, s, client, readStatus)
+	go cli.Run(&wg, &s, client, readStatus)
 	SetupCloseHandler()
 	wg.Wait()
 }

@@ -31,7 +31,7 @@ func info() {
 	fmt.Println("	stop ventilation: vstop")
 }
 
-func Run(wg *sync.WaitGroup, s chan sensors.SensorsReading, client *redis.Client, readStatus chan string) {
+func Run(wg *sync.WaitGroup, s *sensors.SensorsReading, client *redis.Client, readStatus chan string) {
 	defer wg.Done()
 
 	parameters := structs.Names(&params.UserInput{})
@@ -215,10 +215,10 @@ func Run(wg *sync.WaitGroup, s chan sensors.SensorsReading, client *redis.Client
 			}
 			switch words[1] {
 			case "PIns":
-				val := (<-s).PressureInput
+				val := s.PressureInput
 				fmt.Println("PIns:", val)
 			case "PExp":
-				val := (<-s).PressureOutput
+				val := s.PressureOutput
 				fmt.Println("PExp:", val)
 			case "FIns":
 				//val := sensors.FIns.ReadFlow()

@@ -1,15 +1,15 @@
 package modeselect
 
 import (
+	"fmt"
 	"log"
 	"sync"
 	"time"
-	// "fmt"
 
-	"github.com/mzahmi/ventilator/control/sensors"
-	"github.com/mzahmi/ventilator/control/valves"
 	"github.com/mzahmi/ventilator/control/dac"
 	"github.com/mzahmi/ventilator/control/ioexp"
+	"github.com/mzahmi/ventilator/control/sensors"
+	"github.com/mzahmi/ventilator/control/valves"
 	"github.com/mzahmi/ventilator/params"
 )
 
@@ -38,7 +38,7 @@ The perceived disadvantage of this mode is that an operator cannot directly
 control tidal volume. The resultant tidal volume may be unstable when the patient’s
 breathing effort and/or respiratory mechanics change. Therefore, you should
 carefully set the upper and lower limits of the tidal volume alarm.*/
-func PressureAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
+func PressureAC(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
 	defer wg.Done()
 	switch UI.BreathType {
 	case "Pressure Control":
@@ -56,7 +56,7 @@ func PressureAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.Wa
 // 	Triggering:	Time
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
+func PressureControl(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
 	defer wg.Done()
 	//initiate Pressure PID based on readings from PIns
 	// PressurePID := NewPIDController(0.5, 0.5, 0.5)                            // takes in P, I, and D values to be set trial and error
@@ -78,14 +78,11 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 
 			dac.WriteDac(1, 1, 0.5)
 			// fmt.Println(feedbackIn)
-			//fmt.Println((<-s).PressureInput)
-			v:= (<-s).PressureInput
-			v = v + 1
-			//fmt.Println((<-s).PressureOutput)
+			fmt.Println(s.PressureInput)
 			// valves.InProp.IncrementValve(PressurePID.Update(float64((<-s).PressureInput)))
 		}
 		valves.MIns.Close()
-		ioexp.WritePin(ioexp.Solenoid1, false)
+		ioexp.WritePin(ioexp.Solenoid2, false)
 		dac.WriteDac(1, 1, 0)
 
 		//Close main valve InProp
@@ -95,7 +92,7 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
 
 			//check for PEEP
-			// if ((<-s).PressureOutput) <= (UI.PEEP / 1020) {
+			// if (s.PressureOutput) <= (UI.PEEP / 1020) {
 			// 	break
 			// }
 			// Open ExProp valve
@@ -122,7 +119,7 @@ func PressureControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sy
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
+func PressureAssist(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
 	defer wg.Done()
 	//initiate Pressure PID based on readings from PIns
 	PressurePID := NewPIDController(0.5, 0.5, 0.5)         // takes in P, I, and D values to be set trial and error

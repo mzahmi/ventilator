@@ -12,7 +12,7 @@ import (
 )
 
 // VolumeAC one of the main 5 modes of the github.com/mzahmi/ventilatorilator
-func VolumeAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
+func VolumeAC(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
 	switch UI.BreathType {
 	case "Volume Control":
 		VolumeControl(UI, s, wg, readStatus)
@@ -27,7 +27,7 @@ func VolumeAC(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.Wait
 // 	Triggering:	Time
 // 	Cycling: 	Time
 // 	Control: 	Volume
-func VolumeControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
+func VolumeControl(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
 
 	//initiate a PID controller based on the PeakFlow
 	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
@@ -66,7 +66,7 @@ func VolumeControl(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Time
 // 	Control: 	Volume
-func VolumeAssist(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
+func VolumeAssist(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
 
 	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 
