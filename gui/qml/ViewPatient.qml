@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.0
+import QtQuick.Controls 2.13
 
 Item {
     anchors.fill: parent
@@ -30,16 +31,16 @@ Item {
                 font.pixelSize: 24
             }
 
+
             Text {
                 id: element1
                 text: qsTr("Age:")
                 font.pixelSize: 24
             }
 
-            Text {
-                id: element6
-                text: Patient.age
-                font.pixelSize: 24
+            SpinBox {
+                id: spinBox
+                value: 30
             }
 
             Text {
@@ -48,10 +49,9 @@ Item {
                 font.pixelSize: 24
             }
 
-            Text {
-                id: element7
-                text: Patient.gender
-                font.pixelSize: 24
+            Switch {
+                id: element6
+                text: qsTr("Switch")
             }
 
             Text {
@@ -60,10 +60,11 @@ Item {
                 font.pixelSize: 24
             }
 
-            Text {
-                id: element8
-                text: Patient.height
-                font.pixelSize: 24
+            SpinBox {
+                id: spinBox2
+                from: 0
+                to:300
+                value: 160
             }
 
             Text {
@@ -72,11 +73,17 @@ Item {
                 font.pixelSize: 24
             }
 
-            Text {
-                id: element9
-                text: Patient.weight
-                font.pixelSize: 24
+            SpinBox {
+                id: spinBox3
+                from: 0
+                to:300
+                value: 70
             }
+
+
+
+
+
         }
 
         Text {
