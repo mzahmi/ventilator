@@ -27,6 +27,17 @@ Item {
         info1.text = AlarmManager.info
     }
 
+    SideBar {
+        id: sidebar
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+        anchors.bottom: parent.bottom
+        anchors.top: parent.top
+        anchors.topMargin: 0
+        width: Config.sidebar_width
+
+    }
+
     Rectangle {
         id: mainview
         color: "#ffffff"
@@ -158,16 +169,6 @@ Item {
         }
     }
 
-    SideBar {
-        id: sidebar
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.bottom: parent.bottom
-        anchors.top: parent.top
-        anchors.topMargin: 0
-        width: Config.sidebar_width
-
-    }
 
 
 
@@ -175,6 +176,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:480;width:640}D{i:1;anchors_width:150}D{i:13;anchors_height:400;anchors_width:200}
+    D{i:0;autoSize:true;height:480;width:640}D{i:2;anchors_width:150}D{i:14;anchors_height:400;anchors_width:200}
 }
 ##^##*/
