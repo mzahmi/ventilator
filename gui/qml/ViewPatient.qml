@@ -1,10 +1,10 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.0
-import QtQuick.Controls 2.13
+import QtQuick.Controls 2.1
 
 Item {
     anchors.fill: parent
-    Rectangle{
+    Rectangle {
         anchors.rightMargin: 0
         anchors.bottomMargin: 0
         anchors.leftMargin: 0
@@ -63,7 +63,7 @@ Item {
             SpinBox {
                 id: spinBox2
                 from: 0
-                to:300
+                to: 300
                 value: 160
             }
 
@@ -76,7 +76,7 @@ Item {
             SpinBox {
                 id: spinBox3
                 from: 0
-                to:300
+                to: 300
                 value: 70
             }
 

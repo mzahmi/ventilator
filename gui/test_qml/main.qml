@@ -1,37 +1,38 @@
 import QtQuick 2.0
-import "./componentCreation.js" as MyScript
+import "./componentCreation.js"
+as MyScript
 import QtQuick.Window 2.0
-import QtQuick.Controls 2.13
+import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 
 
 Window {
     id: window
     property int componentCount
-    
+
     visible: true
     width: 800
     height: 480
     // visibility: "FullScreen"
     title: qsTr("Hello World")
     Component.onCompleted: {
-        componentCount= MyScript.getSliders()
-        submitButton.y=componentCount*50
+        componentCount = MyScript.getSliders()
+        submitButton.y = componentCount * 50
     }
 
-    Flickable{
+    Flickable {
         id: flickable
         anchors.fill: parent
         contentHeight: 900
-        Column{
+        Column {
             anchors.fill: parent
-            Item{
+            Item {
                 id: appWindow
 
             }
 
         }
-        Button{
+        Button {
             id: submitButton
             text: "submit"
             onClicked: MyScript.iter()
