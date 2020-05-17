@@ -13,10 +13,10 @@ import (
 	"github.com/mzahmi/ventilator/control/cli"
 	"github.com/mzahmi/ventilator/control/initialization"
 	"github.com/mzahmi/ventilator/control/modeselect"
+	"github.com/mzahmi/ventilator/control/rpigpio"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
 	"github.com/mzahmi/ventilator/params"
-	"github.com/mzahmi/ventilator/control/rpigpio"
 	// "github.com/mzahmi/ventilator/control/alarms"
 )
 
@@ -45,7 +45,11 @@ func main() {
 	check(err)
 
 	//delcare channels to communicate between goroutines
-	s := make(chan sensors.SensorsReading)
+	// s := make(chan sensors.SensorsReading)
+	s := sensors.SensorsReading{
+		PressureInput:  0,
+		PressureOutput: 0,
+	}
 	readStatus := make(chan string)
 	client.Set("status", "NA", 0).Err() // empty the previous record of status
 
@@ -66,53 +70,52 @@ func main() {
 	}()
 
 	// Reads sensors and populate the graph
-	//limit the reading frequency to a predefined value
-	// rate := float64(200)                                                // Hz rate
-	// timePerLoopIteration := time.Duration(1000/rate) * time.Millisecond //(1 / rate) ms
+	// limit the reading frequency to a predefined value
+	rate := float64(200)                                                // Hz rate
+	timePerLoopIteration := time.Duration(1000/rate) * time.Millisecond //(1 / rate) ms
 	// fmt.Println(timePerLoopIteration)
 
 	go func() {
 		defer wg.Done()
 		for {
-			// t1 := time.Now()
+			t1 := time.Now()
 
 			Pin, Pout := sensors.ReadAllSensors()
 			//loopTime := time.Since(t1)
-			s <- sensors.SensorsReading{
+			s = sensors.SensorsReading{
 				PressureInput:  Pin,
 				PressureOutput: Pout}
-			//fmt.Println("Loop time:", loopTime)
-			//t2:= time.Now()
+
 			//fmt.Println("done reading all sensors")
-			if (Pin * 1020) > 150{
-				fmt.Println(Pin)
-			}
+			// if (Pin * 1020) > 150 {
+			// 	fmt.Println(Pin)
+			// }
 			client.Set("pressure", (Pin)*1020, 0).Err()
 			//fmt.Println("done sending to chart")
 			//alarms.AirwayPressureAlarms(s,&wg,30,5)
-			// loopTime := time.Since(t1)
-			// if loopTime < timePerLoopIteration {
-			// 	diff := (timePerLoopIteration - loopTime)
-			// 	//fmt.Println("Sleeping for:", diff)
-			// 	time.Sleep(diff)
-			// }
-			
+			loopTime := time.Since(t1)
+			if loopTime < timePerLoopIteration {
+				diff := (timePerLoopIteration - loopTime)
+				//fmt.Println("Sleeping for:", diff)
+				time.Sleep(diff)
+			}
+
 			//t3 := time.Now()
 			//fmt.Println("Tdiff=", t3.Sub(t1))
 		}
 	}()
 
-	go func(){
-		// defer wg.Done()
+	go func() {
+		defer wg.Done()
 		for {
-			if (((<-s).PressureInput)*1020) >= 200 {
+			if (s.PressureInput * 1020) >= 200 {
 				//msg := "Airway Pressure high"
 				client.Set("alarm_status", "critical", 0).Err()
-				client.Set("alarm_title","Airway Pressure high", 0).Err()
+				client.Set("alarm_title", "Airway Pressure high", 0).Err()
 				client.Set("alarm_text", "Airway Pressure exceeded limits check for obstruction", 0).Err()
 				tm := 200 * time.Millisecond
 				ts := 3000 * time.Millisecond
-				
+
 				err := rpigpio.BeepOn()
 				check(err)
 				time.Sleep(tm)
@@ -132,13 +135,13 @@ func main() {
 				check(err)
 				time.Sleep(tm)
 				time.Sleep(ts)
-				
-			} else{
+
+			} else {
 				client.Set("alarm_status", "none", 0).Err()
 			}
 			// time.Sleep(10*time.Millisecond)
 		}
-		
+
 	}()
 
 	// Runs the ventelation method control
@@ -149,7 +152,7 @@ func main() {
 				if val == "start" {
 					logger.Printf("Ventilation status changed to %s\n", val)
 					UI = params.ReadParams(client)
-					go modeselect.ModeSelection(&UI, s, &wg, readStatus, logger)
+					modeselect.ModeSelection(&UI, s, &wg, readStatus, logger)
 					client.Set("status", "ventilating", 0).Err()
 					readStatus <- "ventilating"
 					logger.Printf("Ventilation status changed to %v", <-readStatus)

@@ -13,7 +13,7 @@ import (
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Flow
 // 	Control: 	Pressure
-func PSV(UI *params.UserInput, s chan sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
+func PSV(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
 	defer wg.Done()
 
 	PressurePID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
