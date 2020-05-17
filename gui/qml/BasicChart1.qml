@@ -6,24 +6,56 @@ as Config
 
 Item {
 
-    id: mainItem
+    id: root
+
+    property bool starttwo:false
+    property int limit:50
+    property int minY:0
+    property int maxY:50
+    property int xval:0
+    property int xval2:-1
     signal reemitted(point p)
-    // connects to reemitted
-    Component.onCompleted: ChartManager.dataReady.connect(mainItem.reemitted)
+
+    Component.onCompleted: ChartManager.dataReady.connect(root.reemitted)
     onReemitted: {
-        series1.addpoint(p.y)
+        root.addpoint(p.y, xval, series1)
+        xval++
+        if (xval==limit){starttwo=true}
+        // start second chart
+        if(starttwo){
+            root.addpoint2(p.y, xval2, series2)
+            xval2++
+        }
+    }
+
+    function addpoint(y,x, myseries) {
+        if (x>limit){
+            if(myseries.count!==0){
+                myseries.remove(0)
+            }else{
+                xval=0
+            }
+        }else{
+        myseries.append(x, y)
+        }
+    }
+
+    function addpoint2(y,x, myseries) {
+        if (x>limit){
+            if(myseries.count!==0){
+                myseries.remove(0)
+            }else{
+                xval2=0
+            }
+        }else{
+        myseries.append(x, y)
+        }
     }
 
     Rectangle {
         id: chartsarea
         color: "#ffffff"
         anchors.fill: parent
-        property var xvalues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        property var yvalues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        property int i: 0
-        property int j: 0
-        property bool seriesswitch: false
-
 
         ChartView {
             id: chartview
@@ -31,64 +63,51 @@ Item {
             antialiasing: true
             legend.visible: false
 
+            SplineSeries {
+                id: series2
+                color: "blue"
+                name: "LineSeries"
 
-            LineSeries {
+                axisY: ValueAxis {
+                    id: axisY2
+                    min: root.minY
+                    max: root.maxY
+                    minorTickCount: 1
+                    tickCount: 3
+                    visible:false
+                }
+                axisX: ValueAxis {
+                    id: axisXs2
+                    min: 0
+                    max: root.limit
+                    tickCount: 2
+                    visible:false
+                }
+
+            }
+
+
+            SplineSeries {
                 id: series1
-                color: "black"
+                color: "blue"
                 name: "LineSeries"
 
                 axisY: ValueAxis {
                     id: axisY
-                    min: -5
-                    max: 50
+                    min: root.minY
+                    max: root.maxY
                     minorTickCount: 1
                     tickCount: 3
                 }
                 axisX: ValueAxis {
                     id: axisXs
                     min: 0
-                    max: 40
+                    max: root.limit
+                    tickCount: 2
                 }
 
-                function populateSeries(myseries) {
-                    var i;
-                    for (i = 0; i < chartsarea.xvalues.length; i++) {
-                        myseries.append(chartsarea.xvalues[count], chartsarea.yvalues[count])
-                    }
-                }
-
-                function addpoint(y) {
-                    series1.remove(0)
-                    series1.append(chartsarea.i, y)
-                    chartsarea.i++
-                    if (chartsarea.i > 40) {
-                        axisXs.min = axisXs.min + 1
-                        axisXs.max = axisXs.max + 1
-                    }
-                }
-
-                Component.onCompleted: {
-                    populateSeries(series1)
-                }
-
-                // Connections{
-                //     target: QmlBridge
-                //     onSendToQml: series1.addpoint(data)
-
-                // }
             }
         }
-        //        Button {
-        //            id: button
-        //            x: 61
-        //            y: 30
-        //            text: qsTr("Button")
-        //            property int counter: 5
-        //            onClicked: {
-        //                series.addpoint(counter,counter)
-        //                counter++
-        //            }
-        //        }
     }
 
 }
