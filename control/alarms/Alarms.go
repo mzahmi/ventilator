@@ -3,7 +3,6 @@ package alarms
 
 import (
 	"errors"
-	"log"
 	"runtime"
 	"sync"
 	"time"
@@ -292,14 +291,10 @@ func HighAlert(title, info string, logStruct *logger.Logging, client *redis.Clie
 	td := 1000 * time.Millisecond
 	for i := 1; !AlarmReset; i++ {
 		err := rpigpio.BeepOn()
-		if err != nil {
-			log.Println(err)
-		}
+		check(err, logStruct)
 		time.Sleep(tm)
 		err = rpigpio.BeepOff()
-		if err != nil {
-			log.Println(err)
-		}
+		check(err, logStruct)
 		time.Sleep(tm)
 		if i%3 == 0 {
 			time.Sleep(td)
@@ -307,6 +302,11 @@ func HighAlert(title, info string, logStruct *logger.Logging, client *redis.Clie
 		if i%5 == 0 {
 			time.Sleep(ts)
 			i = 0
+		}
+		status, err := client.Get("status").Result()
+		check(err, logStruct)
+		if status == "none" {
+			AlarmReset = true
 		}
 	}
 }
@@ -330,20 +330,22 @@ func MediumAlert(title, info string, logStruct *logger.Logging, client *redis.Cl
 	logStruct.Alarm(title)
 	tm := 400 * time.Millisecond
 	ts := 3000 * time.Millisecond
+
 	for i := 1; !AlarmReset; i++ {
 		err := rpigpio.BeepOn()
-		if err != nil {
-			log.Println(err)
-		}
+		check(err, logStruct)
 		time.Sleep(tm)
 		err = rpigpio.BeepOff()
-		if err != nil {
-			log.Println(err)
-		}
+		check(err, logStruct)
 		time.Sleep(tm)
 		if i%3 == 0 {
 			time.Sleep(ts)
 			i = 0
+		}
+		status, err := client.Get("status").Result()
+		check(err, logStruct)
+		if status == "none" {
+			AlarmReset = true
 		}
 	}
 }
@@ -366,13 +368,21 @@ func LowAlert(title, info string, logStruct *logger.Logging, client *redis.Clien
 	logStruct.Alarm(title)
 	tm := 400 * time.Millisecond
 	err := rpigpio.BeepOn()
-	if err != nil {
-		log.Println(err)
-	}
+	check(err, logStruct)
 	time.Sleep(tm)
 	err = rpigpio.BeepOff()
-	if err != nil {
-		log.Println(err)
-	}
+	check(err, logStruct)
 	time.Sleep(tm)
+	status, err := client.Get("status").Result()
+	check(err, logStruct)
+	if status == "none" {
+		AlarmReset = true
+	}
+}
+
+// prints out the checked error err
+func check(err error, logStruct *logger.Logging) {
+	if err != nil {
+		logStruct.Err(err)
+	}
 }
