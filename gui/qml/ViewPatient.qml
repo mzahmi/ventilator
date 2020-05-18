@@ -128,10 +128,11 @@ Item {
             font.pixelSize: 15
         }
 
-        SpinBox {
-            id: spinBox
+        TextField {
+            id: textField
             x: 40
-            y: 314
+            y: 305
+            text: qsTr("Text Field")
         }
 
 
