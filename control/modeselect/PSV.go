@@ -1,13 +1,14 @@
 package modeselect
 
 import (
-	"log"
+	"fmt"
 	"sync"
 	"time"
 
 	"github.com/go-redis/redis"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
+	"github.com/mzahmi/ventilator/logger"
 	"github.com/mzahmi/ventilator/params"
 )
 
@@ -15,13 +16,14 @@ import (
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Flow
 // 	Control: 	Pressure
-func PSV(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logger *log.Logger, logErr *log.Logger) {
+func PSV(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logStruct *logger.Logging) {
 
 	PressurePID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 
 	//Check trigger type
 	switch UI.PatientTriggerType {
 	case "Pressure Trigger  ":
+		logStruct.Event(fmt.Sprintf("Pressure Trigger is set at %v cmH2O\n", UI.PressureTrigSense))
 		//Calculate trigger threshhold with PEEP and sensitivity
 		PTrigger := UI.PEEP + UI.PressureTrigSense
 
@@ -60,7 +62,7 @@ func PSV(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, 
 			}
 			// if it's stop or exit then close valves and break loop
 			trig, err := client.Get("status").Result()
-			check(err, logErr)
+			check(err, logStruct)
 			if (trig == "stop") || (trig == "exit") {
 				// valves.CloseAllValves(&valves.MIns, &valves.MExp)
 				// logger.Println("All valves closed")
@@ -71,6 +73,7 @@ func PSV(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, 
 		}
 	case "Flow Trigger  ":
 		//Calculate trigger threshhold with flow trig sensitivity
+		logStruct.Event(fmt.Sprintf("Flow Trigger is set at %v cmH2O\n", UI.FlowTrigSense))
 		FTrigger := UI.FlowTrigSense
 		//Begin loop
 		for {
@@ -96,7 +99,7 @@ func PSV(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, 
 			}
 			// if it's stop or exit then close valves and break loop
 			trig, err := client.Get("status").Result()
-			check(err, logErr)
+			check(err, logStruct)
 			if (trig == "stop") || (trig == "exit") {
 				// valves.CloseAllValves(&valves.MIns, &valves.MExp)
 				// logger.Println("All valves closed")

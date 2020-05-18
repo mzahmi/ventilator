@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"runtime"
@@ -17,6 +16,7 @@ import (
 	"github.com/mzahmi/ventilator/control/rpigpio"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
+	"github.com/mzahmi/ventilator/logger"
 	"github.com/mzahmi/ventilator/params"
 	// "github.com/mzahmi/ventilator/control/alarms"
 )
@@ -30,21 +30,25 @@ func init() {
 }
 
 func main() {
-	//Creates log file called Events.log
-	f, err := os.OpenFile("file.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer f.Close()
+	// //Creates log file called Events.log
+	// f, err := os.OpenFile("file.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// defer f.Close()
 
-	// declare new loggers with different prefixes
-	logger := log.New(f, "Event ", log.LstdFlags) // event logger
-	logErr := log.New(f, "Error ", log.LstdFlags) // errors logger
-	logArm := log.New(f, "Alarm ", log.LstdFlags) // alarms logger
+	// // declare new loggers with different prefixes
+	// logger := log.New(f, "Event ", log.LstdFlags) // event logger
+	// logErr := log.New(f, "Error ", log.LstdFlags) // errors logger
+	// logArm := log.New(f, "Alarm ", log.LstdFlags) // alarms logger
+
+	logStruct := logger.LoggerInit()
+	defer logger.LoggerClose()
 
 	//initialize the hardware
 	initialization.HardwareInit()
-	logger.Println("Hardware Initialized")
+	logStruct.Event("Hardware Initialized")
+	//logger.Println("Hardware Initialized")
 
 	//establish connection with redis client
 	client := redis.NewClient(&redis.Options{
@@ -52,9 +56,10 @@ func main() {
 		Password: "",
 		DB:       0,
 	})
-	_, err = client.Ping().Result()
-	check(err, logErr)
-	logger.Println("Client Initialized")
+	_, err := client.Ping().Result()
+	check(err, logStruct)
+	logStruct.Event("Client Initialized")
+	// logger.Println("Client Initialized")
 
 	// set the critical records in redis to zero or NA
 	client.Set("status", "NA", 0).Err()
@@ -64,7 +69,8 @@ func main() {
 
 	//initialize the user input parameters
 	params.InitParams(client)
-	logger.Println("Parameters Initialized")
+	logStruct.Event("Parameters Initialized")
+	//logger.Println("Parameters Initialized")
 
 	//initialize a SensorsReading struct to store all of the sensor readings
 	s := sensors.SensorsReading{
@@ -118,27 +124,28 @@ func main() {
 				client.Set("alarm_status", "critical", 0).Err()
 				client.Set("alarm_title", "Airway Pressure high", 0).Err()
 				client.Set("alarm_text", "Airway Pressure exceeded limits check for obstruction", 0).Err()
-				logArm.Println("Airway Pressure high")
+				logStruct.Alarm("Airway Pressure high")
+				//logArm.Println("Airway Pressure high")
 				tm := 200 * time.Millisecond
 				ts := 3000 * time.Millisecond
 
 				err := rpigpio.BeepOn()
-				check(err, logErr)
+				check(err, logStruct)
 				time.Sleep(tm)
 				err = rpigpio.BeepOff()
-				check(err, logErr)
+				check(err, logStruct)
 				time.Sleep(tm)
 				err = rpigpio.BeepOn()
-				check(err, logErr)
+				check(err, logStruct)
 				time.Sleep(tm)
 				err = rpigpio.BeepOff()
-				check(err, logErr)
+				check(err, logStruct)
 				time.Sleep(tm)
 				err = rpigpio.BeepOn()
-				check(err, logErr)
+				check(err, logStruct)
 				time.Sleep(tm)
 				err = rpigpio.BeepOff()
-				check(err, logErr)
+				check(err, logStruct)
 				time.Sleep(tm)
 				time.Sleep(ts)
 
@@ -158,25 +165,30 @@ func main() {
 
 	for {
 		status, err := client.Get("status").Result()
-		check(err, logErr)
+		check(err, logStruct)
 		if status == "start" {
-			logger.Printf("Ventilation status changed to %s\n", status)
+			// logger.Printf("Ventilation status changed to %s\n", status)
+			logStruct.Event(fmt.Sprintf("Ventilation status changed to %s\n", status))
 			UI = params.ReadParams(client)
-			go modeselect.ModeSelection(&UI, &s, client, &mux, logger, logErr)
+			go modeselect.ModeSelection(&UI, &s, client, &mux, &logStruct)
 			client.Set("status", "ventilating", 0).Err()
-			logger.Printf("Ventilation status changed to %s\n", status)
+			// logger.Printf("Ventilation status changed to %s\n", status)
+			logStruct.Event(fmt.Sprintf("Ventilation status changed to %s\n", status))
 		} else if status == "stop" {
-			logger.Println("Stopping system")
+			// logger.Println("Stopping system")
+			logStruct.Event("Stopping system")
+			client.Set("status", "waiting", 0).Err()
 		} else if status == "exit" {
-			logger.Println("Exiting system")
+			// logger.Println("Exiting system")
+			logStruct.Event("Exiting system")
 		}
 	}
 }
 
 // prints out the checked error err
-func check(err error, logErr *log.Logger) {
+func check(err error, logStruct logger.Logging) {
 	if err != nil {
-		logErr.Println(err)
+		logStruct.Err(err)
 	}
 }
 

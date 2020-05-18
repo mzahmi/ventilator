@@ -3,23 +3,23 @@ package modeselect
 
 import (
 	"fmt"
-	"log"
 	"sync"
 	"time"
 
 	"github.com/go-redis/redis"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
+	"github.com/mzahmi/ventilator/logger"
 	"github.com/mzahmi/ventilator/params"
 )
 
 // VolumeAC one of the main 5 modes of the github.com/mzahmi/ventilatorilator
-func VolumeAC(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logger *log.Logger, logErr *log.Logger) {
+func VolumeAC(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logStruct *logger.Logging) {
 	switch UI.BreathType {
 	case "Volume Control":
-		VolumeControl(UI, s, client, mux, logger, logErr)
+		VolumeControl(UI, s, client, mux, logStruct)
 	case "Volume Assist":
-		VolumeAssist(UI, s, client, mux, logger, logErr)
+		VolumeAssist(UI, s, client, mux, logStruct)
 	default:
 		fmt.Println("Enter valid breath type")
 	}
@@ -29,7 +29,7 @@ func VolumeAC(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Cli
 // 	Triggering:	Time
 // 	Cycling: 	Time
 // 	Control: 	Volume
-func VolumeControl(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logger *log.Logger, logErr *log.Logger) {
+func VolumeControl(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logStruct *logger.Logging) {
 
 	//initiate a PID controller based on the PeakFlow
 	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
@@ -54,7 +54,7 @@ func VolumeControl(UI *params.UserInput, s *sensors.SensorsReading, client *redi
 		valves.ExProp.IncrementValve(0) // closes the valve
 		// if it's stop or exit then close valves and break loop
 		trig, err := client.Get("status").Result()
-		check(err, logErr)
+		check(err, logStruct)
 		if (trig == "stop") || (trig == "exit") {
 			// valves.CloseAllValves(&valves.MIns, &valves.MExp)
 			// logger.Println("All valves closed")
@@ -69,13 +69,14 @@ func VolumeControl(UI *params.UserInput, s *sensors.SensorsReading, client *redi
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Time
 // 	Control: 	Volume
-func VolumeAssist(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logger *log.Logger, logErr *log.Logger) {
+func VolumeAssist(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logStruct *logger.Logging) {
 
 	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 
 	//Check trigger type
 	switch UI.PatientTriggerType {
 	case "Pressure Trigger":
+		logStruct.Event(fmt.Sprintf("Pressure Trigger is set at %v cmH2O\n", UI.PressureTrigSense))
 		//Calculate trigger threshhold with PEEP and sensitivity
 		PTrigger := UI.PEEP + UI.PressureTrigSense
 		//Begin loop
@@ -99,7 +100,7 @@ func VolumeAssist(UI *params.UserInput, s *sensors.SensorsReading, client *redis
 			}
 			// if it's stop or exit then close valves and break loop
 			trig, err := client.Get("status").Result()
-			check(err, logErr)
+			check(err, logStruct)
 			if (trig == "stop") || (trig == "exit") {
 				// valves.CloseAllValves(&valves.MIns, &valves.MExp)
 				// logger.Println("All valves closed")
@@ -110,6 +111,7 @@ func VolumeAssist(UI *params.UserInput, s *sensors.SensorsReading, client *redis
 		}
 	case "Flow Trigger":
 		//Calculate trigger threshhold with PEEP and sensitivity
+		logStruct.Event(fmt.Sprintf("Flow Trigger is set at %v cmH2O\n", UI.FlowTrigSense))
 		FTrigger := UI.FlowTrigSense
 		//Begin loop
 		for {
@@ -132,7 +134,7 @@ func VolumeAssist(UI *params.UserInput, s *sensors.SensorsReading, client *redis
 			}
 			// if it's stop or exit then close valves and break loop
 			trig, err := client.Get("status").Result()
-			check(err, logErr)
+			check(err, logStruct)
 			if (trig == "stop") || (trig == "exit") {
 				// valves.CloseAllValves(&valves.MIns, &valves.MExp)
 				// logger.Println("All valves closed")
