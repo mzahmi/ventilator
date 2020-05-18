@@ -16,6 +16,7 @@ from patient import Patient
 from chart_manager1 import ChartManager1
 from chart_manager2 import ChartManager2
 from chart_manager3 import ChartManager3
+from input_manager import UserInput
 
 
 parser = argparse.ArgumentParser(description='Run the main GUI code')
@@ -50,6 +51,7 @@ def main():
     alarmManager = AlarmManager()
     alarmManager.start()
     patient = Patient()
+    userInput = UserInput()
     modeSelect = ms.ModeSelect()
     dp = 0
 
@@ -60,6 +62,7 @@ def main():
     ctx.setContextProperty("ChartManager3", chartManager3)
     ctx.setContextProperty("ModeSelect", modeSelect)
     ctx.setContextProperty("Patient", patient)
+    ctx.setContextProperty("UserInput", userInput)
     ctx.setContextProperty("AlarmManager", alarmManager)
     ctx.setContextProperty("dp", dp)
     ctx.setContextProperty("fs", False)

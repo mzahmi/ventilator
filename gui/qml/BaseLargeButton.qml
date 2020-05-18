@@ -10,14 +10,8 @@ Item {
     // property bool active: false
     property string title: "Volume A/C"
     property string info: "In Development"
-    Component.onCompleted: {
-        // if (BtnScript.activeButtons.includes(title)) {
-        //     active = true
-        // } else {
-        //     active = false
-        //     info = "In Development"
-        // }
-    }
+    signal clicked()
+
 
     Rectangle {
         id: rectangle
@@ -51,7 +45,7 @@ Item {
             anchors.top: parent.top
             onClicked: {
                 // if (root.active) {
-                BtnScript.createComponent(root.title)
+                root.clicked()
                 // }
             }
         }

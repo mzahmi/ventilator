@@ -12,38 +12,15 @@ Item {
     id: name
     width: 650
     height: 480
-    signal presetClicked()
     signal stop()
-    onPresetClicked: {
-        view.push(selectbreathe)
-    }
+
     Component.onCompleted: {
-        // MyScript.createButtonComponent(MyScript.toArray(ModeSelect.buttonList))
         ModeSelect.stopVent.connect(name.stop)
     }
 
     // when a stop signal appears
     // reset view
     onStop: {
-        // hide button page
-        flickableItems.visible = false
-        // make page non interactive and move to top
-        flickablePage.contentY = 0
-        flickablePage.interactive = false
-        // hide breath row
-        rowBreath.visible = false
-        // hide trigger
-        rowTrigger.visible = false
-        // show modes
-        rowButtons.visible = true
-        // remove all trigger buttons
-        for (var i = rowTrigger.children.length; i > 0; i--) {
-            rowTrigger.children[i - 1].height = 0
-        }
-        // remove all breath buttons
-        for (var j = rowBreath.children.length; j > 0; j--) {
-            rowBreath.children[j - 1].height = 0
-        }
 
         ModeSelect.status = "stop"
     }
@@ -63,15 +40,9 @@ Item {
             font.pointSize: 32
         }
 
-        Button {
-            text: "back"
-            onClicked: MyScript.backButton()
-            visible: !rowButtons.visible
-
-        }
 
         Item {
-            id: rowButtons
+            id: modePage
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.left: parent.horizontalCenter
@@ -102,6 +73,9 @@ Item {
                 y: 118
                 info: "Pressure Support ventilation mode is indicated for active patients only"
                 title: "Pressure Support"
+                onClicked: {
+                    console.log("not active")
+                }
             }
 
             BaseLargeButton {
@@ -110,6 +84,9 @@ Item {
                 y: 38
                 info: "Pressure control breaths at the set SIMV rate. Pressure/Flow trigger to assisted breath"
                 title: "Pressure SIMV"
+                onClicked: {
+                    console.log("not active")
+                }
             }
 
             BaseLargeButton {
@@ -118,6 +95,10 @@ Item {
                 y: 38
                 title: "Pressure A/C"
                 info: "Suitable for passive, partially active and active patients with weak respiratory drive"
+                onClicked: {
+                    modePage.visible = false
+                    modePAC.visible = true
+                }
             }
 
             BaseLargeButton {
@@ -126,6 +107,9 @@ Item {
                 y: -80
                 title: "Volume SIMV"
                 info: "Volume control breaths at the set SIMV rate. Pressure/Flow trigger to assisted breath"
+                onClicked: {
+                    console.log("not active")
+                }
             }
 
             BaseLargeButton {
@@ -134,38 +118,32 @@ Item {
                 y: -80
                 title: "Volume A/C"
                 info: "Intended for patients who are passive or partially active"
+                onClicked: {
+                    console.log("not active")
+                }
+            }
+        }
+
+        ModePAC {
+            id: modePAC
+            visible: false
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+        }
+
+
+
+        Button {
+            text: "back"
+            onClicked: {
+                modePAC.visible = false
+                modePage.visible = true
             }
 
+            visible: !modePage.visible
 
         }
-
-        Row {
-            id: rowBreath
-            y: 213
-            spacing: 15
-            anchors.rightMargin: 20
-            anchors.leftMargin: 20 + this.spacing
-            anchors.right: parent.right
-            anchors.left: parent.left
-        }
-
-        Row {
-            id: rowTrigger
-            y: 213
-            spacing: 15
-            anchors.rightMargin: 20
-            anchors.leftMargin: 20 + this.spacing
-            anchors.right: parent.right
-            anchors.left: parent.left
-        }
-
-        Item {
-            visible: false
-            id: flickableItems
-        }
-
-
-
     }
 }
 

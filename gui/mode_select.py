@@ -1,9 +1,10 @@
 from PySide2 import QtCore, QtWidgets, QtQml
 import json
-import redis 
+import redis
 import config
 from main import logging
 import time
+import json
 
 
 if config.useredis:
@@ -11,17 +12,17 @@ if config.useredis:
     useredis = True
 else:
     logging.info("not using redis")
-    useredis=False
+    useredis = False
 
 if useredis:
-    r=config.r
+    r = config.r
 
 mode_breath = {
     "Volume A/C": ["Volume Control", "Volume Assist"],
     "Pressure A/C": ["Pressure Control", "Pressure Assist"],
     "Pressure Support": ["Pressure Support"],
     "Volume SIMV": ["Volume Control", "Volume Assist", "Pressure Support"],
-    "Pressure SIMV": ["Pressure Control","Pressure Assist", "Pressure Support"]
+    "Pressure SIMV": ["Pressure Control", "Pressure Assist", "Pressure Support"]
 }
 
 breath_trigger = {
@@ -58,8 +59,9 @@ class ModeSelect(QtCore.QObject):
         self._status = ""
         self._threader = None
         self._delay = 1
-        # self.start() # threader start when variables are needed to be shown
         self._goOn = True
+        self._pip = {"name": "PIP", "value": 3}
+
     @QtCore.Property(str)
     def buttonList(self):
         buttonList = ","
@@ -79,18 +81,26 @@ class ModeSelect(QtCore.QObject):
 
         return buttonList.join(mode_breath.keys())
 
-
     @QtCore.Property(str)
     def mode(self):
         return self._currMode
 
     @mode.setter
     def setMode(self, mode):
-        self._currMode=mode
-        if mode=="":
+        self._currMode = mode
+        if mode == "":
             logging.debug("mode reset")
         else:
             logging.debug(f'mode set: {mode}')
+
+    @QtCore.Property('QVariant')
+    def pip(self):
+        return self._pip
+
+    @pip.setter
+    def setPip(self, val):
+        print(val)
+        self._pip = val
 
     @QtCore.Property(str)
     def breath(self):
@@ -98,8 +108,8 @@ class ModeSelect(QtCore.QObject):
 
     @breath.setter
     def setBreath(self, breath):
-        self._currBreath=breath
-        if breath=="":
+        self._currBreath = breath
+        if breath == "":
             logging.debug("breath reset")
         else:
             logging.debug(f'breath type set: {breath}')
@@ -110,8 +120,8 @@ class ModeSelect(QtCore.QObject):
 
     @trigger.setter
     def setTrigger(self, trigger):
-        self._currTrigger=trigger
-        if trigger=="":
+        self._currTrigger = trigger
+        if trigger == "":
             logging.debug("trigger reset")
         else:
             logging.debug(f'trigger type set: {trigger}')
@@ -123,7 +133,7 @@ class ModeSelect(QtCore.QObject):
     @status.setter
     def setStatus(self, status):
         logging.debug("status set: {}".format(status))
-        self._status=status
+        self._status = status
 
     @QtCore.Slot()
     def stopVentilation(self):
@@ -133,29 +143,29 @@ class ModeSelect(QtCore.QObject):
         logging.warning("Stopping Ventilation")
         # send status 'stop'
         if useredis:
-            r.mset({"status":"stop"})        
+            r.mset({"status": "stop"})
         self.stopVent.emit()
 
     @QtCore.Slot()
     def startVentilation(self):
-        self.status="start"
+        self.status = "start"
         logging.warning("Starting Ventilation")
         if useredis:
-            r.mset({"status":self._status})        
+            r.mset({"status": self._status})
 
     @QtCore.Slot(str, int)
     def sendValues(self, mystring, myint):
         # clean up for useredis
-        if mystring=="FIO2%":
-            mystring="FiO2"
-        if mystring=="IE":
-            mystring="ER"
-        if mystring=="Insparotary Pressure":
-            mystring="InspiratoryPressure"
-        if mystring=="Breath Per Minute":
-            mystring="Rate"
-        if mystring=="PEEP":
-            mystring="PEEP"
+        if mystring == "FIO2%":
+            mystring = "FiO2"
+        if mystring == "IE":
+            mystring = "ER"
+        if mystring == "Insparotary Pressure":
+            mystring = "InspiratoryPressure"
+        if mystring == "Breath Per Minute":
+            mystring = "Rate"
+        if mystring == "PEEP":
+            mystring = "PEEP"
 
         # json get
         if useredis:
@@ -163,11 +173,11 @@ class ModeSelect(QtCore.QObject):
             params = json.loads(params)
 
             # json set
-            params[mystring]=myint
-            params["Mode"]=self._currMode
-            params["BreathType"]=self._currBreath
+            params[mystring] = myint
+            params["Mode"] = self._currMode
+            params["BreathType"] = self._currBreath
             paramsdump = json.dumps(params)
-            r.mset({"PARAMS":paramsdump})
+            r.mset({"PARAMS": paramsdump})
             logging.info("Sending value to redis")
 
         logging.debug(f'Input {mystring} set: {myint}')
@@ -183,15 +193,17 @@ class ModeSelect(QtCore.QObject):
             # print("on thread")
             time.sleep(self._delay)
 
-# ------------------------------------------------- 
+# -------------------------------------------------
+
 
 class Threader(QtCore.QThread):
-    def __init__(self,core,parent=None):
+    def __init__(self, core, parent=None):
         super(Threader, self).__init__(parent)
         self._core = core
 
     def run(self):
         self._core()
+
 
 if __name__ == "__main__":
     for key in mode_breath:

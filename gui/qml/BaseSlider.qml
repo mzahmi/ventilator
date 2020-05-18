@@ -24,7 +24,7 @@ Item {
     Rectangle {
         id: rectangle
         width: slider.width+120
-        height: slider.height+30
+        height: slider.height+50
         color: "#ffffff"
 
         Slider {
