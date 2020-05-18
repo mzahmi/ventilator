@@ -17,7 +17,7 @@ Item {
 
         Text {
             id: element
-            y: 40
+            y: 15
             color: "#646464"
             text: qsTr("Patient Information")
             anchors.rightMargin: -11
@@ -30,7 +30,7 @@ Item {
         Text {
             id: element2
             x: 51
-            y: 85
+            y: 52
             text: qsTr("Tell us about yourself")
             font.bold: true
             font.pixelSize: 16
@@ -61,6 +61,7 @@ Item {
                 y: 15
                 color: male.active ? Config.color_primary : "grey"
                 text: qsTr("Male")
+                font.bold: true
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -94,6 +95,7 @@ Item {
                 y: 15
                 color: female.active ? Config.color_primary : "grey"
                 text: qsTr("Female")
+                font.bold: true
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -114,8 +116,8 @@ Item {
 
         Text {
             id: element4
-            x: 51
-            y: 229
+            x: 352
+            y: 129
             color: "#6c6c6c"
             text: qsTr("How old are you?")
             font.pixelSize: 15
@@ -124,8 +126,8 @@ Item {
 
         Slider {
             id: sliderage
-            x: 51
-            y: 257
+            x: 352
+            y: 170
             width: 239
             height: 27
             value: 33
@@ -163,8 +165,8 @@ Item {
 
         Text {
             id: agetext
-            x: 200
-            y: 229
+            x: 501
+            y: 129
             color: "grey"
             text: Math.floor(sliderage.value) + " years old"
             font.pixelSize: 14
@@ -173,7 +175,7 @@ Item {
         Text {
             id: element5
             x: 51
-            y: 290
+            y: 272
             color: "#6c6c6c"
             text: qsTr("What is your height?")
             font.pixelSize: 15
@@ -182,7 +184,7 @@ Item {
         Slider {
             id: sliderHeight
             x: 51
-            y: 318
+            y: 307
             width: 239
             height: 27
             to: 250
@@ -219,7 +221,7 @@ Item {
         Text {
             id: agetext1
             x: 235
-            y: 292
+            y: 274
             color: "#808080"
             text: Math.floor(sliderHeight.value) + "cm"
             font.pixelSize: 14
@@ -227,8 +229,8 @@ Item {
 
         Text {
             id: element6
-            x: 51
-            y: 351
+            x: 352
+            y: 272
             color: "#6c6c6c"
             text: qsTr("What is your weight?")
             font.pixelSize: 15
@@ -236,8 +238,8 @@ Item {
 
         Slider {
             id: sliderWeight
-            x: 51
-            y: 379
+            x: 352
+            y: 307
             width: 239
             height: 27
             to: 200
@@ -272,8 +274,8 @@ Item {
 
         Text {
             id: agetext2
-            x: 235
-            y: 353
+            x: 536
+            y: 274
             width: 44
             height: 20
             color: "#808080"
@@ -287,18 +289,18 @@ Item {
         Rectangle {
             id: continueButton
             property bool active: false
-            x: 126
-            y: 412
+            x: 267
+            y: 390
             width: 106
             height: 41
-            color: "#ffffff"
+            color: Config.color_primary
             radius: 8
-            border.color: active ? Config.color_primary : "grey"
 
             Text {
                 y: 15
-                color: continueButton.active ? Config.color_primary : "grey"
+                color: "white"
                 text: qsTr("Continue")
+                font.bold: true
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.right: parent.right
