@@ -49,8 +49,13 @@ Item {
         }
 
         RowLayout {
-            x: 188
             y: 277
+            anchors.left: parent.left
+            anchors.leftMargin: (chartsarea.width - 277) / 2
+            anchors.right: parent.right
+            anchors.rightMargin: (chartsarea.width - 277) / 2
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 8
             spacing: 15
 
             MouseArea {
@@ -59,8 +64,11 @@ Item {
                 Layout.preferredWidth: 78
                 onClicked: {
                     chart1.active = true
+                    ChartManager1.starter = true
                     chart2.active = false
+                    ChartManager2.starter = false
                     chart3.active = false
+                    ChartManager3.starter = false
                 }
 
                 Text {
@@ -78,9 +86,12 @@ Item {
                 Layout.preferredHeight: 35
                 Layout.preferredWidth: 78
                 onClicked: {
-                    chart2.active = true
                     chart1.active = false
+                    ChartManager1.starter = false
+                    chart2.active = true
+                    ChartManager2.starter = true
                     chart3.active = false
+                    ChartManager3.starter = false
                 }
 
                 Text {
@@ -98,9 +109,12 @@ Item {
                 Layout.preferredHeight: 35
                 Layout.preferredWidth: 78
                 onClicked: {
-                    chart2.active = false
                     chart1.active = false
+                    ChartManager1.starter = false
+                    chart2.active = false
+                    ChartManager2.starter = false
                     chart3.active = true
+                    ChartManager3.starter = true
                 }
 
                 Text {
@@ -140,6 +154,7 @@ Item {
 Designer {
     D{i:0;anchors_height:200;anchors_width:200;anchors_x:18;anchors_y:46;autoSize:true;height:480;width:640}
 D{i:2;anchors_height:295;anchors_width:300;anchors_x:162;anchors_y:29}D{i:3;anchors_height:500}
-D{i:9;anchors_height:500}D{i:1;anchors_height:200;anchors_width:200}D{i:12;anchors_height:500}
+D{i:9;anchors_height:500}D{i:5;anchors_x:188}D{i:1;anchors_height:200;anchors_width:200}
+D{i:12;anchors_height:500}
 }
 ##^##*/
