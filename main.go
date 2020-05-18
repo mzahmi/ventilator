@@ -79,7 +79,7 @@ func main() {
 
 	// Reads sensors and populate the graph
 	// limit the reading frequency to a predefined value
-	rate := float64(100)                                                   // Hz rate
+	rate := float64(500)                                                   // Hz rate
 	timePerLoopIteration := time.Duration(1000000/rate) * time.Microsecond //(1 / rate) us
 
 	go func() {
@@ -96,6 +96,7 @@ func main() {
 			runtime.Gosched()
 			//sends the pressure reading from Pin to GUI
 			client.Set("pressure", (Pin)*1020, 0).Err()
+			//fmt.Println(Pin*1020)
 			//calculates the delay based on a specified rate
 			loopTime := time.Since(t1)
 			if loopTime < timePerLoopIteration {
@@ -115,7 +116,7 @@ func main() {
 			airpress := s.PressureInput
 			mux.Unlock()
 			runtime.Gosched()
-			if (airpress * 1020) >= 200 {
+			if (airpress * 1020) >= 80 {
 				//msg := "Airway Pressure high"
 				client.Set("alarm_status", "critical", 0).Err()
 				client.Set("alarm_title", "Airway Pressure high", 0).Err()
@@ -189,6 +190,7 @@ func main() {
 		check(err)
 		if status == "start" {
 			logger.Printf("Ventilation status changed to %s\n", status)
+			UI = params.ReadParams(client)
 			go modeselect.ModeSelection(&UI, &s, client, &mux, logger)
 			client.Set("status", "ventilating", 0).Err()
 			logger.Printf("Ventilation status changed to %s\n", status)

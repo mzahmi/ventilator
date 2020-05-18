@@ -1,9 +1,9 @@
 package modeselect
 
 import (
-	"fmt"
+	//"fmt"
 	"log"
-	"runtime"
+	//"runtime"
 	"sync"
 	"time"
 
@@ -78,10 +78,10 @@ func PressureControl(UI *params.UserInput, s *sensors.SensorsReading, client *re
 
 			dac.WriteDac(1, 1, 0.5)
 			// fmt.Println(feedbackIn)
-			mux.Lock()
-			fmt.Println(s.PressureInput)
-			mux.Unlock()
-			runtime.Gosched()
+			// mux.Lock()
+			// fmt.Println(s.PressureInput)
+			// mux.Unlock()
+			// runtime.Gosched()
 			// valves.InProp.IncrementValve(PressurePID.Update(float64((<-s).PressureInput)))
 		}
 		valves.MIns.Close()
