@@ -1,7 +1,6 @@
 package modeselect
 
 import (
-	"fmt"
 	"log"
 	"sync"
 
@@ -22,33 +21,33 @@ func UpdateValues(UI *params.UserInput) {
 }
 
 // ModeSelection reads input from the GUI to select the required Mode from the user input struct
-func ModeSelection(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logger *log.Logger) {
+func ModeSelection(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logger *log.Logger, logErr *log.Logger) {
 	UpdateValues(UI) // calculates missing values
 	//fmt.Println(UI.Mode)
 	switch UI.Mode {
 	case "Volume A/C":
-		fmt.Println("Pressure Control Mode selected")
-		VolumeAC(UI, s, client, mux, logger)
+		logger.Println("Pressure Control Mode selected")
+		VolumeAC(UI, s, client, mux, logger, logErr)
 	case "Pressure A/C":
 		logger.Println("Pressure Assisted Control Mode selected")
-		PressureAC(UI, s, client, mux, logger)
+		PressureAC(UI, s, client, mux, logger, logErr)
 	case "Pressure Support (PSV)":
-		fmt.Println("Pressure Support Control Mode selected")
-		PSV(UI, s, client, mux, logger)
+		logger.Println("Pressure Support Control Mode selected")
+		PSV(UI, s, client, mux, logger, logErr)
 	case "Volume SMIV":
-		fmt.Println("Volume SIMV Mode selected")
+		logger.Println("Volume SIMV Mode selected")
 	case "Pressure SIMV":
-		fmt.Println("Pressure SIMV Mode selected")
+		logger.Println("Pressure SIMV Mode selected")
 	default:
-		fmt.Println("No github.com/mzahmi/ventilator Mode selected")
+		logger.Println("Incorrect Mode selected")
 		return
 	}
 }
 
 // prints out the checked error err
-func check(err error) {
+func check(err error, logErr *log.Logger) {
 	if err != nil {
-		fmt.Println(err)
+		logErr.Println(err)
 	}
 }
 

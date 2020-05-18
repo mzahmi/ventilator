@@ -15,7 +15,7 @@ import (
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Flow
 // 	Control: 	Pressure
-func PSV(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logger *log.Logger) {
+func PSV(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logger *log.Logger, logErr *log.Logger) {
 
 	PressurePID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 
@@ -60,7 +60,7 @@ func PSV(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, 
 			}
 			// if it's stop or exit then close valves and break loop
 			trig, err := client.Get("status").Result()
-			check(err)
+			check(err, logErr)
 			if (trig == "stop") || (trig == "exit") {
 				// valves.CloseAllValves(&valves.MIns, &valves.MExp)
 				// logger.Println("All valves closed")
@@ -96,7 +96,7 @@ func PSV(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, 
 			}
 			// if it's stop or exit then close valves and break loop
 			trig, err := client.Get("status").Result()
-			check(err)
+			check(err, logErr)
 			if (trig == "stop") || (trig == "exit") {
 				// valves.CloseAllValves(&valves.MIns, &valves.MExp)
 				// logger.Println("All valves closed")

@@ -31,12 +31,16 @@ func init() {
 
 func main() {
 	//Creates log file called Events.log
-	f, err := os.OpenFile("Events.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	check(err)
+	f, err := os.OpenFile("file.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		fmt.Println(err)
+	}
 	defer f.Close()
 
-	// declare new logger
-	logger := log.New(f, "Event", log.LstdFlags)
+	// declare new loggers with different prefixes
+	logger := log.New(f, "Event ", log.LstdFlags) // event logger
+	logErr := log.New(f, "Error ", log.LstdFlags) // errors logger
+	logArm := log.New(f, "Alarm ", log.LstdFlags) // alarms logger
 
 	//initialize the hardware
 	initialization.HardwareInit()
@@ -49,16 +53,11 @@ func main() {
 		DB:       0,
 	})
 	_, err = client.Ping().Result()
-	check(err)
+	check(err, logErr)
+	logger.Println("Client Initialized")
 
-	//delcare channels to communicate between goroutines
-	// s := make(chan sensors.SensorsReading)
-	s := sensors.SensorsReading{
-		PressureInput:  0,
-		PressureOutput: 0,
-	}
-	//readStatus := make(chan string)
-	client.Set("status", "NA", 0).Err() // empty the previous record of status
+	// set the critical records in redis to zero or NA
+	client.Set("status", "NA", 0).Err()
 	client.Set("pressure", 0, 0).Err()
 	client.Set("volume", 0, 0).Err()
 	client.Set("flow", 0, 0).Err()
@@ -67,18 +66,11 @@ func main() {
 	params.InitParams(client)
 	logger.Println("Parameters Initialized")
 
-	// // Checks if GUI changed params and pushed to redis
-	// go func() {
-	// 	defer wg.Done()
-	// 	for {
-	// 		mux.Lock()
-	// 		status, err := client.Get("status").Result()
-	// 		check(err)
-	// 		mux.Unlock()
-	// 		runtime.Gosched()
-	// 		time.Sleep(200 * time.Millisecond)
-	// 	}
-	// }()
+	//initialize a SensorsReading struct to store all of the sensor readings
+	s := sensors.SensorsReading{
+		PressureInput:  0,
+		PressureOutput: 0,
+	}
 
 	// Reads sensors and populate the graph
 	// limit the reading frequency to a predefined value
@@ -126,26 +118,27 @@ func main() {
 				client.Set("alarm_status", "critical", 0).Err()
 				client.Set("alarm_title", "Airway Pressure high", 0).Err()
 				client.Set("alarm_text", "Airway Pressure exceeded limits check for obstruction", 0).Err()
+				logArm.Println("Airway Pressure high")
 				tm := 200 * time.Millisecond
 				ts := 3000 * time.Millisecond
 
 				err := rpigpio.BeepOn()
-				check(err)
+				check(err, logErr)
 				time.Sleep(tm)
 				err = rpigpio.BeepOff()
-				check(err)
+				check(err, logErr)
 				time.Sleep(tm)
 				err = rpigpio.BeepOn()
-				check(err)
+				check(err, logErr)
 				time.Sleep(tm)
 				err = rpigpio.BeepOff()
-				check(err)
+				check(err, logErr)
 				time.Sleep(tm)
 				err = rpigpio.BeepOn()
-				check(err)
+				check(err, logErr)
 				time.Sleep(tm)
 				err = rpigpio.BeepOff()
-				check(err)
+				check(err, logErr)
 				time.Sleep(tm)
 				time.Sleep(ts)
 
@@ -157,33 +150,6 @@ func main() {
 
 	}()
 
-	// Runs the ventelation method control
-	// go func() {
-	// 	for {
-	// 		for val := range readStatus {
-	// 			if val == "start" {
-	// 				logger.Printf("Ventilation status changed to %s\n", val)
-	// 				UI = params.ReadParams(client)
-	// 				modeselect.ModeSelection(&UI, &s, &wg, readStatus, logger)
-	// 				client.Set("status", "ventilating", 0).Err()
-	// 				readStatus <- "ventilating"
-	// 				logger.Printf("Ventilation status changed to %v", <-readStatus)
-	// 				// write to redis status = ventilating
-	// 			} else if val == "stop" {
-	// 				// stop function to stop ventilation
-	// 				//fmt.Println("Stopping system")
-	// 				//readStatus <- "Stoped"
-	// 				logger.Println("Stopping system")
-	// 			} else if val == "exit" {
-	// 				// exit program
-	// 				// exit <- true
-	// 				//readStatus <- "Exited"
-	// 				logger.Println("Exiting system")
-	// 			}
-	// 		}
-	// 	}
-	// }()
-
 	// Provides CLI interface
 	go cli.Run(&s, client, &mux)
 
@@ -192,11 +158,11 @@ func main() {
 
 	for {
 		status, err := client.Get("status").Result()
-		check(err)
+		check(err, logErr)
 		if status == "start" {
 			logger.Printf("Ventilation status changed to %s\n", status)
 			UI = params.ReadParams(client)
-			go modeselect.ModeSelection(&UI, &s, client, &mux, logger)
+			go modeselect.ModeSelection(&UI, &s, client, &mux, logger, logErr)
 			client.Set("status", "ventilating", 0).Err()
 			logger.Printf("Ventilation status changed to %s\n", status)
 		} else if status == "stop" {
@@ -208,9 +174,9 @@ func main() {
 }
 
 // prints out the checked error err
-func check(err error) {
+func check(err error, logErr *log.Logger) {
 	if err != nil {
-		fmt.Println(err)
+		logErr.Println(err)
 	}
 }
 
