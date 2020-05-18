@@ -113,6 +113,8 @@ func main() {
 	}()
 
 	//Airway pressure alarm check
+	// go alarms.AirwayPressureAlarms(&s, &mux, UI.UpperLimitPIP, UI.LowerLimitPIP, &logStruct, client)
+
 	go func() {
 		for {
 			mux.Lock()
