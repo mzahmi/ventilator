@@ -19,9 +19,22 @@ class ChartManager2(QtCore.QObject):
         self._currY = 0
         self._delay = 0.1
         self._xIncrement = 1
+        self._starter = False
         self._goOn = False
         self._threader = None
         self.test = 0
+
+    @QtCore.Property(bool)
+    def starter(self):
+        return self._starter
+
+    @starter.setter
+    def setStarter(self, val):
+        if val:
+            self.start()
+        else:
+            self.stop()
+        self._starter = val
 
     @QtCore.Property(float)
     def delay(self):

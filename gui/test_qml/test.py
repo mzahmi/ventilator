@@ -1,28 +1,23 @@
-
-import random
+import os
+import sys
 import time
-import math
-# from main import args
-
-import config
-from PySide2 import QtCore, QtQml, QtWidgets
+from PySide2 import QtCore, QtWidgets, QtQml
 
 
-class ChartManager1(QtCore.QObject):
-    # create a signal
+class Manager(QtCore.QObject):
     dataReady = QtCore.Signal(QtCore.QPointF, name='dataReady')
 
-    def __init__(self, parent=None, r=None):
-        # if 'parent' is given then it will inherit it
-        super(ChartManager1, self).__init__(parent)
+    def __init__(self, parent=None):
+        super(Manager, self).__init__(parent)
         self._currX = 0
         self._currY = 0
-        self._delay = 0.1
-        self._xIncrement = 1
-        self._starter = False
+        self._delay = 0.5
+        self._multiplier = 1.0
+        self._power = 1.0
+        self._xIncrement = 1.0
+        self._starter = True
         self._goOn = False
         self._threader = None
-        self.test = 0
 
     @QtCore.Property(bool)
     def starter(self):
@@ -30,11 +25,36 @@ class ChartManager1(QtCore.QObject):
 
     @starter.setter
     def setStarter(self, val):
+        if self._multiplier == val:
+            return
+        print(val)
         if val:
             self.start()
         else:
             self.stop()
         self._starter = val
+
+    @QtCore.Property(float)
+    def multiplier(self):
+        return self._multiplier
+
+    @multiplier.setter
+    def setMultiplier(self, val):
+        if self._multiplier == val:
+            return
+        print(val)
+        self._multiplier = val
+
+    @QtCore.Property(int)
+    def power(self):
+        return self._power
+
+    @power.setter
+    def setPower(self, val):
+        if self._power == val:
+            return
+        print(val)
+        self._power = val
 
     @QtCore.Property(float)
     def delay(self):
@@ -47,7 +67,7 @@ class ChartManager1(QtCore.QObject):
         print(val)
         self._delay = val
 
-    @QtCore.Property(float, constant=True)
+    @QtCore.Property(float)
     def xIncrement(self):
         return self._xIncrement
 
@@ -59,20 +79,13 @@ class ChartManager1(QtCore.QObject):
         self._xIncrement = val
 
     def generatePoint(self):
-        # increments and returns x and y
-
         self._currX += self._xIncrement
-        if not config.useredis:
-            self.test = self.test+self._delay
-            self._currY = math.sin(self.test*2)*10+25
-        else:
-            self._currY = float(config.r.get("pressure"))
+        self._currY = self._multiplier*(self._currX**self._power)
 
         return self._currX, self._currY
 
     def stop(self):
         self._goOn = False
-        # checks threader, if still alive, stays inside till dead
         if self._threader is not None:
             while self._threader.isRunning():
                 time.sleep(0.1)
@@ -84,10 +97,7 @@ class ChartManager1(QtCore.QObject):
 
     def core(self):
         while self._goOn:
-            # makes an XY point object using generatepoint
-            # using 'self._currX,self._currY'
             p = QtCore.QPointF(*self.generatePoint())
-            # sends signal and then waits for delay
             self.dataReady.emit(p)
             time.sleep(self._delay)
 
@@ -101,3 +111,19 @@ class Threader(QtCore.QThread):
 
     def run(self):
         self._core()
+
+
+if __name__ == "__main__":
+    os.environ["QT_QUICK_CONTROLS_STYLE"] = "Material"
+    app = QtWidgets.QApplication(sys.argv)
+    manager = Manager()
+    app.aboutToQuit.connect(manager.stop)
+    manager.start()
+    engine = QtQml.QQmlApplicationEngine()
+    ctx = engine.rootContext()
+    ctx.setContextProperty("Manager", manager)
+    engine.load('test.qml')
+    if not engine.rootObjects():
+        sys.exit(-1)
+
+    sys.exit(app.exec_())

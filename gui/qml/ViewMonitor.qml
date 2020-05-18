@@ -64,8 +64,11 @@ Item {
                 Layout.preferredWidth: 78
                 onClicked: {
                     chart1.active = true
+                    ChartManager1.starter = true
                     chart2.active = false
+                    ChartManager2.starter = false
                     chart3.active = false
+                    ChartManager3.starter = false
                 }
 
                 Text {
@@ -83,9 +86,12 @@ Item {
                 Layout.preferredHeight: 35
                 Layout.preferredWidth: 78
                 onClicked: {
-                    chart2.active = true
                     chart1.active = false
+                    ChartManager1.starter = false
+                    chart2.active = true
+                    ChartManager2.starter = true
                     chart3.active = false
+                    ChartManager3.starter = false
                 }
 
                 Text {
@@ -103,9 +109,12 @@ Item {
                 Layout.preferredHeight: 35
                 Layout.preferredWidth: 78
                 onClicked: {
-                    chart2.active = false
                     chart1.active = false
+                    ChartManager1.starter = false
+                    chart2.active = false
+                    ChartManager2.starter = false
                     chart3.active = true
+                    ChartManager3.starter = true
                 }
 
                 Text {

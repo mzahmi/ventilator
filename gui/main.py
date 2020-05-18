@@ -46,8 +46,8 @@ def main():
     app.aboutToQuit.connect(chartManager3.stop)
 
     chartManager1.start()
-    chartManager2.start()
-    chartManager3.start()
+    # chartManager2.start()
+    # chartManager3.start()
 
     alarmManager = AlarmManager()
     alarmManager.start()
