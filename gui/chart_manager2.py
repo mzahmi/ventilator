@@ -67,7 +67,7 @@ class ChartManager2(QtCore.QObject):
             self._currY = random.randint(15, 40)
             # self._currY = math.sin(self.test*2)*10+25
         else:
-            self._currY = float(config.r.get("pressure"))
+            self._currY = float(config.r.get("volume"))
 
         return self._currX, self._currY
 

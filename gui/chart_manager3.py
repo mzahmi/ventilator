@@ -66,7 +66,7 @@ class ChartManager3(QtCore.QObject):
             self.test = self.test+self._delay
             self._currY = math.sin(self.test*3)*random.randint(5, 10)+25
         else:
-            self._currY = float(config.r.get("pressure"))
+            self._currY = float(config.r.get("flow"))
 
         return self._currX, self._currY
 

@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 2.1
+import QtQuick.Controls.Styles 1.4
 import "./config.js"
 as Config
 
@@ -128,12 +129,7 @@ Item {
             font.pixelSize: 15
         }
 
-        TextField {
-            id: textField
-            x: 40
-            y: 305
-            text: qsTr("Text Field")
-        }
+
 
 
     }
