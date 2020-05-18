@@ -16,7 +16,7 @@ Item {
     property double xval2: 0
     signal reemitted(point p)
 
-    Component.onCompleted: ChartManager.dataReady.connect(root.reemitted)
+    Component.onCompleted: ChartManager1.dataReady.connect(root.reemitted)
     onReemitted: {
         root.addpoint(p.y, xval, series1)
         xval += 0.1

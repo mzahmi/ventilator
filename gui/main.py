@@ -3,8 +3,6 @@ import argparse
 import os
 import random
 import sys
-import test
-import time
 
 from alarm_manager import AlarmManager
 
@@ -15,7 +13,7 @@ import config
 import mode_select as ms
 from config import logging as logging
 from patient import Patient
-from chart_manager import ChartManager
+from chart_manager1 import ChartManager1
 from chart_manager2 import ChartManager2
 from chart_manager3 import ChartManager3
 
@@ -35,30 +33,29 @@ if config.args.fullscreen:
 
 
 def main():
-    os.environ["QT_QUICK_CONTROLS_STYLE"] = "Material"
+    os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
+
     app = QtWidgets.QApplication(sys.argv)
 
-    chartManager = ChartManager()
+    chartManager1 = ChartManager1()
     chartManager2 = ChartManager2()
     chartManager3 = ChartManager3()
 
-    app.aboutToQuit.connect(chartManager.stop)
+    app.aboutToQuit.connect(chartManager1.stop)
     app.aboutToQuit.connect(chartManager2.stop)
     app.aboutToQuit.connect(chartManager3.stop)
 
-    chartManager.start()
-    chartManager2.start()
-    chartManager3.start()
+    chartManager1.start()
 
-    engine = QtQml.QQmlApplicationEngine()
     alarmManager = AlarmManager()
     alarmManager.start()
     patient = Patient()
     modeSelect = ms.ModeSelect()
     dp = 0
 
+    engine = QtQml.QQmlApplicationEngine()
     ctx = engine.rootContext()
-    ctx.setContextProperty("ChartManager", chartManager)
+    ctx.setContextProperty("ChartManager1", chartManager1)
     ctx.setContextProperty("ChartManager2", chartManager2)
     ctx.setContextProperty("ChartManager3", chartManager3)
     ctx.setContextProperty("ModeSelect", modeSelect)

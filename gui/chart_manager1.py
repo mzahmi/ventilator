@@ -8,20 +8,33 @@ import config
 from PySide2 import QtCore, QtQml, QtWidgets
 
 
-class ChartManager(QtCore.QObject):
+class ChartManager1(QtCore.QObject):
     # create a signal
     dataReady = QtCore.Signal(QtCore.QPointF, name='dataReady')
 
     def __init__(self, parent=None, r=None):
         # if 'parent' is given then it will inherit it
-        super(ChartManager, self).__init__(parent)
+        super(ChartManager1, self).__init__(parent)
         self._currX = 0
         self._currY = 0
         self._delay = 0.1
         self._xIncrement = 1
+        self._starter = False
         self._goOn = False
         self._threader = None
         self.test = 0
+
+    @QtCore.Property(bool)
+    def starter(self):
+        return self._starter
+
+    @starter.setter
+    def setStarter(self, val):
+        if val:
+            self.start()
+        else:
+            self.stop()
+        self._starter = val
 
     @QtCore.Property(float)
     def delay(self):
