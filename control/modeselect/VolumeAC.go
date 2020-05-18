@@ -3,21 +3,23 @@ package modeselect
 
 import (
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
+	"github.com/go-redis/redis"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/control/valves"
 	"github.com/mzahmi/ventilator/params"
 )
 
 // VolumeAC one of the main 5 modes of the github.com/mzahmi/ventilatorilator
-func VolumeAC(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
+func VolumeAC(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logger *log.Logger) {
 	switch UI.BreathType {
 	case "Volume Control":
-		VolumeControl(UI, s, wg, readStatus)
+		VolumeControl(UI, s, client, mux, logger)
 	case "Volume Assist":
-		VolumeAssist(UI, s, wg, readStatus)
+		VolumeAssist(UI, s, client, mux, logger)
 	default:
 		fmt.Println("Enter valid breath type")
 	}
@@ -27,7 +29,7 @@ func VolumeAC(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGrou
 // 	Triggering:	Time
 // 	Cycling: 	Time
 // 	Control: 	Volume
-func VolumeControl(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
+func VolumeControl(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logger *log.Logger) {
 
 	//initiate a PID controller based on the PeakFlow
 	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
@@ -51,22 +53,23 @@ func VolumeControl(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.Wai
 		//Close main valve MExp
 		valves.ExProp.IncrementValve(0) // closes the valve
 		// if it's stop or exit then close valves and break loop
-		trig := <-readStatus
+		trig, err := client.Get("status").Result()
+		check(err)
 		if (trig == "stop") || (trig == "exit") {
-			valves.CloseAllValves(&valves.ExProp, &valves.InProp)
+			// valves.CloseAllValves(&valves.MIns, &valves.MExp)
+			// logger.Println("All valves closed")
 			break
 		} else {
 			continue
 		}
 	}
-
 }
 
 // VolumeAssist a submode of Volume AC. The Triggering type is chosen by the operator.
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Time
 // 	Control: 	Volume
-func VolumeAssist(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string) {
+func VolumeAssist(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logger *log.Logger) {
 
 	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
 
@@ -95,9 +98,11 @@ func VolumeAssist(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.Wait
 				valves.ExProp.IncrementValve(0) // closes the valve
 			}
 			// if it's stop or exit then close valves and break loop
-			trig := <-readStatus
+			trig, err := client.Get("status").Result()
+			check(err)
 			if (trig == "stop") || (trig == "exit") {
-				valves.CloseAllValves(&valves.ExProp, &valves.InProp)
+				// valves.CloseAllValves(&valves.MIns, &valves.MExp)
+				// logger.Println("All valves closed")
 				break
 			} else {
 				continue
@@ -126,9 +131,11 @@ func VolumeAssist(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.Wait
 				valves.ExProp.IncrementValve(0) // closes the valve
 			}
 			// if it's stop or exit then close valves and break loop
-			trig := <-readStatus
+			trig, err := client.Get("status").Result()
+			check(err)
 			if (trig == "stop") || (trig == "exit") {
-				valves.CloseAllValves(&valves.ExProp, &valves.InProp)
+				// valves.CloseAllValves(&valves.MIns, &valves.MExp)
+				// logger.Println("All valves closed")
 				break
 			} else {
 				continue

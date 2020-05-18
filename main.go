@@ -25,7 +25,12 @@ var UI = params.DefaultParams
 var wg sync.WaitGroup
 var mux sync.Mutex
 
+func init() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+}
+
 func main() {
+	//Creates log file called Events.log
 	f, err := os.OpenFile("Events.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	check(err)
 	defer f.Close()
@@ -52,73 +57,65 @@ func main() {
 		PressureInput:  0,
 		PressureOutput: 0,
 	}
-	readStatus := make(chan string)
+	//readStatus := make(chan string)
 	client.Set("status", "NA", 0).Err() // empty the previous record of status
 
 	//initialize the user input parameters
 	params.InitParams(client)
 	logger.Println("Parameters Initialized")
 
-	//TODO: determine how to properly assign the number of goroutinues
-	wg.Add(5)
-
-	// Checks if GUI changed params and pushed to redis
-	go func() {
-		defer wg.Done()
-		for {
-			mux.Lock()
-			status, _ := client.Get("status").Result()
-			readStatus <- status
-			mux.Unlock()
-			runtime.Gosched()
-			time.Sleep(200 * time.Millisecond)
-		}
-	}()
+	// // Checks if GUI changed params and pushed to redis
+	// go func() {
+	// 	defer wg.Done()
+	// 	for {
+	// 		mux.Lock()
+	// 		status, err := client.Get("status").Result()
+	// 		check(err)
+	// 		mux.Unlock()
+	// 		runtime.Gosched()
+	// 		time.Sleep(200 * time.Millisecond)
+	// 	}
+	// }()
 
 	// Reads sensors and populate the graph
 	// limit the reading frequency to a predefined value
-	rate := float64(200)                                                // Hz rate
-	timePerLoopIteration := time.Duration(1000/rate) * time.Millisecond //(1 / rate) ms
-	// fmt.Println(timePerLoopIteration)
+	rate := float64(100)                                                   // Hz rate
+	timePerLoopIteration := time.Duration(1000000/rate) * time.Microsecond //(1 / rate) us
 
 	go func() {
-		defer wg.Done()
 		for {
 			t1 := time.Now()
-
+			// reads all of the sensors on the system
 			Pin, Pout := sensors.ReadAllSensors()
-			//loopTime := time.Since(t1)
+			//locks the populating of the sensors struct
 			mux.Lock()
 			s = sensors.SensorsReading{
 				PressureInput:  Pin,
 				PressureOutput: Pout}
-
-			//fmt.Println("done reading all sensors")
-			// if (Pin * 1020) > 150 {
-			// 	fmt.Println(Pin)
-			// }
+			mux.Unlock()
+			runtime.Gosched()
+			//sends the pressure reading from Pin to GUI
 			client.Set("pressure", (Pin)*1020, 0).Err()
-			//fmt.Println("done sending to chart")
-			//alarms.AirwayPressureAlarms(s,&wg,30,5)
+			//calculates the delay based on a specified rate
 			loopTime := time.Since(t1)
 			if loopTime < timePerLoopIteration {
 				diff := (timePerLoopIteration - loopTime)
 				//fmt.Println("Sleeping for:", diff)
 				time.Sleep(diff)
 			}
-			mux.Unlock()
-			runtime.Gosched()
-
 			//t3 := time.Now()
 			//fmt.Println("Tdiff=", t3.Sub(t1))
 		}
 	}()
 
+	//Airway pressure alarm check
 	go func() {
-		defer wg.Done()
 		for {
 			mux.Lock()
-			if (s.PressureInput * 1020) >= 200 {
+			airpress := s.PressureInput
+			mux.Unlock()
+			runtime.Gosched()
+			if (airpress * 1020) >= 200 {
 				//msg := "Airway Pressure high"
 				client.Set("alarm_status", "critical", 0).Err()
 				client.Set("alarm_title", "Airway Pressure high", 0).Err()
@@ -149,45 +146,58 @@ func main() {
 			} else {
 				client.Set("alarm_status", "none", 0).Err()
 			}
-			mux.Unlock()
-			runtime.Gosched()
-			time.Sleep(200 * time.Millisecond)
+			time.Sleep(time.Millisecond * 100)
 		}
 
 	}()
 
 	// Runs the ventelation method control
-	go func() {
-		defer wg.Done()
-		for {
-			for val := range readStatus {
-				if val == "start" {
-					logger.Printf("Ventilation status changed to %s\n", val)
-					UI = params.ReadParams(client)
-					modeselect.ModeSelection(&UI, &s, &wg, readStatus, logger)
-					client.Set("status", "ventilating", 0).Err()
-					readStatus <- "ventilating"
-					logger.Printf("Ventilation status changed to %v", <-readStatus)
-					// write to redis status = ventilating
-				} else if val == "stop" {
-					// stop function to stop ventilation
-					//fmt.Println("Stopping system")
-					//readStatus <- "Stoped"
-					logger.Println("Stopping system")
-				} else if val == "exit" {
-					// exit program
-					// exit <- true
-					//readStatus <- "Exited"
-					logger.Println("Exiting system")
-				}
-			}
-		}
-	}()
+	// go func() {
+	// 	for {
+	// 		for val := range readStatus {
+	// 			if val == "start" {
+	// 				logger.Printf("Ventilation status changed to %s\n", val)
+	// 				UI = params.ReadParams(client)
+	// 				modeselect.ModeSelection(&UI, &s, &wg, readStatus, logger)
+	// 				client.Set("status", "ventilating", 0).Err()
+	// 				readStatus <- "ventilating"
+	// 				logger.Printf("Ventilation status changed to %v", <-readStatus)
+	// 				// write to redis status = ventilating
+	// 			} else if val == "stop" {
+	// 				// stop function to stop ventilation
+	// 				//fmt.Println("Stopping system")
+	// 				//readStatus <- "Stoped"
+	// 				logger.Println("Stopping system")
+	// 			} else if val == "exit" {
+	// 				// exit program
+	// 				// exit <- true
+	// 				//readStatus <- "Exited"
+	// 				logger.Println("Exiting system")
+	// 			}
+	// 		}
+	// 	}
+	// }()
 
 	// Provides CLI interface
-	go cli.Run(&wg, &s, client, readStatus)
+	go cli.Run(&s, client, &mux)
+
+	//checks for sys interupt
 	SetupCloseHandler()
-	wg.Wait()
+
+	for {
+		status, err := client.Get("status").Result()
+		check(err)
+		if status == "start" {
+			logger.Printf("Ventilation status changed to %s\n", status)
+			go modeselect.ModeSelection(&UI, &s, client, &mux, logger)
+			client.Set("status", "ventilating", 0).Err()
+			logger.Printf("Ventilation status changed to %s\n", status)
+		} else if status == "stop" {
+			logger.Println("Stopping system")
+		} else if status == "exit" {
+			logger.Println("Exiting system")
+		}
+	}
 }
 
 // prints out the checked error err

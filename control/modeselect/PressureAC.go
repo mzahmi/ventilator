@@ -3,9 +3,11 @@ package modeselect
 import (
 	"fmt"
 	"log"
+	"runtime"
 	"sync"
 	"time"
 
+	"github.com/go-redis/redis"
 	"github.com/mzahmi/ventilator/control/dac"
 	"github.com/mzahmi/ventilator/control/ioexp"
 	"github.com/mzahmi/ventilator/control/sensors"
@@ -38,15 +40,14 @@ The perceived disadvantage of this mode is that an operator cannot directly
 control tidal volume. The resultant tidal volume may be unstable when the patient’s
 breathing effort and/or respiratory mechanics change. Therefore, you should
 carefully set the upper and lower limits of the tidal volume alarm.*/
-func PressureAC(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
-	defer wg.Done()
+func PressureAC(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logger *log.Logger) {
 	switch UI.BreathType {
 	case "Pressure Control":
 		logger.Println("Pressure Control Breath Type")
-		PressureControl(UI, s, wg, readStatus, logger)
+		PressureControl(UI, s, client, mux, logger)
 	case "Pressure Assist":
 		logger.Println("Pressure Assist Breath Type")
-		PressureAssist(UI, s, wg, readStatus, logger)
+		PressureAssist(UI, s, client, mux, logger)
 	default:
 		logger.Println("No supported breath type")
 	}
@@ -56,8 +57,7 @@ func PressureAC(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGr
 // 	Triggering:	Time
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureControl(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
-	defer wg.Done()
+func PressureControl(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logger *log.Logger) {
 	//initiate Pressure PID based on readings from PIns
 	// PressurePID := NewPIDController(0.5, 0.5, 0.5)                            // takes in P, I, and D values to be set trial and error
 	// PressurePID.setpoint = float64((UI.InspiratoryPressure + UI.PEEP) / 1020) // Sets the PID setpoint to inspiratory pressure above PEEP
@@ -78,7 +78,10 @@ func PressureControl(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.W
 
 			dac.WriteDac(1, 1, 0.5)
 			// fmt.Println(feedbackIn)
+			mux.Lock()
 			fmt.Println(s.PressureInput)
+			mux.Unlock()
+			runtime.Gosched()
 			// valves.InProp.IncrementValve(PressurePID.Update(float64((<-s).PressureInput)))
 		}
 		valves.MIns.Close()
@@ -101,10 +104,9 @@ func PressureControl(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.W
 		//Close main valve ExProp
 		valves.MExp.Close()
 		// if it's stop or exit then close valves and break loop
-		trig := <-readStatus
+		trig, err := client.Get("status").Result()
+		check(err)
 		if (trig == "stop") || (trig == "exit") {
-			// valves.CloseAllValves(&valves.MIns, &valves.MExp)
-			// logger.Println("All valves closed")
 			break
 		} else {
 			continue
@@ -119,8 +121,7 @@ func PressureControl(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.W
 // 	Triggering:	Pressure/Flow
 // 	Cycling: 	Time
 // 	Control: 	Pressure
-func PressureAssist(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
-	defer wg.Done()
+func PressureAssist(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logger *log.Logger) {
 	//initiate Pressure PID based on readings from PIns
 	PressurePID := NewPIDController(0.5, 0.5, 0.5)         // takes in P, I, and D values to be set trial and error
 	PressurePID.setpoint = float64(UI.InspiratoryPressure) // Sets PID setpoint to Inspiratory pressure
@@ -161,10 +162,11 @@ func PressureAssist(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.Wa
 				valves.ExProp.IncrementValve(0) // closes the valve
 			}
 			// if it's stop or exit then close valves and break loop
-			trig := <-readStatus
+			trig, err := client.Get("status").Result()
+			check(err)
 			if (trig == "stop") || (trig == "exit") {
-				valves.CloseAllValves(&valves.ExProp, &valves.InProp)
-				logger.Println("All valves closed")
+				// valves.CloseAllValves(&valves.MIns, &valves.MExp)
+				// logger.Println("All valves closed")
 				break
 			} else {
 				continue
@@ -202,10 +204,11 @@ func PressureAssist(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.Wa
 				valves.ExProp.IncrementValve(0) // closes the valve
 			}
 			// if it's stop or exit then close valves and break loop
-			trig := <-readStatus
+			trig, err := client.Get("status").Result()
+			check(err)
 			if (trig == "stop") || (trig == "exit") {
-				valves.CloseAllValves(&valves.ExProp, &valves.InProp)
-				logger.Println("All valves closed")
+				// valves.CloseAllValves(&valves.MIns, &valves.MExp)
+				// logger.Println("All valves closed")
 				break
 			} else {
 				continue

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -31,8 +32,7 @@ func info() {
 	fmt.Println("	stop ventilation: vstop")
 }
 
-func Run(wg *sync.WaitGroup, s *sensors.SensorsReading, client *redis.Client, readStatus chan string) {
-	defer wg.Done()
+func Run(s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex) {
 
 	parameters := structs.Names(&params.UserInput{})
 
@@ -40,7 +40,9 @@ func Run(wg *sync.WaitGroup, s *sensors.SensorsReading, client *redis.Client, re
 	reader := bufio.NewReader(os.Stdin)
 	for {
 		//user_input := <-c
-		if (<-readStatus) == "exit" {
+		status, err := client.Get("status").Result()
+		check(err)
+		if status == "exit" {
 			break
 		}
 		fmt.Print("> ")
@@ -215,10 +217,16 @@ func Run(wg *sync.WaitGroup, s *sensors.SensorsReading, client *redis.Client, re
 			}
 			switch words[1] {
 			case "PIns":
+				mux.Lock()
 				val := s.PressureInput
+				mux.Unlock()
+				runtime.Gosched()
 				fmt.Println("PIns:", val)
 			case "PExp":
+				mux.Lock()
 				val := s.PressureOutput
+				mux.Unlock()
+				runtime.Gosched()
 				fmt.Println("PExp:", val)
 			case "FIns":
 				//val := sensors.FIns.ReadFlow()
@@ -316,5 +324,12 @@ func Run(wg *sync.WaitGroup, s *sensors.SensorsReading, client *redis.Client, re
 			//break
 		}
 		fmt.Println("Unknown input")
+	}
+}
+
+// prints out the checked error err
+func check(err error) {
+	if err != nil {
+		fmt.Println(err)
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	// "github.com/mzahmi/ventilator/control/alarms"
+	"github.com/go-redis/redis"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/params"
 )
@@ -21,19 +22,19 @@ func UpdateValues(UI *params.UserInput) {
 }
 
 // ModeSelection reads input from the GUI to select the required Mode from the user input struct
-func ModeSelection(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.WaitGroup, readStatus chan string, logger *log.Logger) {
+func ModeSelection(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logger *log.Logger) {
 	UpdateValues(UI) // calculates missing values
 	//fmt.Println(UI.Mode)
 	switch UI.Mode {
 	case "Volume A/C":
 		fmt.Println("Pressure Control Mode selected")
-		VolumeAC(UI, s, wg, readStatus)
+		VolumeAC(UI, s, client, mux, logger)
 	case "Pressure A/C":
 		logger.Println("Pressure Assisted Control Mode selected")
-		PressureAC(UI, s, wg, readStatus, logger)
+		PressureAC(UI, s, client, mux, logger)
 	case "Pressure Support (PSV)":
 		fmt.Println("Pressure Support Control Mode selected")
-		PSV(UI, s, wg, readStatus)
+		PSV(UI, s, client, mux, logger)
 	case "Volume SMIV":
 		fmt.Println("Volume SIMV Mode selected")
 	case "Pressure SIMV":
@@ -41,6 +42,13 @@ func ModeSelection(UI *params.UserInput, s *sensors.SensorsReading, wg *sync.Wai
 	default:
 		fmt.Println("No github.com/mzahmi/ventilator Mode selected")
 		return
+	}
+}
+
+// prints out the checked error err
+func check(err error) {
+	if err != nil {
+		fmt.Println(err)
 	}
 }
 
