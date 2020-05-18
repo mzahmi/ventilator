@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/go-redis/redis"
 	"github.com/mzahmi/ventilator/control/sensors"
 	"github.com/mzahmi/ventilator/logger"
 	"github.com/mzahmi/ventilator/pkg/rpigpio"
@@ -37,18 +38,20 @@ Lower Limit:
 	◆ For a passive adult patient, 100 to 150 ml less than the expected tidal volume
 	◆ For an active patient, 50% less than the expected tidal volume
 */
-func TidalVolumeAlarms(s *sensors.SensorsReading, mux *sync.Mutex, UpperLimit, LowerLimit float32, logStruct *logger.Logging) error {
+func TidalVolumeAlarms(s *sensors.SensorsReading, mux *sync.Mutex, UpperLimit, LowerLimit float32, logStruct *logger.Logging, client *redis.Client) error {
 	mux.Lock()
 	trig := s.PressureInput // TODO: needs to be a flow sensor
 	mux.Unlock()
 	runtime.Gosched()
 	if trig >= UpperLimit {
 		msg := "High tidal volume"
-		HighAlert(msg, logStruct)
+		info := "Check tidal volume"
+		HighAlert(msg, info, logStruct, client)
 		return errors.New(msg)
 	} else if trig <= LowerLimit {
 		msg := "Low tidal volume"
-		LowAlert(msg, logStruct)
+		info := "Check tidal volume"
+		LowAlert(msg, info, logStruct, client)
 		return errors.New(msg)
 	} else {
 		return nil
@@ -67,18 +70,20 @@ Lower Limit:
 
 	air way pressure is PEEP + (pressure insp or pressure support)
 */
-func AirwayPressureAlarms(s *sensors.SensorsReading, mux *sync.Mutex, UpperLimit, LowerLimit float32, logStruct *logger.Logging) error {
+func AirwayPressureAlarms(s *sensors.SensorsReading, mux *sync.Mutex, UpperLimit, LowerLimit float32, logStruct *logger.Logging, client *redis.Client) error {
 	mux.Lock()
 	trig := s.PressureInput
 	mux.Unlock()
 	runtime.Gosched()
 	if trig >= UpperLimit {
 		msg := "Airway Pressure high"
-		HighAlert(msg, logStruct)
+		info := "Check for airway obstruction"
+		HighAlert(msg, info, logStruct, client)
 		return errors.New(msg)
 	} else if trig <= LowerLimit {
 		msg := "Airway Pressure low"
-		LowAlert(msg, logStruct)
+		info := "check for gas leakage"
+		LowAlert(msg, info, logStruct, client)
 		return errors.New(msg)
 	} else {
 		return nil
@@ -95,18 +100,20 @@ Lower Limit:
 	◆ For a passive patient, 20% less than the expected minute volume
 	◆ For an active patient, 50% less than the expected minute volume
 */
-func ExpiratoryMinuteVolumeAlarms(s *sensors.SensorsReading, mux *sync.Mutex, UpperLimit, LowerLimit float32, logStruct *logger.Logging) error {
+func ExpiratoryMinuteVolumeAlarms(s *sensors.SensorsReading, mux *sync.Mutex, UpperLimit, LowerLimit float32, logStruct *logger.Logging, client *redis.Client) error {
 	mux.Lock()
 	trig := s.PressureOutput // TODO: should be Flowout
 	mux.Unlock()
 	runtime.Gosched()
 	if trig >= UpperLimit {
 		msg := "High minute volume"
-		HighAlert(msg, logStruct)
+		info := "check for tidal volume and RR"
+		HighAlert(msg, info, logStruct, client)
 		return errors.New(msg)
 	} else if trig <= LowerLimit {
 		msg := "Low minute volume"
-		LowAlert(msg, logStruct)
+		info := "check for tidal volume and RR"
+		LowAlert(msg, info, logStruct, client)
 		return errors.New(msg)
 	} else {
 		return nil
@@ -131,15 +138,17 @@ Lower Limit:
 	◆ For a passive patient, 10 breaths per minute less than the expected total rate
 	◆ For an active patient, 15 breaths per minute less than the expected total rate
 */
-func RespiratoryRateAlarms(UpperLimit, LowerLimit float32, logStruct *logger.Logging) error {
+func RespiratoryRateAlarms(UpperLimit, LowerLimit float32, logStruct *logger.Logging, client *redis.Client) error {
 	RRM := float32(20.0) // TODO: find a way to monitor the BPM of the patient
 	if RRM >= UpperLimit {
 		msg := "High Rate"
-		HighAlert(msg, logStruct)
+		info := "check patient breating mechanism"
+		HighAlert(msg, info, logStruct, client)
 		return errors.New(msg)
 	} else if RRM <= LowerLimit {
 		msg := "Low Rate"
-		LowAlert(msg, logStruct)
+		info := "check patient breating mechanism"
+		LowAlert(msg, info, logStruct, client)
 		return errors.New(msg)
 	} else {
 		return nil
@@ -164,14 +173,15 @@ The oxygen supply pressure is too low because of:
 
 If an air supply is available, mechanical ventilation should continue with air alone
 */
-func OxygenSupplyAlarm(s *sensors.SensorsReading, mux *sync.Mutex, LowerO2Press float32, logStruct *logger.Logging) error {
+func OxygenSupplyAlarm(s *sensors.SensorsReading, mux *sync.Mutex, LowerO2Press float32, logStruct *logger.Logging, client *redis.Client) error {
 	mux.Lock()
 	trig := s.PressureInput // TODO: should be an O2 sensor reading
 	mux.Unlock()
 	runtime.Gosched()
 	if trig <= LowerO2Press { // change to oxygen supply sensor reading
 		msg := "Low O2 supply"
-		MediumAlert(msg, logStruct)
+		info := "check O2 inlet for leakage or low pressure"
+		MediumAlert(msg, info, logStruct, client)
 		return errors.New(msg)
 	} else {
 		return nil
@@ -189,14 +199,15 @@ The air supply pressure is too low because of:
 
 If an oxygen supply is available, mechanical ventilation should continue with 100% oxygen
 */
-func AirSupplyAlarm(s *sensors.SensorsReading, mux *sync.Mutex, LowerAirPress float32, logStruct *logger.Logging) error {
+func AirSupplyAlarm(s *sensors.SensorsReading, mux *sync.Mutex, LowerAirPress float32, logStruct *logger.Logging, client *redis.Client) error {
 	mux.Lock()
 	trig := s.PressureInput // TODO: should be a pressure sensor at the entry of the system
 	mux.Unlock()
 	runtime.Gosched()
 	if trig <= LowerAirPress { // change to air supply sensor reading
 		msg := "Low Air supply"
-		MediumAlert(msg, logStruct)
+		info := "check air inlet for leakage or low pressure"
+		MediumAlert(msg, info, logStruct, client)
 		return errors.New(msg)
 	} else {
 		return nil
@@ -211,10 +222,11 @@ Both air and oxygen supply pressures are too low
 If both gas supplies fail at the same time, a ventilator system cannot continue to function.
 The ventilator automatically switches to the ambient state.
 */
-func AirAndO2SupplyAlarm(airerr, o2err error, logStruct *logger.Logging) error {
+func AirAndO2SupplyAlarm(airerr, o2err error, logStruct *logger.Logging, client *redis.Client) error {
 	if (airerr != nil) && (o2err != nil) {
 		msg := "Gas supply is low"
-		HighAlert(msg, logStruct)
+		info := "check gas inlet for leakage or low pressure"
+		HighAlert(msg, info, logStruct, client)
 		return errors.New(msg)
 	} else {
 		return nil
@@ -233,18 +245,20 @@ Common causes:
 	◆ Low FiO2 due to use of an oxygen concentrator. Standard oxygen supplies provide pure oxygen. O2 from a concentrator may be as low as 90%
 */
 
-func FiO2Alarms(s *sensors.SensorsReading, mux *sync.Mutex, UpperLimit, LowerLimit float32, logStruct *logger.Logging) error {
+func FiO2Alarms(s *sensors.SensorsReading, mux *sync.Mutex, UpperLimit, LowerLimit float32, logStruct *logger.Logging, client *redis.Client) error {
 	mux.Lock()
 	trig := s.PressureInput //TODO: read from new O2 sensor at the entry of the system
 	mux.Unlock()
 	runtime.Gosched()
 	if trig >= UpperLimit { // change to oxygen sensor reading
 		msg := "FiO2 is High"
-		HighAlert(msg, logStruct)
+		info := "check O2 concentration"
+		HighAlert(msg, info, logStruct, client)
 		return errors.New(msg)
 	} else if trig <= LowerLimit { // change to oxygen sensor reading
 		msg := "FiO2 is Low"
-		LowAlert(msg, logStruct)
+		info := "check O2 concentration"
+		LowAlert(msg, info, logStruct, client)
 		return errors.New(msg)
 	} else {
 		return nil
@@ -267,9 +281,12 @@ causes:
 Alarm message on red background
 
 A series of 5 beeps in this sequence, repeated: ▯▯▯_▯▯____▯▯▯_▯▯ */
-func HighAlert(msg string, logStruct *logger.Logging) {
+func HighAlert(title, info string, logStruct *logger.Logging, client *redis.Client) {
 	// logArm.Println(msg)
-	logStruct.Alarm(msg)
+	client.Set("alarm_status", "high", 0).Err()
+	client.Set("alarm_title", title, 0).Err()
+	client.Set("alarm_text", info, 0).Err()
+	logStruct.Alarm(title)
 	tm := 400 * time.Millisecond
 	ts := 3000 * time.Millisecond
 	td := 1000 * time.Millisecond
@@ -305,9 +322,12 @@ causes:
 Alarm message on yellow background
 
 A series of 3 beeps in this sequence, repeated: ▯▯▯____▯▯▯*/
-func MediumAlert(msg string, logStruct *logger.Logging) {
+func MediumAlert(title, info string, logStruct *logger.Logging, client *redis.Client) {
 	// logArm.Println(msg)
-	logStruct.Alarm(msg)
+	client.Set("alarm_status", "medium", 0).Err()
+	client.Set("alarm_title", title, 0).Err()
+	client.Set("alarm_text", info, 0).Err()
+	logStruct.Alarm(title)
 	tm := 400 * time.Millisecond
 	ts := 3000 * time.Millisecond
 	for i := 1; !AlarmReset; i++ {
@@ -338,9 +358,12 @@ causes:
 Alarm message on yellow background
 
 A series of 2 beeps, not repeated: ▯▯*/
-func LowAlert(msg string, logStruct *logger.Logging) {
+func LowAlert(title, info string, logStruct *logger.Logging, client *redis.Client) {
 	// logArm.Println(msg)
-	logStruct.Alarm(msg)
+	client.Set("alarm_status", "low", 0).Err()
+	client.Set("alarm_title", title, 0).Err()
+	client.Set("alarm_text", info, 0).Err()
+	logStruct.Alarm(title)
 	tm := 400 * time.Millisecond
 	err := rpigpio.BeepOn()
 	if err != nil {
