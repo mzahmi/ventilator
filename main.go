@@ -59,6 +59,9 @@ func main() {
 	}
 	//readStatus := make(chan string)
 	client.Set("status", "NA", 0).Err() // empty the previous record of status
+	client.Set("pressure", 0, 0).Err()
+	client.Set("volume", 0, 0).Err()
+	client.Set("flow", 0, 0).Err()
 
 	//initialize the user input parameters
 	params.InitParams(client)
@@ -96,6 +99,8 @@ func main() {
 			runtime.Gosched()
 			//sends the pressure reading from Pin to GUI
 			client.Set("pressure", (Pin)*1020, 0).Err()
+			client.Set("volume", (Pin)*1020, 0).Err()
+			client.Set("flow", (Pin)*1020, 0).Err()
 			//fmt.Println(Pin*1020)
 			//calculates the delay based on a specified rate
 			loopTime := time.Since(t1)
