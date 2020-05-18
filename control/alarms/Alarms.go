@@ -13,7 +13,7 @@ import (
 	"github.com/mzahmi/ventilator/pkg/rpigpio"
 )
 
-var AlarmReset bool //TODO: define an alarm reset
+var AlarmReset bool // updated from redis client "status"
 
 /* TidalVolumeAlarms sets the upper and lower limits of the tidal volume alarms based on the operator input
 
