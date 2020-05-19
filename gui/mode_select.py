@@ -17,33 +17,6 @@ else:
 if useredis:
     r = config.r
 
-mode_breath = {
-    "Volume A/C": ["Volume Control", "Volume Assist"],
-    "Pressure A/C": ["Pressure Control", "Pressure Assist"],
-    "Pressure Support": ["Pressure Support"],
-    "Volume SIMV": ["Volume Control", "Volume Assist", "Pressure Support"],
-    "Pressure SIMV": ["Pressure Control", "Pressure Assist", "Pressure Support"]
-}
-
-breath_trigger = {
-    "Volume Control": ["Time Control"],
-    "Volume Assist": ["Pressure Trigger", "Flow Trigger"],
-    "Pressure Control": ["Time"],
-    "Pressure Assist": ["Pressure Trigger ", "Flow Trigger "],
-    "Pressure Support": ["Pressure Trigger  ", "Flow Trigger  "],
-}
-
-trigger_input = {
-    "Time Control": ["IE", "VT", "Breath Per Minute", "PEEP", "FIO2"],
-    "Pressure Trigger": ["IE", "VT", "Breath Per Minute", "PS", "PEEP", "FIO2"],
-    "Flow Trigger": ["IE", "VT", "Breath Per Minute", "FS", "PEEP", "FIO2"],
-    "Time": ["IE", "Insparotary Pressure", "Breath Per Minute", "PEEP", "FIO2"],
-    "Pressure Trigger ": ["IE", "Insparotary Pressure", "Breath Per Minute", "PS", "PEEP", "FIO2"],
-    "Flow Trigger ": ["IE", "Insparotary Pressure", "Breath Per Minute", "FS", "PEEP", "FIO2"],
-    "Pressure Trigger  ": ["IE", "Insparotary Pressure", "Breath Per Minute", "PS", "FC", "PEEP", "FIO2"],
-    "Flow Trigger  ": ["IE", "Insparotary Pressure", "Breath Per Minute", "FS", "FC", "PEEP", "FIO2"],
-}
-
 
 class ModeSelect(QtCore.QObject):
     # signal when mode is selected
@@ -61,25 +34,6 @@ class ModeSelect(QtCore.QObject):
         self._delay = 1
         self._goOn = True
         self._pip = {"name": "PIP", "value": 3}
-
-    @QtCore.Property(str)
-    def buttonList(self):
-        buttonList = ","
-
-        if self._currTrigger is not "":
-            input_list = trigger_input[self._currTrigger]
-            return buttonList.join(input_list)
-
-        if self._currBreath is not "":
-            trigger_list = breath_trigger[self._currBreath]
-            return buttonList.join(trigger_list)
-        # choose mode
-        if self._currMode is not "":
-            # list of breath
-            breath_list = mode_breath[self._currMode]
-            return buttonList.join(breath_list)
-
-        return buttonList.join(mode_breath.keys())
 
     @QtCore.Property(str)
     def mode(self):
