@@ -50,7 +50,7 @@ Item {
                     name: UserInput.PEEP.name
                     stepSize: UserInput.PEEP.stepSize
                     anchors.horizontalCenter: parent.horizontalCenter
-                    initialVal: Params.PEEP ? Params.PEEP : UserInput.PEEP.initialVal
+                    initialVal: Params.PEEP !== null ? Params.PEEP : UserInput.PEEP.initialVal
                     minVal: UserInput.PEEP.minVal
                     maxVal: UserInput.PEEP.maxVal
                 }

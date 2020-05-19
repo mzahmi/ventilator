@@ -10,6 +10,19 @@ Item {
     id: name
     width: 650
     height: 480
+    signal presetClicked(string mode)
+    onPresetClicked: {
+        if (mode === "Pressure A/C") {
+            modePage.visible = false
+            modePAC.visible = true
+            modeVAC.visible = false
+        }
+        if (mode === "Volume A/C") {
+            modePage.visible = false
+            modeVAC.visible = true
+            modePAC.visible = false
+        }
+    }
     signal stop()
 
     Component.onCompleted: {

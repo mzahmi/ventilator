@@ -9,7 +9,7 @@ Item {
     id: root
     height: 300
     width: moderow.width + moderow.spacing
-    signal clicked()
+    signal clicked(string mode)
     signal activated(string mode)
     signal stop()
     // var presetList = [preset1, preset2, preset3, preset4, preset5]
@@ -53,7 +53,7 @@ Item {
                 Layout.preferredWidth: 194
                 color: "#ffffff"
                 development: false
-                onClicked: root.clicked()
+                onClicked: root.clicked(preset1.title)
             }
 
             PresetButton {
@@ -63,7 +63,7 @@ Item {
                 Layout.preferredWidth: 194
                 color: "#ffffff"
                 development: false
-                onClicked: root.clicked()
+                onClicked: root.clicked(preset2.title)
             }
 
             PresetButton {
