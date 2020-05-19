@@ -73,7 +73,6 @@ Item {
                 title: "PSV"
                 Layout.preferredHeight: 120
                 Layout.preferredWidth: 194
-                color: "#ffffff"
                 onClicked: root.clicked()
             }
             PresetButton {
@@ -83,7 +82,6 @@ Item {
                 title: "Volume SIMV"
                 Layout.preferredHeight: 120
                 Layout.preferredWidth: 194
-                color: "#ffffff"
                 onClicked: root.clicked()
             }
 
@@ -94,7 +92,6 @@ Item {
                 title: "Pressure A/C"
                 Layout.preferredHeight: 120
                 Layout.preferredWidth: 194
-                color: "#ffffff"
                 onClicked: root.clicked()
             }
 
