@@ -12,12 +12,12 @@ Item {
     id: sidebar
     width: Config.sidebar_height
     property int currentView: 0
-    // monitor when first started
+    // patient information when first started
     Component.onCompleted: {
-        currentView = 0
-        menulist.model.get(0).class_name = "light"
+        currentView = 2
+        menulist.model.get(0).class_name = "dark"
         menulist.model.get(1).class_name = "dark"
-        menulist.model.get(2).class_name = "dark"
+        menulist.model.get(2).class_name = "light"
         menulist.model.get(3).class_name = "dark"
         ModeSelect.modeSelected.connect(sidebar.openMonitor)
     }
