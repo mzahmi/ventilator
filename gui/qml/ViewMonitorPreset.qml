@@ -20,10 +20,6 @@ Item {
     onActivated: {
         if (ModeSelect.mode === "Pressure A/C") {
             activateButton(preset1)
-            // preset2.visible = false
-            // preset3.visible = false
-            // preset4.visible = false
-            // preset5.visible = false
         }
     }
     onStop: {

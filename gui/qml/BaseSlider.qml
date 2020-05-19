@@ -24,7 +24,7 @@ Item {
     Rectangle {
         id: rectangle
         width: slider.width+120
-        height: slider.height+30
+        height: slider.height+50
         color: "#ffffff"
 
         Slider {
@@ -96,10 +96,13 @@ Item {
             // minimum value
             Text {
                 id: min3
-                x: -13
+                x: -25
                 y: 7
+                width: 26
+                height: 17
                 color:root.active?"black":"grey"
                 text: slider.from
+                horizontalAlignment: Text.AlignRight
                 font.pixelSize: 12
             }
 
@@ -152,6 +155,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:2;anchors_height:30;anchors_width:369}
+    D{i:0;formeditorZoom:2}D{i:2;anchors_height:30;anchors_width:369}
 }
 ##^##*/

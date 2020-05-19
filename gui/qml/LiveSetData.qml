@@ -22,7 +22,7 @@ Item {
 
     RowLayout {
         x: -9
-        y: 0
+        y: 34
         spacing: 0
         anchors.right: parent.right
         anchors.leftMargin: 0
@@ -100,7 +100,7 @@ Item {
 
     RowLayout {
         x: 0
-        y: 90
+        y: 124
         anchors.rightMargin: 0
         anchors.leftMargin: 0
         spacing: 0
