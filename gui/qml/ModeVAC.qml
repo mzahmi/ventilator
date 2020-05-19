@@ -144,14 +144,18 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         onReleased: {
-                            ModeSelect.startVentilation()
+                            ModeSelect.sendString("TidalVolume", vt.value)
+                            ModeSelect.sendString("Mode", "Volume A/C")
                             ModeSelect.mode = "Volume A/C"
+                            ModeSelect.sendString("BreathType", root.triggerType === "Time" ? "Pressure Control" : "Pressure Assist")
+                            ModeSelect.breath = root.triggerType === "Time" ? "Pressure Control" : "Pressure Assist"
+                            ModeSelect.sendString("PatientTriggerType", root.triggerType === "Flow" ? "Flow Trigger" : "Pressure Trigger")
                             ModeSelect.trigger = root.triggerType
-                            ModeSelect.sendValues("FiO2", fio2.value)
-                            ModeSelect.sendValues("TidalVolume", vt.value)
-                            ModeSelect.sendValues("Rate", rate.value)
-                            ModeSelect.sendValues("PEEP", peep.value)
-                            ModeSelect.sendValues("ER", er.value)
+                            ModeSelect.sendInt("FiO2", fio2.value)
+                            ModeSelect.sendInt("Rate", rate.value)
+                            ModeSelect.sendInt("PEEP", peep.value)
+                            ModeSelect.sendInt("ER", er.value)
+                            ModeSelect.startVentilation()
                         }
                     }
 

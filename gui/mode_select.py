@@ -107,32 +107,25 @@ class ModeSelect(QtCore.QObject):
         if useredis:
             r.mset({"status": self._status})
 
-    @QtCore.Slot(str, int)
-    def sendValues(self, mystring, myint):
-        # clean up for useredis
-        if mystring == "FIO2%":
-            mystring = "FiO2"
-        if mystring == "IE":
-            mystring = "ER"
-        if mystring == "Insparotary Pressure":
-            mystring = "InspiratoryPressure"
-        if mystring == "Breath Per Minute":
-            mystring = "Rate"
-        if mystring == "PEEP":
-            mystring = "PEEP"
+    @QtCore.Slot(str, str)
+    def sendString(self, keystring, valstring):
+        if useredis:
+            params = r.get("PARAMS")
+            params = json.loads(params)
+            params[keystring] = valstring
+            paramsdump = json.dumps(params)
+            r.mset({"PARAMS": paramsdump})
 
-        # json get
+    @QtCore.Slot(str, int)
+    def sendInt(self, mystring, myint):
+
         if useredis:
             params = r.get("PARAMS")
             params = json.loads(params)
 
-            # json set
             params[mystring] = myint
-            params["Mode"] = self._currMode
-            params["BreathType"] = self._currBreath
             paramsdump = json.dumps(params)
             r.mset({"PARAMS": paramsdump})
-            logging.info("Sending value to redis")
 
         logging.debug(f'Input {mystring} set: {myint}')
         self.modeSelected.emit(self._currMode)
