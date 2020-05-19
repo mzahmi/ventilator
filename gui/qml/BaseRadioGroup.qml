@@ -1,6 +1,6 @@
 import QtQuick 2.0
-import "./config.js" as Config
-import "./componentCreation.js" as MyScript
+import "./config.js"
+as Config
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
 
@@ -28,7 +28,7 @@ Item {
 
             Text {
                 id: ieratiotitle
-                text: "I/E Ratio"
+                text: root.name
                 font.pixelSize: 16
                 font.family: "Open Sans"
             }

@@ -4,8 +4,6 @@ import QtQuick.Layouts 1.0
 import "./material/qml/material"
 import "./config.js"
 as Config
-import "./componentBCreation.js"
-as MyScript
 import "."
 
 Item {
@@ -18,10 +16,7 @@ Item {
         ModeSelect.stopVent.connect(name.stop)
     }
 
-    // when a stop signal appears
-    // reset view
     onStop: {
-
         ModeSelect.status = "stop"
     }
 
@@ -93,11 +88,13 @@ Item {
                 id: volumeac2
                 x: -237
                 y: 38
+                active: true
                 title: "Pressure A/C"
                 info: "Suitable for passive, partially active and active patients with weak respiratory drive"
                 onClicked: {
                     modePage.visible = false
                     modePAC.visible = true
+                    modeVAC.visible = false
                 }
             }
 
@@ -116,10 +113,13 @@ Item {
                 id: volumeac
                 x: -237
                 y: -80
+                active: true
                 title: "Volume A/C"
                 info: "Intended for patients who are passive or partially active"
                 onClicked: {
-                    console.log("not active")
+                    modePage.visible = false
+                    modePAC.visible = false
+                    modeVAC.visible = true
                 }
             }
         }
@@ -132,12 +132,19 @@ Item {
 
         }
 
+        ModeVAC {
+            id: modeVAC
+            visible: false
+            anchors.left: parent.left
+            anchors.right: parent.right
 
+        }
 
         Button {
             text: "back"
             onClicked: {
                 modePAC.visible = false
+                modeVAC.visible = false
                 modePage.visible = true
             }
 

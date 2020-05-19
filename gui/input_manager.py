@@ -46,6 +46,14 @@ PEEP = {
     "stepSize": 5,
 }
 
+VT = {
+    "name": "Tidal Volume",
+    "initialVal": 200,
+    "minVal": 100,
+    "maxVal": 800,
+    "stepSize": 10,
+}
+
 
 FIO2 = {
     "name": "FIO2%",
@@ -63,6 +71,7 @@ class UserInput(QtCore.QObject):
         self._InsparotaryPressure = InsparotaryPressure
         self._FIO2 = FIO2
         self._PMAX = PMAX
+        self._VT = VT
         self._BreathPerMinute = BreathPerMinute
 
         self._mode = None
@@ -107,3 +116,7 @@ class UserInput(QtCore.QObject):
     @QtCore.Property('QVariant')
     def BreathPerMinute(self):
         return self._BreathPerMinute
+
+    @QtCore.Property('QVariant')
+    def VT(self):
+        return self._VT

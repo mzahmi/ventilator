@@ -12,7 +12,7 @@ from PySide2 import QtCore, QtQml, QtWidgets
 import config
 import mode_select as ms
 from config import logging as logging
-from patient import Patient
+# from patient import Patient
 from chart_manager1 import ChartManager1
 from chart_manager2 import ChartManager2
 from chart_manager3 import ChartManager3
@@ -50,7 +50,7 @@ def main():
 
     alarmManager = AlarmManager()
     alarmManager.start()
-    patient = Patient()
+    # patient = Patient()
     userInput = UserInput()
     modeSelect = ms.ModeSelect()
     dp = 0
@@ -61,7 +61,7 @@ def main():
     ctx.setContextProperty("ChartManager2", chartManager2)
     ctx.setContextProperty("ChartManager3", chartManager3)
     ctx.setContextProperty("ModeSelect", modeSelect)
-    ctx.setContextProperty("Patient", patient)
+    # ctx.setContextProperty("Patient", patient)
     ctx.setContextProperty("UserInput", userInput)
     ctx.setContextProperty("AlarmManager", alarmManager)
     ctx.setContextProperty("dp", dp)

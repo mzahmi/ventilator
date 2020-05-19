@@ -30,7 +30,7 @@ Item {
                 Text {
                     id: title
                     height: 100
-                    text: root.triggerType === "Time" ? "Pressure Control" : "Pressure Assist"
+                    text: root.triggerType === "Time" ? "Volume Control" : "Volume Assist"
                     anchors.horizontalCenter: parent.horizontalCenter
                     horizontalAlignment: Text.AlignLeft
                     font.pixelSize: 38
@@ -66,13 +66,13 @@ Item {
                 }
 
                 BaseSlider {
-                    id: insparotaryPressure
-                    name: UserInput.InsparotaryPressure.name
-                    stepSize: UserInput.InsparotaryPressure.stepSize
+                    id: vt
+                    name: UserInput.VT.name
+                    stepSize: UserInput.VT.stepSize
                     anchors.horizontalCenter: parent.horizontalCenter
-                    initialVal: UserInput.InsparotaryPressure.initialVal
-                    minVal: UserInput.InsparotaryPressure.minVal
-                    maxVal: UserInput.InsparotaryPressure.maxVal
+                    initialVal: UserInput.VT.initialVal
+                    minVal: UserInput.VT.minVal
+                    maxVal: UserInput.VT.maxVal
                 }
 
                 BaseSlider {
@@ -145,10 +145,10 @@ Item {
                         anchors.fill: parent
                         onReleased: {
                             ModeSelect.startVentilation()
-                            ModeSelect.mode = "Pressure A/C"
+                            ModeSelect.mode = "Volume A/C"
                             ModeSelect.trigger = root.triggerType
                             ModeSelect.sendValues("FiO2", fio2.value)
-                            ModeSelect.sendValues("InspiratoryPressure", insparotaryPressure.value)
+                            ModeSelect.sendValues("TidalVolume", vt.value)
                             ModeSelect.sendValues("Rate", rate.value)
                             ModeSelect.sendValues("PEEP", peep.value)
                             ModeSelect.sendValues("ER", er.value)
