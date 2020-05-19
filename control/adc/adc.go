@@ -79,7 +79,7 @@ func ReadADC(adcID uint8) ([]float32, error) {
 		// note that first word is skipped because second word is where valid channel 0 data is
 		adcUint := binary.BigEndian.Uint16(read[2*ii+2 : 2*ii+2+2])
 		// 12 bit ADC with 3.3 volt ref voltage
-		adcReadResult[ii] = float32(adcUint) * float32(11/4096.0)
+		adcReadResult[ii] = float32(adcUint) * float32(12/4096.0)
 	}
 	return adcReadResult, nil
 }
