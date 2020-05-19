@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
-import "./componentBCreation.js"
-as BtnScript
+import "./config.js"
+as Config
 
 Item {
     id: root
@@ -10,14 +10,9 @@ Item {
     // property bool active: false
     property string title: "Volume A/C"
     property string info: "In Development"
-    Component.onCompleted: {
-        // if (BtnScript.activeButtons.includes(title)) {
-        //     active = true
-        // } else {
-        //     active = false
-        //     info = "In Development"
-        // }
-    }
+    property bool active: false
+    signal clicked()
+
 
     Rectangle {
         id: rectangle
@@ -27,10 +22,10 @@ Item {
         height: 74
         color: "#ffffff"
         radius: 10
-        border.color: "#8e8e8e"
+        border.color: root.active ? Config.color_primary : "#8e8e8e"
 
         Text {
-            color: "#000000"
+            color: root.active ? "#000000" : "grey"
             text: root.title
             font.bold: true
             anchors.rightMargin: 0
@@ -51,34 +46,9 @@ Item {
             anchors.top: parent.top
             onClicked: {
                 // if (root.active) {
-                BtnScript.createComponent(root.title)
+                root.clicked()
                 // }
             }
-        }
-
-        Rectangle {
-            id: rectangle1
-            x: 174
-            y: 27
-            visible: false
-            width: 49
-            height: 20
-            color: "#3247ef"
-            radius: 5
-            anchors.right: parent.right
-            anchors.rightMargin: 10
-
-            Text {
-                id: element2
-                color: "#ffffff"
-                text: qsTr("Select")
-                anchors.leftMargin: 0
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignHCenter
-                anchors.fill: parent
-                font.pixelSize: 12
-            }
-
         }
 
         Text {

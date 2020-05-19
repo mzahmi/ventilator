@@ -4,7 +4,8 @@ var bg_color = "#444444"
 var color_primary = "#5677fc"
 var color_light = "#67daff"
 var color_dark = "#007ac1"
-var color_inactive ="#b3b3b3"
+var color_inactive = "#b3b3b3"
+var color_grey = "#bdbebf"
 
 // sizes
 var window_width = 800
