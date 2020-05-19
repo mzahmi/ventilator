@@ -8,9 +8,6 @@ Window {
     height: 480
     visibility: fs ? "FullScreen" : "Windowed"
     title: qsTr("DFF Vent")
-    Component.onCompleted: {
-        console.log(Params.PEEP)
-    }
 
     MainGo {
 

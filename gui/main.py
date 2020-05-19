@@ -72,10 +72,10 @@ def main():
     ctx.setContextProperty("fs", False)
 
     # if redis exists take the userinput
-    if config.useredis:
-        params = config.r.get("PARAMS")
-        params = json.loads(params)
-        ctx.setContextProperty("Params", params)
+    # if config.useredis:
+    #     params = config.r.get("PARAMS")
+    #     params = json.loads(params)
+    #     ctx.setContextProperty("Params", params)
 
     if config.args.fullscreen:
         logging.debug("Runnin in full screen")

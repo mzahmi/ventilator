@@ -18,21 +18,17 @@ Item {
         ModeSelect.stopVent.connect(root.stop)
     }
     onActivated: {
+        console.log("activated")
         if (ModeSelect.mode === "Pressure A/C") {
-            activateButton(preset1)
+            preset1.active = true
+        }
+        if (ModeSelect.mode === "Volume A/C") {
+            preset2.active = true
         }
     }
     onStop: {
-        deactivateButton(preset1)
-    }
-
-    function activateButton(buttonID) {
-        buttonID.active = true
-        buttonID.x = 200
-    }
-
-    function deactivateButton(buttonID) {
-        buttonID.active = false
+        preset1.active = false
+        preset2.active = false
     }
 
 
@@ -50,179 +46,22 @@ Item {
             anchors.left: parent.left
             spacing: 15
 
-            Rectangle {
+            PresetButton {
                 id: preset1
-                property string title: "Pressure A/C"
-                property bool active: false
-                property string breath: "-"
-                property string trigger: "-"
-                color: "#ffffff"
+                title: "Pressure A/C"
                 Layout.preferredHeight: 120
                 Layout.preferredWidth: 194
-                Card {
-                    id: card1
-                    anchors.fill: parent
-                    raised: false
-                    RaisedButton {
-                        id: raisedbutton1
-                        x: 0
-                        y: 124
-                        height: 32
-                        color: preset1.active ? "red" : "#5677fc"
-                        text: preset1.active ? "Stop" : "Start"
-                        textColor: "#ffffff"
-                        anchors.bottom: parent.bottom
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        rippleColor: "#deffffff"
-                        onClicked: {
-
-                            if (raisedbutton1.text === "Stop") {
-                                ModeSelect.stopVentilation()
-                            } else {
-                                root.clicked()
-                            }
-                        }
-                    }
-
-                    Text {
-                        id: element3
-                        y: 8
-                        text: qsTr("Pressure A/C")
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignHCenter
-                        font.pixelSize: 18
-                    }
-
-                    RowLayout {
-                        y: 40
-                        anchors.rightMargin: 20
-                        anchors.leftMargin: 20
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        spacing: 5
-
-                        Text {
-                            color: "#555555"
-                            text: qsTr("Breath:")
-                            font.pixelSize: 14
-                        }
-
-                        Text {
-                            color: "#555555"
-                            text: preset1.active ? ModeSelect.breath : "-"
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            font.pixelSize: 14
-                        }
-                    }
-
-                    RowLayout {
-                        y: 62
-                        anchors.rightMargin: 20
-                        Text {
-                            color: "#555555"
-                            text: qsTr("Trigger:")
-                            font.pixelSize: 14
-                        }
-
-                        Text {
-                            color: "#555555"
-                            text: preset1.active ? ModeSelect.trigger : "-"
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            font.pixelSize: 14
-                        }
-                        anchors.right: parent.right
-                        spacing: 5
-                        anchors.left: parent.left
-                        anchors.leftMargin: 20
-                    }
-
-                }
+                color: "#ffffff"
+                onClicked: root.clicked()
             }
 
-            Rectangle {
+            PresetButton {
                 id: preset2
-                property bool active: false
-                color: "#ffffff"
+                title: "Volume A/C"
                 Layout.preferredHeight: 120
                 Layout.preferredWidth: 194
-                Card {
-                    id: card
-                    anchors.fill: parent
-                    raised: false
-                    RaisedButton {
-                        id: raisedbutton
-                        x: 0
-                        y: 124
-                        height: 32
-                        color: "#b3b3b3"
-                        text: "In development"
-                        textColor: "#ffffff"
-                        anchors.bottom: parent.bottom
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        rippleColor: "#deffffff"
-                    }
-
-                    Text {
-                        id: element1
-                        y: 8
-                        text: qsTr("VOLUME A/C")
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignHCenter
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-
-                        font.pixelSize: 18
-                    }
-
-                    RowLayout {
-                        y: 40
-                        anchors.rightMargin: 20
-                        anchors.leftMargin: 20
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        spacing: 5
-
-                        Text {
-                            color: "#555555"
-                            text: qsTr("Breath:")
-                            font.pixelSize: 14
-                        }
-
-                        Text {
-                            color: "#555555"
-                            text: preset2.active ? ModeSelect.breath : "-"
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            font.pixelSize: 14
-                        }
-                    }
-
-                    RowLayout {
-                        y: 62
-                        anchors.rightMargin: 20
-                        Text {
-                            id: t2
-                            color: "#555555"
-                            text: qsTr("Trigger:")
-                            font.pixelSize: 14
-                        }
-
-                        Text {
-                            id: t2v
-                            color: "#555555"
-                            text: preset2.active ? ModeSelect.trigger : "-"
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            font.pixelSize: 14
-                        }
-                        anchors.right: parent.right
-                        spacing: 5
-                        anchors.left: parent.left
-                        anchors.leftMargin: 20
-                    }
-                }
+                color: "#ffffff"
+                onClicked: root.clicked()
             }
 
             Rectangle {
