@@ -64,7 +64,7 @@ class ChartManager2(QtCore.QObject):
         self._currX += self._xIncrement
         if not config.useredis:
             self.test = self.test+self._delay
-            self._currY = random.randint(15, 40)
+            self._currY = random.random()
             # self._currY = math.sin(self.test*2)*10+25
         else:
             self._currY = float(config.r.get("volume"))

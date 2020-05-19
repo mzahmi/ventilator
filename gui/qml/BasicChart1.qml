@@ -11,7 +11,7 @@ Item {
     property bool starttwo: false
     property double limit: 10.0
     property int minY: 0
-    property int maxY: 50
+    property int maxY: 70
     property double xval: 0
     property double xval2: 0
     signal reemitted(point p)
@@ -77,7 +77,7 @@ Item {
                     max: root.maxY
                     minorTickCount: 1
                     tickCount: 3
-
+                    titleText: "cmH20"
                 }
                 axisX: ValueAxis {
                     id: axisXs
