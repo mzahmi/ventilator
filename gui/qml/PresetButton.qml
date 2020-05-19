@@ -11,6 +11,7 @@ Rectangle {
     property bool active: false
     property string breath: "-"
     property string trigger: "-"
+    property bool development: true
     signal clicked()
     Card {
         id: card1
@@ -21,8 +22,21 @@ Rectangle {
             x: 0
             y: 124
             height: 32
-            color: root.active ? "red" : "#5677fc"
-            text: root.active ? "Stop" : "Start"
+            color: {
+                if (!root.development) {
+                    root.active ? "red" : "#5677fc"
+                } else {
+                    return "grey"
+                }
+            }
+
+            text: {
+                if (!root.development) {
+                    root.active ? "Stop" : "Start"
+                } else {
+                    return "In Development"
+                }
+            }
             textColor: "#ffffff"
             anchors.bottom: parent.bottom
             anchors.left: parent.left
@@ -32,7 +46,7 @@ Rectangle {
 
                 if (raisedbutton1.text === "Stop") {
                     ModeSelect.stopVentilation()
-                } else {
+                } else if (!root.development) {
                     root.clicked()
                 }
             }
