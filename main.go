@@ -124,42 +124,24 @@ func main() {
 			airpress := s.PressureInput
 			mux.Unlock()
 			runtime.Gosched()
-			if (airpress * 1020) >= 80 {
+			if (airpress * 120) >= 20 {
 				//msg := "Airway Pressure high"
 				client.Set("alarm_status", "critical", 0).Err()
 				client.Set("alarm_title", "Airway Pressure high", 0).Err()
 				client.Set("alarm_text", "Airway Pressure exceeded limits check for obstruction", 0).Err()
-				logStruct.Alarm("Airway Pressure high")
-				//logArm.Println("Airway Pressure high")
-				tm := 200 * time.Millisecond
-				ts := 3000 * time.Millisecond
-
-				err := rpigpio.BeepOn()
-				check(err, logStruct)
-				time.Sleep(tm)
-				err = rpigpio.BeepOff()
-				check(err, logStruct)
-				time.Sleep(tm)
-				err = rpigpio.BeepOn()
-				check(err, logStruct)
-				time.Sleep(tm)
-				err = rpigpio.BeepOff()
-				check(err, logStruct)
-				time.Sleep(tm)
-				err = rpigpio.BeepOn()
-				check(err, logStruct)
-				time.Sleep(tm)
-				err = rpigpio.BeepOff()
-				check(err, logStruct)
-				time.Sleep(tm)
-				time.Sleep(ts)
-
+				for ii := 0; ii < 5; ii++ {
+					err = rpigpio.BeepOn()
+					check(err, logStruct)
+					time.Sleep(100 * time.Millisecond)
+					err = rpigpio.BeepOff()
+					check(err, logStruct)
+					time.Sleep(100 * time.Millisecond)
+				}
 			} else {
 				client.Set("alarm_status", "none", 0).Err()
 			}
 			time.Sleep(time.Millisecond * 100)
 		}
-
 	}()
 
 	// Provides CLI interface
