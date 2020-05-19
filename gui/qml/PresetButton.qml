@@ -3,6 +3,8 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
 import "src/cards"
 import "./material/qml/material"
+import "./config.js"
+as Config
 import QtGraphicalEffects 1.0
 
 Rectangle {
@@ -26,7 +28,7 @@ Rectangle {
                 if (!root.development) {
                     root.active ? "red" : "#5677fc"
                 } else {
-                    return "grey"
+                    return Config.color_inactive
                 }
             }
 
