@@ -37,6 +37,7 @@ type PropValve struct {
 	Name       string
 	SetDacID   uint8
 	SetDacChan uint8
+	Enable     uint32
 	Percent    float64
 }
 
@@ -74,6 +75,7 @@ var InProp = PropValve{
 	Name:       Valve_Inhalation_Name,
 	SetDacID:   Valve_Prop_Inhalation_Set_DAC_ID,
 	SetDacChan: Valve_Prop_Inhalation_Set_DAC_Chan,
+	Enable:     ioexp.Solenoid2,
 	Percent:    0,
 }
 
@@ -82,6 +84,7 @@ var ExProp = PropValve{
 	Name:       Valve_Inhalation_Name,
 	SetDacID:   Valve_Prop_Inhalation_Set_DAC_ID,
 	SetDacChan: Valve_Prop_Inhalation_Set_DAC_Chan,
+	Enable:     0,
 	Percent:    0,
 }
 
@@ -99,11 +102,13 @@ func (valve *SolenValve) Close() {
 
 //IncrementValve controls the opening of Prop valves
 func (valve *PropValve) IncrementValve(actuate float64) {
+	ioexp.WritePin(valve.Enable, true)
 	dac.WriteDac(valve.SetDacID, valve.SetDacChan, actuate)
 }
 
 //Close closes prop valve
 func (valve *PropValve) Close() {
+	ioexp.WritePin(valve.Enable, false)
 	valve.IncrementValve(0)
 }
 

@@ -303,7 +303,7 @@ func HighAlert(title, info string, logStruct *logger.Logging, client *redis.Clie
 			time.Sleep(ts)
 			i = 0
 		}
-		status, err := client.Get("status").Result()
+		status, err := client.Get("alarm_status").Result()
 		check(err, logStruct)
 		if status == "none" {
 			AlarmReset = true
@@ -342,7 +342,7 @@ func MediumAlert(title, info string, logStruct *logger.Logging, client *redis.Cl
 			time.Sleep(ts)
 			i = 0
 		}
-		status, err := client.Get("status").Result()
+		status, err := client.Get("alarm_status").Result()
 		check(err, logStruct)
 		if status == "none" {
 			AlarmReset = true
@@ -373,7 +373,7 @@ func LowAlert(title, info string, logStruct *logger.Logging, client *redis.Clien
 	err = rpigpio.BeepOff()
 	check(err, logStruct)
 	time.Sleep(tm)
-	status, err := client.Get("status").Result()
+	status, err := client.Get("alarm_status").Result()
 	check(err, logStruct)
 	if status == "none" {
 		AlarmReset = true

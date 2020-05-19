@@ -76,6 +76,7 @@ func main() {
 	s := sensors.SensorsReading{
 		PressureInput:  0,
 		PressureOutput: 0,
+		FlowInput:      0,
 	}
 
 	// Reads sensors and populate the graph
@@ -87,18 +88,20 @@ func main() {
 		for {
 			t1 := time.Now()
 			// reads all of the sensors on the system
-			Pin, Pout := sensors.ReadAllSensors()
+			Pin, Pout, Fin := sensors.ReadAllSensors()
 			//locks the populating of the sensors struct
 			mux.Lock()
 			s = sensors.SensorsReading{
 				PressureInput:  Pin,
-				PressureOutput: Pout}
+				PressureOutput: Pout,
+				FlowInput:      Fin,
+			}
 			mux.Unlock()
 			runtime.Gosched()
 			//sends the pressure reading from Pin to GUI
 			client.Set("pressure", (Pin)*1020, 0).Err()
 			client.Set("volume", (Pin)*1020, 0).Err()
-			client.Set("flow", (Pin)*1020, 0).Err()
+			client.Set("flow", (Fin)*1020, 0).Err()
 			//fmt.Println(Pin*1020)
 			//calculates the delay based on a specified rate
 			loopTime := time.Since(t1)
@@ -203,7 +206,7 @@ func SetupCloseHandler() {
 	go func() {
 		<-c
 		fmt.Println("\r- Ctrl+C pressed in Terminal")
-		valves.CloseAllValves(&valves.InProp, &valves.MExp, &valves.MV)
+		valves.CloseAllValves(&valves.InProp, &valves.MExp, &valves.MIns)
 		os.Exit(0)
 	}()
 }

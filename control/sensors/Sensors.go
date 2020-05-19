@@ -9,12 +9,12 @@ import (
 //Inhalation pressure sensor constants
 const Inhalation_Pressure_Sensor_Name = "Inhalation Pressure Sensor"
 const Inhalation_Pressure_Sensor_ADC_ID = 1
-const Inhalation_Pressure_Sensor_ADC_Chan = 0
+const Inhalation_Pressure_Sensor_ADC_Chan = 1
 
 //Inhalation flow sensor constants
 const Inhalation_Flow_Sensor_Name = "Inhalation Flow Sensor"
 const Inhalation_Flow_Sensor_ADC_ID = 1
-const Inhalation_Flow_Sensor_ADC_Chan = 1
+const Inhalation_Flow_Sensor_ADC_Chan = 5
 
 //Exhalaltion pressure sensor constants
 const Exhalation_Pressure_Sensor_Name = "Exhalation Pressure Sensor"
@@ -23,8 +23,8 @@ const Exhalation_Pressure_Sensor_ADC_Chan = 1
 
 //Exhalaltion flow sensor constants
 const Exhalation_Flow_Sensor_Name = "Exhalation Flow Sensor"
-const Exhalation_Flow_Sensor_ADC_ID = 1
-const Exhalation_Flow_Sensor_ADC_Chan = 3
+const Exhalation_Flow_Sensor_ADC_ID = 0
+const Exhalation_Flow_Sensor_ADC_Chan = 0
 
 // Pressure is a custom type struct to identify onboard
 // pressure sensors
@@ -48,6 +48,7 @@ type Flow struct {
 type SensorsReading struct {
 	PressureInput  float32
 	PressureOutput float32
+	FlowInput      float32
 }
 
 //PIns ... Inhalaltion pressure sensor
@@ -120,15 +121,15 @@ func (FS *Flow) ReadFlow() float32 {
 
 // // ReadAllSensors constantly reading input from the sensors and returns their readings
 // // in this order: PIns, PExp, FIns, FExp readings
-func ReadAllSensors() (InputPress, OutputPress float32) { //, InputFlow, OutputFlow float32) {
+func ReadAllSensors() (InputPress, OutputPress, InputFlow float32) { //, InputFlow, OutputFlow float32) {
 	// fmt.Println("read PIns")
 	InputPress = PIns.ReadPressureRaw()
 	// fmt.Println("read PExp")
 	OutputPress = PExp.ReadPressureRaw()
 	// fmt.Println("done Reading")
-	//InputFlow = FIns.ReadFlow()
+	InputFlow = FIns.ReadFlow()
 	//OutputFlow = FExp.ReadFlow()
-	return InputPress, OutputPress //, InputFlow, OutputFlow
+	return InputPress, OutputPress, InputFlow //OutputFlow
 }
 
 // func (PS *Pressure) CalibratePressure() {

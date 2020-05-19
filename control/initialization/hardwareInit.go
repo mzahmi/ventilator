@@ -27,6 +27,7 @@ func HardwareInit() {
 }
 
 //initI2C ... this function initializes I2C and checks for errors
+//initI2C ... this function initializes I2C and checks for errors
 func initI2C() {
 	fmt.Println("Starting I2C init")
 	err := ioexp.InitChip()
@@ -36,31 +37,25 @@ func initI2C() {
 	}
 	//Beep test
 	fmt.Println("beep called")
-	err = rpigpio.BeepOn()
-	if err != nil {
-		fmt.Println(err)
-		return
+	for ii := 0; ii < 3; ii++ {
+
+		err = rpigpio.BeepOn()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		time.Sleep(50 * time.Millisecond)
+		err = rpigpio.BeepOff()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		time.Sleep(50 * time.Millisecond)
 	}
-	time.Sleep(500 * time.Millisecond)
-	err = rpigpio.BeepOff()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	//testing solenoids
-	// err := ioexp.WritePin(solPinMask, true)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
-	// time.Sleep(time.Duration(onTime) * time.Second)
-	// err = ioexp.WritePin(solPinMask, false)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
+
 	//testing LEDs
-	const blinkTime = 500
+	const blinkTime = 200
 	fmt.Println("Blinking LEDs")
 	for ii := 0; ii < 2; ii++ {
 
@@ -116,7 +111,6 @@ func initI2C() {
 			return
 		}
 	}
-
 }
 
 //initADC ... this function initializes ADC and checks for errors
