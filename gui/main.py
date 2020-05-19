@@ -66,6 +66,7 @@ def main():
     ctx.setContextProperty("AlarmManager", alarmManager)
     ctx.setContextProperty("dp", dp)
     ctx.setContextProperty("fs", False)
+
     if config.args.fullscreen:
         logging.debug("Runnin in full screen")
         ctx.setContextProperty("fs", True)
