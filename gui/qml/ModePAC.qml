@@ -20,7 +20,7 @@ Item {
             anchors.rightMargin: 0
             anchors.leftMargin: 0
             anchors.fill: parent
-            contentHeight: root.height + column.height - 380
+            // contentHeight: root.height + column.height - 380
 
             Column {
                 id: column
@@ -29,7 +29,7 @@ Item {
 
                 Text {
                     id: title
-                    height: 100
+                    height: 80
                     text: root.triggerType === "Time" ? "Pressure Control" : "Pressure Assist"
                     anchors.horizontalCenter: parent.horizontalCenter
                     horizontalAlignment: Text.AlignLeft
@@ -96,6 +96,7 @@ Item {
                 }
                 BaseRadioGroup {
                     id: er
+                    name: ""
                     width: 500
                     height: 100
                     anchors.horizontalCenterOffset: 20
