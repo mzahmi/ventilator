@@ -1,23 +1,24 @@
 # https://oxfordmedicine.com/view/10.1093/med/9780198784975.001.0001/med-9780198784975-chapter-7
 import argparse
+import json
 import os
 import random
 import sys
-import json
-
-from alarm_manager import AlarmManager
 
 from PySide2 import QtCore, QtQml, QtWidgets
 
-# from chart_manager import ChartManager as cm
 import config
 import mode_select as ms
-from config import logging as logging
-# from patient import Patient
+from alarm_manager import AlarmManager
 from chart_manager1 import ChartManager1
 from chart_manager2 import ChartManager2
 from chart_manager3 import ChartManager3
+from config import logging as logging
 from input_manager import UserInput
+
+# from chart_manager import ChartManager as cm
+
+# from patient import Patient
 
 
 parser = argparse.ArgumentParser(description='Run the main GUI code')
@@ -72,10 +73,10 @@ def main():
     ctx.setContextProperty("fs", False)
 
     # if redis exists take the userinput
-    # if config.useredis:
-    #     params = config.r.get("PARAMS")
-    #     params = json.loads(params)
-    #     ctx.setContextProperty("Params", params)
+    if config.useredis:
+        params = config.r.get("PARAMS")
+        params = json.loads(params)
+        ctx.setContextProperty("Params", params)
 
     if config.args.fullscreen:
         logging.debug("Runnin in full screen")

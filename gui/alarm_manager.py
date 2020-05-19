@@ -61,10 +61,14 @@ class AlarmManager(QtCore.QObject):
     def core(self):
         while self._goOn:
             if config.useredis:
-                self._status = config.r.get("alarm_status")
-                self._title = config.r.get("alarm_title")
-                self._info = config.r.get("alarm_text")
-                if self._status is not "none":
+                try:
+                    self._status = config.r.get("alarm_status")
+                    self._title = config.r.get("alarm_title")
+                    self._info = config.r.get("alarm_text")
+                except:
+                    config.logging.error("Could not get alarm data from redis")
+
+                if "none" not in self._status:
                     print("emitting alarm ", self._info)
                 self.alarmStatus.emit(config.r.get("alarm_status"))
                 time.sleep(self._delay)

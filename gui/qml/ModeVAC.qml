@@ -50,7 +50,7 @@ Item {
                     name: UserInput.PEEP.name
                     stepSize: UserInput.PEEP.stepSize
                     anchors.horizontalCenter: parent.horizontalCenter
-                    initialVal: UserInput.PEEP.initialVal
+                    initialVal: Params.PEEP ? Params.PEEP : UserInput.PEEP.initialVal
                     minVal: UserInput.PEEP.minVal
                     maxVal: UserInput.PEEP.maxVal
                 }
@@ -60,7 +60,7 @@ Item {
                     name: UserInput.FIO2.name
                     stepSize: UserInput.FIO2.stepSize
                     anchors.horizontalCenter: parent.horizontalCenter
-                    initialVal: UserInput.FIO2.initialVal
+                    initialVal: Params.Fio2 ? Params.Fio2 : UserInput.FIO2.initialVal
                     minVal: UserInput.FIO2.minVal
                     maxVal: UserInput.FIO2.maxVal
                 }
@@ -70,7 +70,7 @@ Item {
                     name: UserInput.VT.name
                     stepSize: UserInput.VT.stepSize
                     anchors.horizontalCenter: parent.horizontalCenter
-                    initialVal: UserInput.VT.initialVal
+                    initialVal: Params.VT ? Params.VT : UserInput.VT.initialVal
                     minVal: UserInput.VT.minVal
                     maxVal: UserInput.VT.maxVal
                 }
@@ -80,7 +80,7 @@ Item {
                     name: UserInput.BreathPerMinute.name
                     stepSize: UserInput.BreathPerMinute.stepSize
                     anchors.horizontalCenter: parent.horizontalCenter
-                    initialVal: UserInput.BreathPerMinute.initialVal
+                    initialVal: Params.Rate ? Params.Rate : UserInput.BreathPerMinute.initialVal
                     minVal: UserInput.BreathPerMinute.minVal
                     maxVal: UserInput.BreathPerMinute.maxVal
                 }

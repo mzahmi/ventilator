@@ -1,3 +1,4 @@
+// volume chart
 import QtQuick 2.0
 import QtCharts 2.2
 import QtQuick.Controls 2.0
@@ -11,7 +12,7 @@ Item {
     property bool starttwo: false
     property double limit: 10.0
     property int minY: 0
-    property int maxY: 50
+    property double maxY: 1.5
     property double xval: 0
     property double xval2: 0
     signal reemitted(point p)
@@ -77,6 +78,7 @@ Item {
                     max: root.maxY
                     minorTickCount: 1
                     tickCount: 3
+                    titleText: "L"
 
                 }
                 axisX: ValueAxis {
