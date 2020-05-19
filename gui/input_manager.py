@@ -101,22 +101,22 @@ class UserInput(QtCore.QObject):
         else:
             logging.debug(f'trigger type set: {trigger}')
 
-    @QtCore.Property('QVariant')
+    @QtCore.Property('QVariant', constant=True)
     def InsparotaryPressure(self):
         return self._InsparotaryPressure
 
-    @QtCore.Property('QVariant')
+    @QtCore.Property('QVariant', constant=True)
     def PEEP(self):
         return self._PEEP
 
-    @QtCore.Property('QVariant')
+    @QtCore.Property('QVariant', constant=True)
     def FIO2(self):
         return self._FIO2
 
-    @QtCore.Property('QVariant')
+    @QtCore.Property('QVariant', constant=True)
     def BreathPerMinute(self):
         return self._BreathPerMinute
 
-    @QtCore.Property('QVariant')
+    @QtCore.Property('QVariant', constant=True)
     def VT(self):
         return self._VT
