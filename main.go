@@ -85,21 +85,30 @@ func main() {
 	timePerLoopIteration := time.Duration(1000000/rate) * time.Microsecond //(1 / rate) us
 
 	go func() {
+		calCounter := 0
+		var InitPin []float32
+		var calP float32
 		for {
 			t1 := time.Now()
 			// reads all of the sensors on the system
+			for ; calCounter < 6; calCounter++ {
+				P, _, _ := sensors.ReadAllSensors()
+				InitPin = append(InitPin, P)
+				calP = average(InitPin)
+			}
+
 			Pin, Pout, Fin := sensors.ReadAllSensors()
 			//locks the populating of the sensors struct
 			mux.Lock()
 			s = sensors.SensorsReading{
-				PressureInput:  Pin * 1020,
+				PressureInput:  (Pin - calP) * 1020,
 				PressureOutput: Pout * 1020,
 				FlowInput:      Fin * 100,
 			}
 			mux.Unlock()
 			runtime.Gosched()
 			//sends the pressure reading from Pin to GUI
-			client.Set("pressure", (Pin)*1020, 0).Err()
+			client.Set("pressure", (Pin-calP)*1020, 0).Err()
 			client.Set("flow", (Fin)*100, 0).Err()
 			//fmt.Println(Pin*1020)
 			//calculates the delay based on a specified rate
@@ -190,4 +199,12 @@ func SetupCloseHandler() {
 		valves.CloseAllValves(&valves.InProp, &valves.MExp, &valves.MV)
 		os.Exit(0)
 	}()
+}
+
+func average(xs []float32) float32 {
+	var total float32
+	for _, v := range xs {
+		total += v
+	}
+	return total / float32(len(xs))
 }

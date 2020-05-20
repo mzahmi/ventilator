@@ -32,7 +32,9 @@ func VolumeAC(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Cli
 func VolumeControl(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logStruct *logger.Logging) {
 
 	//initiate a PID controller based on the PeakFlow
-	FlowPID := NewPIDController(0.5, 0.5, 0.5) // takes in P, I, and D values
+	FlowPID := NewPIDController(0.5, 0.5, 0) // takes in P, I, and D values
+	FlowPID.SetOutputLimits(0, 0.5)
+	FlowPID.Set(float64(UI.TidalVolume / 1000))
 
 	//control loop
 	for {
