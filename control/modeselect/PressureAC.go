@@ -79,7 +79,7 @@ func PressureControl(UI *params.UserInput, s *sensors.SensorsReading, client *re
 			time.Sleep(1 * time.Millisecond)
 			toc := time.Since(tic)
 			//TODO: move the calculation inside the sensor go routine
-			volume += float32(toc.Minutes()) * flowRate * 100
+			volume += float32(toc.Minutes()) * flowRate
 			client.Set("volume", volume, 0).Err()
 		}
 		client.Set("volume", 0, 0).Err()

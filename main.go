@@ -172,6 +172,7 @@ func main() {
 		} else if status == "stop" {
 			// logger.Println("Stopping system")
 			logStruct.Event("Stopping system")
+			valves.CloseAllValves(&valves.MV, &valves.MExp, &valves.InProp)
 			// client.Set("status", "waiting", 0).Err()
 		} else if status == "exit" {
 			// logger.Println("Exiting system")

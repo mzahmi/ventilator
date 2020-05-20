@@ -48,19 +48,24 @@ func VolumeControl(UI *params.UserInput, s *sensors.SensorsReading, client *redi
 	for {
 		//FlowPID.setpoint = float64(UI.PeakFlow) // Sets the PID setpoint
 		//Open main valve MIns controlled by flow sensor PIns
+		var volume float32
 		valves.MV.Open()
 		valves.MExp.Close()
 		valves.InProp.IncrementValve(float64(desireVoltage))
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
+			tic:= time.Now()
 			mux.Lock()
-			incrementor := s.FlowInput
+			flowRate := s.FlowInput
 			mux.Unlock()
 			runtime.Gosched()
 			//valves.InProp.IncrementValve(FlowPID.Update(float64(incrementor)))
-			fmt.Println(incrementor)
 			time.Sleep(1 * time.Millisecond)
+			toc:= time.Since(tic)
+			volume += float32(toc.Minutes()) * flowRate
+			client.Set("volume", volume, 0).Err()
 		}
 		//Close main valve MIns
+		client.Set("volume", 0, 0).Err()
 		valves.InProp.Close() // closes the valve
 		valves.InProp.Close() // closes the valve
 		// time.Sleep(1*time.Millisecond)
