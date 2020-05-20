@@ -81,7 +81,7 @@ func main() {
 
 	// Reads sensors and populate the graph
 	// limit the reading frequency to a predefined value
-	rate := float64(500)                                                   // Hz rate
+	rate := float64(200)                                                   // Hz rate
 	timePerLoopIteration := time.Duration(1000000/rate) * time.Microsecond //(1 / rate) us
 
 	go func() {
@@ -92,16 +92,15 @@ func main() {
 			//locks the populating of the sensors struct
 			mux.Lock()
 			s = sensors.SensorsReading{
-				PressureInput:  Pin,
-				PressureOutput: Pout,
-				FlowInput:      Fin,
+				PressureInput:  Pin * 1020,
+				PressureOutput: Pout * 1020,
+				FlowInput:      Fin * 100,
 			}
 			mux.Unlock()
 			runtime.Gosched()
 			//sends the pressure reading from Pin to GUI
 			client.Set("pressure", (Pin)*1020, 0).Err()
-			client.Set("volume", (Pin)*1020, 0).Err()
-			client.Set("flow", (Fin)*1020, 0).Err()
+			client.Set("flow", (Fin)*100, 0).Err()
 			//fmt.Println(Pin*1020)
 			//calculates the delay based on a specified rate
 			loopTime := time.Since(t1)
@@ -124,7 +123,7 @@ func main() {
 			airpress := s.PressureInput
 			mux.Unlock()
 			runtime.Gosched()
-			if (airpress * 120) >= 20 {
+			if (airpress) >= 40 {
 				//msg := "Airway Pressure high"
 				client.Set("alarm_status", "critical", 0).Err()
 				client.Set("alarm_title", "Airway Pressure high", 0).Err()
@@ -188,7 +187,7 @@ func SetupCloseHandler() {
 	go func() {
 		<-c
 		fmt.Println("\r- Ctrl+C pressed in Terminal")
-		valves.CloseAllValves(&valves.InProp, &valves.MExp, &valves.MIns)
+		valves.CloseAllValves(&valves.InProp, &valves.MExp, &valves.MV)
 		os.Exit(0)
 	}()
 }

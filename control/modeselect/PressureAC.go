@@ -3,6 +3,8 @@ package modeselect
 import (
 	//"fmt"
 	"fmt"
+	"runtime"
+
 	//"runtime"
 	"sync"
 	"time"
@@ -64,21 +66,26 @@ func PressureControl(UI *params.UserInput, s *sensors.SensorsReading, client *re
 	//control loop; it loops unitll Exit bool is set to false
 	for {
 		//Open main valve MIns controlled by pressure sensor PIns
+		var volume float32
+		valves.MV.Open()
+		valves.MExp.Close()
+		valves.InProp.IncrementValve(0.75)
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
-
-			valves.MIns.Open()
-
-			valves.MExp.Close()
-
-			valves.InProp.IncrementValve(0.5)
-			// mux.Lock()
-			// fmt.Println(s.PressureInput)
-			// mux.Unlock()
-			// runtime.Gosched()
+			tic := time.Now()
+			mux.Lock()
+			flowRate := s.FlowInput
+			mux.Unlock()
+			runtime.Gosched()
+			toc := time.Since(tic)
+			//TODO: move the calculation inside the sensor go routine
+			volume += float32(toc.Minutes()) * flowRate * 100
+			client.Set("volume", volume, 0).Err()
+			time.Sleep(1 * time.Millisecond)
 		}
+		client.Set("volume", 0, 0).Err()
 
 		//Closes the inhalation MIns and InProp
-		valves.MIns.Close()
+		//valves.MIns.Close()
 		valves.InProp.Close()
 		//Open main valve MExp controlled by pressure sensor PExp
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
@@ -101,7 +108,7 @@ func PressureControl(UI *params.UserInput, s *sensors.SensorsReading, client *re
 			continue
 		}
 	}
-	valves.CloseAllValves(&valves.MIns, &valves.MExp, &valves.InProp)
+	valves.CloseAllValves(&valves.MV, &valves.MExp, &valves.InProp)
 	// logger.Println("All valves closed")
 	logStruct.Event("All valves closed")
 
