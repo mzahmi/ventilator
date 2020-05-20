@@ -69,25 +69,25 @@ func PressureControl(UI *params.UserInput, s *sensors.SensorsReading, client *re
 		var volume float32
 		valves.MV.Open()
 		valves.MExp.Close()
-		valves.InProp.IncrementValve(0.5)
+		valves.InProp.IncrementValve(0.4)
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
 			tic := time.Now()
 			mux.Lock()
 			flowRate := s.FlowInput
 			mux.Unlock()
 			runtime.Gosched()
+			time.Sleep(1 * time.Millisecond)
 			toc := time.Since(tic)
 			//TODO: move the calculation inside the sensor go routine
 			volume += float32(toc.Minutes()) * flowRate * 100
 			client.Set("volume", volume, 0).Err()
-			time.Sleep(1 * time.Millisecond)
 		}
 		client.Set("volume", 0, 0).Err()
 
 		//Closes the inhalation MIns and InProp
 		//valves.MIns.Close()
 		valves.InProp.Close()
-		// valves.InProp.Close()
+		valves.InProp.Close()
 		//Open main valve MExp controlled by pressure sensor PExp
 		// for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
 

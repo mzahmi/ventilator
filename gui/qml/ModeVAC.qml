@@ -144,11 +144,11 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         onReleased: {
-                            ModeSelect.sendString("TidalVolume", vt.value)
+                            ModeSelect.sendInt("TidalVolume", vt.value)
                             ModeSelect.sendString("Mode", "Volume A/C")
                             ModeSelect.mode = "Volume A/C"
-                            ModeSelect.sendString("BreathType", root.triggerType === "Time" ? "Pressure Control" : "Pressure Assist")
-                            ModeSelect.breath = root.triggerType === "Time" ? "Pressure Control" : "Pressure Assist"
+                            ModeSelect.sendString("BreathType", root.triggerType === "Time" ? "Volume Control" : "Volume Assist")
+                            ModeSelect.breath = root.triggerType === "Time" ? "Volume Control" : "Volume Assist"
                             ModeSelect.sendString("PatientTriggerType", root.triggerType === "Flow" ? "Flow Trigger" : "Pressure Trigger")
                             ModeSelect.trigger = root.triggerType
                             ModeSelect.sendInt("FiO2", fio2.value)

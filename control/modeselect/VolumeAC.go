@@ -32,29 +32,38 @@ func VolumeAC(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Cli
 // 	Control: 	Volume
 func VolumeControl(UI *params.UserInput, s *sensors.SensorsReading, client *redis.Client, mux *sync.Mutex, logStruct *logger.Logging) {
 
-	UI.PeakFlow = UI.TidalVolume / UI.Ti
-	//initiate a PID controller based on the PeakFlow
-	FlowPID := NewPIDController(0.5, 0.5, 0) // takes in P, I, and D values
-	FlowPID.SetOutputLimits(0, 0.5)
-	// FlowPID.Set(float64(UI.TidalVolume / 1000))
-	FlowPID.Set(float64(UI.PeakFlow))
+	// UI.PeakFlow = UI.TidalVolume / UI.Ti
+	// //initiate a PID controller based on the PeakFlow
+	// FlowPID := NewPIDController(0.5, 0.5, 0) // takes in P, I, and D values
+	// FlowPID.SetOutputLimits(0, 0.5)
+	// // FlowPID.Set(float64(UI.TidalVolume / 1000))
+	// FlowPID.Set(float64(UI.PeakFlow))
+	// fmt.Printf("recieved tidal volume: %v\n", UI.TidalVolume)
+	desireFlowRate:= (UI.TidalVolume*60)/(UI.Ti*1000)
+	desireVoltage:= desireFlowRate/100
+	// fmt.Printf("desired voltage : %v\n", desireVoltage)
+	
 
 	//control loop
 	for {
-		FlowPID.setpoint = float64(UI.PeakFlow) // Sets the PID setpoint
+		//FlowPID.setpoint = float64(UI.PeakFlow) // Sets the PID setpoint
 		//Open main valve MIns controlled by flow sensor PIns
 		valves.MV.Open()
 		valves.MExp.Close()
+		valves.InProp.IncrementValve(float64(desireVoltage))
 		for start := time.Now(); time.Since(start) < (time.Duration(UI.Ti*1000) * time.Millisecond); {
 			mux.Lock()
 			incrementor := s.FlowInput
 			mux.Unlock()
 			runtime.Gosched()
-			valves.InProp.IncrementValve(FlowPID.Update(float64(incrementor)))
+			//valves.InProp.IncrementValve(FlowPID.Update(float64(incrementor)))
+			fmt.Println(incrementor)
 			time.Sleep(1 * time.Millisecond)
 		}
 		//Close main valve MIns
 		valves.InProp.Close() // closes the valve
+		valves.InProp.Close() // closes the valve
+		// time.Sleep(1*time.Millisecond)
 		//Open main valve MExp controlled by flow sensor PExp
 		// for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
 		// 	if sensors.PExp.ReadPressure() <= UI.PEEP {
