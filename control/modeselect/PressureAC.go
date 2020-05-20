@@ -87,7 +87,7 @@ func PressureControl(UI *params.UserInput, s *sensors.SensorsReading, client *re
 		//Closes the inhalation MIns and InProp
 		//valves.MIns.Close()
 		valves.InProp.Close()
-		valves.InProp.Close()
+		// valves.InProp.Close()
 		//Open main valve MExp controlled by pressure sensor PExp
 		// for start := time.Now(); time.Since(start) < (time.Duration(UI.Te*1000) * time.Millisecond); {
 
