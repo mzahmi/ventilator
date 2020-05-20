@@ -172,7 +172,7 @@ func main() {
 		} else if status == "stop" {
 			// logger.Println("Stopping system")
 			logStruct.Event("Stopping system")
-			client.Set("status", "waiting", 0).Err()
+			// client.Set("status", "waiting", 0).Err()
 		} else if status == "exit" {
 			// logger.Println("Exiting system")
 			logStruct.Event("Exiting system")
